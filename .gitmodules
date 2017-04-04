@@ -7,3 +7,6 @@
 [submodule "lib/babbler"]
 	path = lib/babbler
 	url = https://bitbucket.org/sco0ter/babbler.git
+[submodule "lib/emite"]
+	path = lib/emite
+	url = https://github.com/EmiteGWT/emite.git
