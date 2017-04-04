@@ -1,0 +1,3 @@
+[submodule "docs/lib/smack/Smack"]
+	path = docs/lib/smack/Smack
+	url = https://github.com/igniterealtime/Smack.git
