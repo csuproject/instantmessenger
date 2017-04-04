@@ -4,3 +4,6 @@
 [submodule "lib/Smack"]
 	path = lib/Smack
 	url = https://github.com/igniterealtime/Smack.git
+[submodule "lib/babbler"]
+	path = lib/babbler
+	url = https://bitbucket.org/sco0ter/babbler.git
