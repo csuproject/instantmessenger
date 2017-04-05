@@ -1,4 +1,4 @@
-This is the Library director
+This is the Library directory
 
 A Library is added with the git submodule command, see use here: https://git-scm.com/book/en/v2/Git-Tools-Submodules
 
