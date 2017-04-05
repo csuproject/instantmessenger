@@ -10,4 +10,4 @@ https://bitbucket.org/sco0ter/babbler.git
 
 https://github.com/igniterealtime/Smack.git
 
-You will need to use, git submodule update --init, in the directories to pull in the modules.
+You will need to use, git submodule update --init, to pull in the modules.
