@@ -1,0 +1,71 @@
+Creating a connection
+18:50:23 SENT (0): <stream:stream xmlns='jabber:client' to='teamorange.space' xmlns:stream='http://etherx.jabber.org/streams' version='1.0' xml:lang='en'>
+18:50:24 RECV (0): <?xml version='1.0' encoding='UTF-8'?><stream:stream xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" from="teamorange.space" id="1en9crmq19" xml:lang="en" version="1.0">
+18:50:24 RECV (0): <stream:features><starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"></starttls><mechanisms xmlns="urn:ietf:params:xml:ns:xmpp-sasl"><mechanism>PLAIN</mechanism><mechanism>SCRAM-SHA-1</mechanism><mechanism>EXTERNAL</mechanism><mechanism>CRAM-MD5</mechanism><mechanism>DIGEST-MD5</mechanism></mechanisms><compression xmlns="http://jabber.org/features/compress"><method>zlib</method></compression><register xmlns="http://jabber.org/features/iq-register"/></stream:features>
+Connection to teamorange.space XXMP Server is true
+Acount Manager Object Created
+18:50:44 SENT (0): <iq to='teamorange.space' id='rdFWQ-3' type='get'><query xmlns='jabber:iq:register'></query></iq>
+18:50:45 RECV (0): <iq type="result" id="rdFWQ-3" from="teamorange.space"><query xmlns="jabber:iq:register"><username/><password/><email/><name/><x xmlns="jabber:x:data" type="form"><title>XMPP Client Registration</title><instructions>Please provide the following information</instructions><field var="FORM_TYPE" type="hidden"><value>jabber:iq:register</value></field><field var="username" type="text-single" label="Username"><required/></field><field var="name" type="text-single" label="Full name"/><field var="email" type="text-single" label="Email"/><field var="password" type="text-private" label="Password"><required/></field></x></query></iq>
+18:50:45 SENT (0): <iq to='teamorange.space' id='rdFWQ-5' type='set'><query xmlns='jabber:iq:register'><password>smackuser</password><name></name><email></email><username>smackuser</username></query></iq>
+18:50:45 RECV (0): <iq type="result" id="rdFWQ-5" from="teamorange.space" to="teamorange.space/1en9crmq19"/>
+Created account smackuser
+18:51:01 SENT (0): <auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='SCRAM-SHA-1'>biwsbj1zbWFja3VzZXIscj19XVhWIUdqcX1vbXBOeTMxdSV8a3xqMSh2V1FZWXI/Og==</auth>
+18:51:01 RECV (0): <challenge xmlns="urn:ietf:params:xml:ns:xmpp-sasl">cj19XVhWIUdqcX1vbXBOeTMxdSV8a3xqMSh2V1FZWXI/OjBmMTI0NGZkLWQyZjQtNDc3MC04ZjUwLTViODQ3MTAyNTgzZixzPTR6cHE0YjUzR1d2YXRYVUlQaG9TUUlITDhGOGN5OS80LGk9NDA5Ng==</challenge>
+18:51:01 SENT (0): <response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>Yz1iaXdzLHI9fV1YViFHanF9b21wTnkzMXUlfGt8ajEodldRWVlyPzowZjEyNDRmZC1kMmY0LTQ3NzAtOGY1MC01Yjg0NzEwMjU4M2YscD15ZEJUZXZZemZGcm40RkQ3Lzd1dGRmQTcwK0k9</response>
+18:51:01 RECV (0): <success xmlns="urn:ietf:params:xml:ns:xmpp-sasl">dj11Y08vcldHVHJoN1paVlhSTHg5WjA3clVJd2c9</success>
+18:51:01 SENT (0): <stream:stream xmlns='jabber:client' to='teamorange.space' xmlns:stream='http://etherx.jabber.org/streams' version='1.0' id='1en9crmq19' xml:lang='en'>
+18:51:02 RECV (0): <?xml version='1.0' encoding='UTF-8'?><stream:stream xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" from="teamorange.space" id="1en9crmq19" xml:lang="en" version="1.0"><stream:features><compression xmlns="http://jabber.org/features/compress"><method>zlib</method></compression><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"/><session xmlns="urn:ietf:params:xml:ns:xmpp-session"><optional/></session><sm xmlns='urn:xmpp:sm:2'/><sm xmlns='urn:xmpp:sm:3'/></stream:features>
+18:51:02 SENT (0): <iq id='rdFWQ-7' type='set'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'></bind></iq>
+18:51:02 RECV (0): <iq type="result" id="rdFWQ-7" to="teamorange.space/1en9crmq19"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><jid>smackuser@teamorange.space/1en9crmq19</jid></bind></iq>
+18:51:02 SENT (0): <enable xmlns='urn:xmpp:sm:3' resume='true'/>
+18:51:02 RECV (0): <enabled xmlns='urn:xmpp:sm:3'/>
+18:51:02 User logged (0): smackuser@teamorange.space:5222/1en9crmq19
+18:51:02 XMPPConnection authenticated (XMPPTCPConnection[smackuser@teamorange.space/1en9crmq19] (0))
+18:51:02 SENT (0): <iq id='rdFWQ-9' type='get'><query xmlns='jabber:iq:roster'></query></iq>
+18:51:02 SENT (0): <presence id='rdFWQ-10'><c xmlns='http://jabber.org/protocol/caps' hash='sha-1' node='http://www.igniterealtime.org/projects/smack' ver='NfJ3flI83zSdUDzCEICtbypursw='/></presence>
+18:51:03 RECV (0): <iq type="result" id="rdFWQ-9" to="smackuser@teamorange.space/1en9crmq19"><query xmlns="jabber:iq:roster"/></iq>
+18:51:03 RECV (0): <iq type="get" id="806-922" to="smackuser@teamorange.space/1en9crmq19" from="teamorange.space"><query xmlns="http://jabber.org/protocol/disco#info"/></iq>
+18:51:03 SENT (0): <iq to='teamorange.space' id='806-922' type='result'><query xmlns='http://jabber.org/protocol/disco#info'><identity category='client' name='Smack' type='pc'/><feature var='http://jabber.org/protocol/disco#items'/><feature var='http://jabber.org/protocol/caps'/><feature var='vcard-temp'/><feature var='http://jabber.org/protocol/bytestreams'/><feature var='http://jabber.org/protocol/xhtml-im'/><feature var='jabber:x:data'/><feature var='jabber:iq:version'/><feature var='urn:xmpp:time'/><feature var='jabber:iq:privacy'/><feature var='urn:xmpp:ping'/><feature var='jabber:iq:last'/><feature var='http://jabber.org/protocol/commands'/><feature var='http://jabber.org/protocol/muc'/><feature var='http://jabber.org/protocol/xdata-validate'/><feature var='http://jabber.org/protocol/xdata-layout'/><feature var='urn:xmpp:receipts'/><feature var='http://jabber.org/protocol/disco#info'/></query></iq>
+Login with smackuser is true
+18:51:07 RECV (0): <message to="smackuser@teamorange.space/1en9crmq19" from="teamorange.space"><subject>Message of the Day</subject><body>Welcome to Team Orange! I hope your client development is going well :)</body></message>
+18:54:04 RECV (0): <iq type="get" id="419-923" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+18:54:04 SENT (0): <iq to='teamorange.space' id='419-923' type='result'></iq>
+18:57:05 RECV (0): <iq type="get" id="193-924" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+18:57:05 SENT (0): <iq to='teamorange.space' id='193-924' type='result'></iq>
+18:57:05 SENT (0): <r xmlns='urn:xmpp:sm:3'/>
+18:57:05 RECV (0): <a xmlns='urn:xmpp:sm:3' h='5' />
+19:00:06 RECV (0): <iq type="get" id="331-925" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:00:06 SENT (0): <iq to='teamorange.space' id='331-925' type='result'></iq>
+19:03:06 RECV (0): <iq type="get" id="472-926" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:03:06 SENT (0): <iq to='teamorange.space' id='472-926' type='result'></iq>
+19:06:07 RECV (0): <iq type="get" id="216-927" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:06:07 SENT (0): <iq to='teamorange.space' id='216-927' type='result'></iq>
+19:09:07 RECV (0): <iq type="get" id="225-928" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:09:07 SENT (0): <iq to='teamorange.space' id='225-928' type='result'></iq>
+19:12:08 RECV (0): <iq type="get" id="886-929" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:12:08 SENT (0): <iq to='teamorange.space' id='886-929' type='result'></iq><r xmlns='urn:xmpp:sm:3'/>
+19:12:08 RECV (0): <a xmlns='urn:xmpp:sm:3' h='10' />
+19:15:09 RECV (0): <iq type="get" id="849-930" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:15:09 SENT (0): <iq to='teamorange.space' id='849-930' type='result'></iq>
+19:18:09 RECV (0): <iq type="get" id="593-931" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:18:09 SENT (0): <iq to='teamorange.space' id='593-931' type='result'></iq>
+19:21:10 RECV (0): <iq type="get" id="502-932" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:21:10 SENT (0): <iq to='teamorange.space' id='502-932' type='result'></iq>
+19:24:10 RECV (0): <iq type="get" id="354-933" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:24:10 SENT (0): <iq to='teamorange.space' id='354-933' type='result'></iq>
+19:27:11 RECV (0): <iq type="get" id="448-934" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:27:11 SENT (0): <iq to='teamorange.space' id='448-934' type='result'></iq><r xmlns='urn:xmpp:sm:3'/>
+19:27:11 RECV (0): <a xmlns='urn:xmpp:sm:3' h='15' />
+19:30:11 RECV (0): <iq type="get" id="536-935" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:30:11 SENT (0): <iq to='teamorange.space' id='536-935' type='result'></iq>
+19:33:12 RECV (0): <iq type="get" id="703-936" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:33:12 SENT (0): <iq to='teamorange.space' id='703-936' type='result'></iq>
+19:36:12 RECV (0): <iq type="get" id="732-937" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:36:12 SENT (0): <iq to='teamorange.space' id='732-937' type='result'></iq>
+19:39:13 RECV (0): <iq type="get" id="640-938" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:39:13 SENT (0): <iq to='teamorange.space' id='640-938' type='result'></iq>
+19:42:13 RECV (0): <iq type="get" id="769-939" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:42:13 SENT (0): <iq to='teamorange.space' id='769-939' type='result'></iq><r xmlns='urn:xmpp:sm:3'/>
+19:42:14 RECV (0): <a xmlns='urn:xmpp:sm:3' h='20' />
+19:45:14 RECV (0): <iq type="get" id="525-940" from="teamorange.space" to="smackuser@teamorange.space/1en9crmq19"><ping xmlns="urn:xmpp:ping"/></iq>
+19:45:14 SENT (0): <iq to='teamorange.space' id='525-940' type='result'></iq> 
