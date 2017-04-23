@@ -2,10 +2,15 @@ package TeamOrange.instantmessenger;
 
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
+import rocks.xmpp.core.session.ConnectionException;
+import rocks.xmpp.core.session.NoResponseException;
 import rocks.xmpp.core.session.TcpConnectionConfiguration;
 import rocks.xmpp.core.session.XmppClient;
+import rocks.xmpp.core.stanza.StanzaException;
 import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stanza.model.Presence;
+import rocks.xmpp.core.stream.StreamErrorException;
+import rocks.xmpp.core.stream.StreamNegotiationException;
 import rocks.xmpp.extensions.register.RegistrationManager;
 import rocks.xmpp.extensions.register.model.Registration;
 import rocks.xmpp.im.roster.RosterManager;
@@ -40,7 +45,17 @@ public class BabblerClient extends Client {
 	public boolean connect() {
 		try{
     		client.connect();
+    	} catch(ConnectionException e){
+    		return false;
+    	} catch(StreamErrorException e){
+    		return false;
+    	} catch(StreamNegotiationException e){
+    		return false;
+    	} catch(NoResponseException e){
+    		return false;
     	} catch(XmppException e){
+    		return false;
+    	} catch(IllegalStateException e){
     		return false;
     	}
 		return true;
@@ -53,6 +68,14 @@ public class BabblerClient extends Client {
     		client.login(userName, password, null);
     	} catch(AuthenticationException e){
     		return false;
+    	} catch(StreamErrorException e){
+    		return false;
+    	} catch(StreamNegotiationException e){
+    		return false;
+    	} catch(NoResponseException e){
+    		return false;
+    	} catch(StanzaException e){
+    		return false;
     	} catch(XmppException e){
     		return false;
     	}
@@ -64,9 +87,19 @@ public class BabblerClient extends Client {
 		try {
 			// TODO: not sure if this logs other user out
 			client.loginAnonymously();
-		} catch (XmppException e) {
-			return false;
-		}
+		} catch(AuthenticationException e){
+    		return false;
+    	} catch(StreamErrorException e){
+    		return false;
+    	} catch(StreamNegotiationException e){
+    		return false;
+    	} catch(NoResponseException e){
+    		return false;
+    	} catch(StanzaException e){
+    		return false;
+    	} catch(XmppException e){
+    		return false;
+    	}
 		return true;
 	}
 
