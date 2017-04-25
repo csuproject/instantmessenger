@@ -4,25 +4,21 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class App extends Application
-{
+public class App {
+
 	private Client client;
-	private Stage stage;
 
 //    public static void main( String[] args )
 //    {
 //    	App app = new App();
 //    	app.run();
 //    }
-
+//
 //    public void run(){
 //    	init();
 //
-////    	CLI cli = new CLI(this);
-////    	cli.run();
-//    	AccountScreen accountScreen = new AccountScreen(this);
-//    	accountScreen.launch(null);
-//    	//Application.launch(AccountScreen.class);
+//    	CLI cli = new CLI(this);
+//    	cli.run();
 //    }
 
     public void init(){
@@ -45,6 +41,8 @@ public class App extends Application
     }
 
 /////////////////////////////////////////////////////
+// These probably shouldnt be here
+/////////////////////////////////////////////////////
 
     public Client getClient(){
     	return client;
@@ -58,16 +56,6 @@ public class App extends Application
     	client.createUser(username, password);
     }
 
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		init();
 
-		this.stage = primaryStage;
-		stage.setTitle("Confide");
-
-		Scene scene = new Scene(new AccountScreen(this), 640, 480);
-		stage.setScene(scene);
-		stage.show();
-	}
 
 }
