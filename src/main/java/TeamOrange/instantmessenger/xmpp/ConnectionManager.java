@@ -11,7 +11,7 @@ import rocks.xmpp.im.roster.RosterManager;
 
 public class ConnectionManager {
 
-	public static XmppClient setupConnection(String hostName, BabblerClient babblerClient){
+	public static XmppClient setupConnection(String hostName, BabblerBase babblerClient){
 		TcpConnectionConfiguration tcpConfiguration = TcpConnectionConfiguration.builder()
     		    .hostname(hostName)
     		    .port(5222)

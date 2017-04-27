@@ -1,19 +1,19 @@
 package TeamOrange.instantmessenger;
 
-import TeamOrange.instantmessenger.xmpp.BabblerClient;
+import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class App {
 
-	private BabblerClient client;
+	private BabblerBase babblerBase;
 
     public void init(){
-    	client = new BabblerClient("teamorange.space", () -> messageListener(), () -> presenceListener(), () -> rosterListener());
+    	babblerBase = new BabblerBase("teamorange.space", () -> messageListener(), () -> presenceListener(), () -> rosterListener());
 
-    	client.setupConnection();
-    	client.connect();
+    	babblerBase.setupConnection();
+    	babblerBase.connect();
     }
 
     public void messageListener(){
@@ -32,16 +32,16 @@ public class App {
 // These probably shouldnt be here
 /////////////////////////////////////////////////////
 
-    public BabblerClient getClient(){
-    	return client;
+    public BabblerBase getClient(){
+    	return babblerBase;
     }
 
-    public boolean login(String username, String password){
-    	return client.login(username, password);
+    public void login(String username, String password){
+    	babblerBase.login(username, password);
     }
 
     public void createAccount(String username, String password){
-    	client.createUser(username, password);
+    	babblerBase.createUser(username, password);
     }
 
 
