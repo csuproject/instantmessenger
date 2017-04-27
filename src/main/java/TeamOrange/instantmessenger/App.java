@@ -8,19 +8,6 @@ public class App {
 
 	private Client client;
 
-//    public static void main( String[] args )
-//    {
-//    	App app = new App();
-//    	app.run();
-//    }
-//
-//    public void run(){
-//    	init();
-//
-//    	CLI cli = new CLI(this);
-//    	cli.run();
-//    }
-
     public void init(){
     	client = new BabblerClient("teamorange.space", () -> messageListener(), () -> presenceListener(), () -> rosterListener());
 
