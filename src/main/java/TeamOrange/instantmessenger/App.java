@@ -1,12 +1,13 @@
 package TeamOrange.instantmessenger;
 
+import TeamOrange.instantmessenger.xmpp.BabblerClient;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class App {
 
-	private Client client;
+	private BabblerClient client;
 
     public void init(){
     	client = new BabblerClient("teamorange.space", () -> messageListener(), () -> presenceListener(), () -> rosterListener());
@@ -31,7 +32,7 @@ public class App {
 // These probably shouldnt be here
 /////////////////////////////////////////////////////
 
-    public Client getClient(){
+    public BabblerClient getClient(){
     	return client;
     }
 

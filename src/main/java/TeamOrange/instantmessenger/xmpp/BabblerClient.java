@@ -1,4 +1,4 @@
-package TeamOrange.instantmessenger;
+package TeamOrange.instantmessenger.xmpp;
 
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
@@ -15,53 +15,36 @@ import rocks.xmpp.extensions.register.RegistrationManager;
 import rocks.xmpp.extensions.register.model.Registration;
 import rocks.xmpp.im.roster.RosterManager;
 
-public class BabblerClient extends Client {
+public class BabblerClient {
 
+	private String hostName;
 	private XmppClient client;
 
+	private MessageListener messageListener;
+	private PresenceListener presenceListener;
+	private RosterListener rosterListener;
+
 	public BabblerClient(String hostName, MessageListener messageListener, PresenceListener presenceListener, RosterListener rosterListener) {
-		super(hostName, messageListener, presenceListener, rosterListener);
+		this.hostName = hostName;
+		this.messageListener = messageListener;
+		this.presenceListener = presenceListener;
+		this.rosterListener = rosterListener;
 	}
 
-	@Override
-	public boolean setupConnection(){
-		TcpConnectionConfiguration tcpConfiguration = TcpConnectionConfiguration.builder()
-    		    .hostname(hostName)
-    		    .port(5222)
-    		    .secure(false)
-    		    .build();
-
-    	client = XmppClient.create(hostName, tcpConfiguration);
-
-    	client.addInboundPresenceListener(e -> newPresence() );
-    	client.addInboundMessageListener(e -> newMessage() );
-    	client.getManager(RosterManager.class).addRosterListener(e -> newRoster() );
-
-    	// TODO: check if this worked
-    	return true;
+	// ConnectionMannager
+	public void setupConnection(){
+		client = ConnectionManager.setupConnection(hostName, this);
 	}
 
-	@Override
-	public boolean connect() {
-		try{
-    		client.connect();
-    	} catch(ConnectionException e){
-    		return false;
-    	} catch(StreamErrorException e){
-    		return false;
-    	} catch(StreamNegotiationException e){
-    		return false;
-    	} catch(NoResponseException e){
-    		return false;
-    	} catch(XmppException e){
-    		return false;
-    	} catch(IllegalStateException e){
-    		return false;
-    	}
-		return true;
+	public void connect(){
+		ConnectionManager.connect(client);
 	}
 
-	@Override
+	public void close(){
+		ConnectionManager.close(client);
+	}
+
+	// where to put login, logout, createUser ???
 	public boolean login(String userName, String password) {
 		// TODO: throw exceptions so the different failure reasons can be handled
 		try{
@@ -82,7 +65,6 @@ public class BabblerClient extends Client {
 		return true;
 	}
 
-	@Override
 	public boolean logout(){
 		try {
 			// TODO: not sure if this logs other user out
@@ -103,7 +85,6 @@ public class BabblerClient extends Client {
 		return true;
 	}
 
-	@Override
 	public boolean createUser(String userName, String password) {
 		// TODO: how to tell if this failed?
 		Registration registration = Registration.builder()
@@ -116,16 +97,8 @@ public class BabblerClient extends Client {
     	return true;
 	}
 
-	@Override
-	public boolean close() {
-		try{
-    		client.close();
-    	} catch(XmppException e){
-    		return false;
-    	}
-		return true;
-	}
-
+	// these will be passed Babbler constructs, do what they need to, and then alert the listeners from App using our own constructs, so that Babbler never goes past this point
+	// But maybe these should be moved. e.g. newRoster into RosterManager, newMessage into MessageManager.
 	public void newPresence(){
 		presenceListener.presence();
 	}
