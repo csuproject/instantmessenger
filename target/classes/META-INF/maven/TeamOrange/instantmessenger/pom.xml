@@ -22,24 +22,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.igniterealtime.smack</groupId>
-    	<artifactId>smack-java7</artifactId>
-    	<version>4.2.0</version>
+    	<groupId>rocks.xmpp</groupId>
+    	<artifactId>xmpp-core-client</artifactId>
+    	<version>0.7.4</version>
     </dependency>
     <dependency>
-    	<groupId>org.igniterealtime.smack</groupId>
-    	<artifactId>smack-tcp</artifactId>
-    	<version>4.2.0</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.igniterealtime.smack</groupId>
-    	<artifactId>smack-im</artifactId>
-    	<version>4.2.0</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.igniterealtime.smack</groupId>
-    	<artifactId>smack-extensions</artifactId>
-    	<version>4.2.0</version>
+    	<groupId>rocks.xmpp</groupId>
+    	<artifactId>xmpp-extensions-client</artifactId>
+    	<version>0.7.4</version>
     </dependency>
   </dependencies>
 </project>
