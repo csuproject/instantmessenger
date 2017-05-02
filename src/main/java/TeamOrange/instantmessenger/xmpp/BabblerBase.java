@@ -54,8 +54,8 @@ public class BabblerBase {
 	}
 
 	// MessageManager
-	public AppChatSession createChat(AppJid jid){
-		ChatSession chatSession = messageManager.createChat(client, jid);
+	public AppChatSession createChat(AppJid to){
+		ChatSession chatSession = messageManager.createChat(client, to);
 		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
 		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
 		return appChatSession;

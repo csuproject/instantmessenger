@@ -27,10 +27,10 @@ public class AppChatSession {
 	}
 
 	public void sendMessage(String body){
-		AppJid appJid = xmppChatSession.getChatPartner();
+		AppJid to = xmppChatSession.getChatPartner();
 		String thread = xmppChatSession.getThread();
 		boolean inbound = false;
-		AppMessage appMessage = new AppMessage(appJid, body, thread, inbound);
+		AppMessage appMessage = new AppMessage(to, body, thread, inbound);
 		xmppChatSession.sendMessage(appMessage);
 		messages.add(appMessage);
 	}
@@ -38,7 +38,12 @@ public class AppChatSession {
 	public void printMessages(){
 		Iterator<AppMessage> i = messages.iterator();
 		while(i.hasNext()){
-			System.out.println(i.next());
+			AppMessage message = i.next();
+			if(message.isInbound()){
+				System.out.println(getPartner() + " : " + message.getBody());
+			} else{
+				System.out.println("self : " + message.getBody());
+			}
 		}
 	}
 

@@ -33,15 +33,15 @@ public class MessageManager {
 
 	public AppMessage messageEventToAppMessage(MessageEvent messageEvent){
 		Message xmppMessage = messageEvent.getMessage();
-		AppJid appJid = appJidFromjid(xmppMessage.getFrom());
-		AppMessage appMessage = new AppMessage( appJid, xmppMessage.getBody(), xmppMessage.getThread(), messageEvent.isInbound() );
+		//AppJid from = appJidFromjid(xmppMessage.getFrom());
+		AppMessage appMessage = new AppMessage( null, xmppMessage.getBody(), xmppMessage.getThread(), messageEvent.isInbound() );
 		return appMessage;
 	}
 
 	private Message messageFromAppMessage(AppMessage appMessage){
 		Message message = new Message();
 
-		message.setTo( jidFromAppJid(appMessage.getJid()) );
+		message.setTo( jidFromAppJid(appMessage.getToJid()) );
 		message.setBody(appMessage.getBody());
 		message.setThread(appMessage.getThread());
 		return message;

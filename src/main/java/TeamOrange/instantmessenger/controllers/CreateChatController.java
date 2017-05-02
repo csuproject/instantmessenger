@@ -3,6 +3,7 @@ package TeamOrange.instantmessenger.controllers;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppChats;
+import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
@@ -15,7 +16,7 @@ public class CreateChatController {
 	private HomeScreen homeScreen;
 	private ChangeScreen changeScreen;
 
-	public CreateChatController(AppChats chats, BabblerBase babblerBase, HomeScreen homeScreen){
+	public CreateChatController(AppChats chats, AppContacts contacts, BabblerBase babblerBase, HomeScreen homeScreen){
 		this.chats = chats;
 		this.babblerBase = babblerBase;
 		this.homeScreen = homeScreen;
@@ -28,8 +29,8 @@ public class CreateChatController {
 	}
 
 	public void chatWithUserName(String userName){
-		AppJid other = new AppJid(userName, "teamorange.space");
-		AppChatSession appChatSession = babblerBase.createChat(other);
+		AppJid to = new AppJid(userName, "teamorange.space");
+		AppChatSession appChatSession = babblerBase.createChat(to);
 		chats.addChat(appChatSession);
 		chats.setActiveChat(appChatSession);
 		changeScreen.SetScreen(ScreenEnum.CHAT);

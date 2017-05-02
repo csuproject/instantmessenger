@@ -64,7 +64,7 @@ public class App {
 		loginController = new LoginController(babblerBase, accountScreen, contacts);
 		loginController.setOnChangeScreen( screen->setScreen(screen) );
 
-		createChatController = new CreateChatController(chats, babblerBase, homeScreen);
+		createChatController = new CreateChatController(chats, contacts, babblerBase, homeScreen);
 		createChatController.setOnChangeScreen( screen->setScreen(screen) );
 
 		chatController = new ChatController(babblerBase, chatScreen, chats);
