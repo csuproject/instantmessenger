@@ -1,5 +1,6 @@
 package TeamOrange.instantmessenger.xmpp;
 
+import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppUser;
@@ -19,6 +20,7 @@ import rocks.xmpp.core.stream.StreamErrorException;
 import rocks.xmpp.core.stream.StreamNegotiationException;
 import rocks.xmpp.extensions.register.RegistrationManager;
 import rocks.xmpp.extensions.register.model.Registration;
+import rocks.xmpp.im.chat.ChatSession;
 import rocks.xmpp.im.roster.RosterEvent;
 import rocks.xmpp.im.roster.RosterManager;
 
@@ -39,6 +41,14 @@ public class BabblerBase {
 		this.presenceListener = presenceListener;
 		this.rosterListener = rosterListener;
 		this.messageManager = new MessageManager();
+	}
+
+	// MessageManager
+	public AppChatSession createChat(AppJid jid){
+		ChatSession chatSession = messageManager.createChat(client, jid);
+		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
+		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
+		return appChatSession;
 	}
 
 	// ConnectionMannager

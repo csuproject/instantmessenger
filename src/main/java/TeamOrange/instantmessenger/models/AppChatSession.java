@@ -3,23 +3,23 @@ package TeamOrange.instantmessenger.models;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import TeamOrange.instantmessenger.xmpp.XmppChatSession;
+
 public class AppChatSession {
-	private AppJid partner;
-	private String thread;
+	private XmppChatSession xmppChatSession;
 	private LinkedList<AppMessage> messages;
 
-	public AppChatSession(AppJid partner, String thread){
-		this.partner = partner;
-		this.thread = thread;
+	public AppChatSession(XmppChatSession xmppChatSession){
+		this.xmppChatSession = xmppChatSession;
 		this.messages = new LinkedList<AppMessage>();
 	}
 
 	public AppJid getPartner(){
-		return partner;
+		return xmppChatSession.getChatPartner();
 	}
 
 	public String getThread(){
-		return thread;
+		return xmppChatSession.getThread();
 	}
 
 	public void addMessage(AppMessage message){

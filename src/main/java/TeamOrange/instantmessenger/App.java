@@ -2,6 +2,7 @@ package TeamOrange.instantmessenger;
 
 import TeamOrange.instantmessenger.controllers.CreateAccountController;
 import TeamOrange.instantmessenger.controllers.LoginController;
+import TeamOrange.instantmessenger.models.AppChats;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
@@ -31,6 +32,7 @@ public class App {
 
 	//
 	AppContacts contacts;
+	AppChats chats;
 
 	public App(GuiBase guiBase){
 		this.guiBase = guiBase;
@@ -40,6 +42,7 @@ public class App {
 
 		//
 		contacts = new AppContacts();
+		chats = new AppChats();
 		//
 
 		babblerBase = new BabblerBase("teamorange.space", appMessage -> messageListener(appMessage), () -> presenceListener(), () -> rosterListener());

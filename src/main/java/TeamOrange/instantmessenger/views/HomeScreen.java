@@ -12,7 +12,6 @@ import javafx.scene.text.Font;
 
 public class HomeScreen extends Screen {
 
-	String name;
 	private Label header;
 
 	public HomeScreen(){
