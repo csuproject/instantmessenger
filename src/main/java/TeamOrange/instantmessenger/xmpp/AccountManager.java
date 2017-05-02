@@ -1,5 +1,6 @@
 package TeamOrange.instantmessenger.xmpp;
 
+import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
 import rocks.xmpp.core.session.NoResponseException;
@@ -12,7 +13,7 @@ import rocks.xmpp.extensions.register.model.Registration;
 
 public class AccountManager {
 
-	public static void login(XmppClient client, String userName, String password) {
+	public static Jid login(XmppClient client, String userName, String password) {
 		// TODO: throw exceptions so the different failure reasons can be handled
 		try{
     		client.login(userName, password, null);
@@ -29,6 +30,7 @@ public class AccountManager {
     	} catch(XmppException e){
 
     	}
+		return Jid.of(userName, "teamorange.space", null);
 	}
 
 	public static void logout(XmppClient client){

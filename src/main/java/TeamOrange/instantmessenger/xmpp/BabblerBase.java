@@ -1,6 +1,9 @@
 package TeamOrange.instantmessenger.xmpp;
 
+import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
+import TeamOrange.instantmessenger.models.AppUser;
+import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
 import rocks.xmpp.core.session.ConnectionException;
@@ -51,8 +54,10 @@ public class BabblerBase {
 	}
 
 	// AccountMannager
-	public void login(String userName, String password){
-		AccountManager.login(client, userName, password);
+	public AppJid login(String userName, String password){
+		Jid jid = AccountManager.login(client, userName, password);
+		AppJid appJid = new AppJid(jid.getLocal(), jid.getDomain(), jid.getResource());
+		return appJid;
 	}
 
 	public void logout(){

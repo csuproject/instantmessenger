@@ -1,5 +1,7 @@
 package TeamOrange.instantmessenger.views;
 
-public enum Screen {
-	ACCOUNT, HOME
+import javafx.scene.layout.StackPane;
+
+public abstract class Screen extends StackPane {
+
 }

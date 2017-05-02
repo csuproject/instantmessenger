@@ -11,7 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
-public class AccountScreen extends StackPane{
+public class AccountScreen extends Screen {
 
 	private TextField userNameTextField;
 	private TextField passwordTextField;
