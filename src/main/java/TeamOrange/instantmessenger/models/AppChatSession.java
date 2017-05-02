@@ -26,6 +26,15 @@ public class AppChatSession {
 		messages.add(message);
 	}
 
+	public void sendMessage(String body){
+		AppJid appJid = xmppChatSession.getChatPartner();
+		String thread = xmppChatSession.getThread();
+		boolean inbound = false;
+		AppMessage appMessage = new AppMessage(appJid, body, thread, inbound);
+		xmppChatSession.sendMessage(appMessage);
+		messages.add(appMessage);
+	}
+
 	public void printMessages(){
 		Iterator<AppMessage> i = messages.iterator();
 		while(i.hasNext()){

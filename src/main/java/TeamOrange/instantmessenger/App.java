@@ -1,12 +1,17 @@
 package TeamOrange.instantmessenger;
 
+import TeamOrange.instantmessenger.controllers.ChatController;
 import TeamOrange.instantmessenger.controllers.CreateAccountController;
+import TeamOrange.instantmessenger.controllers.CreateChatController;
 import TeamOrange.instantmessenger.controllers.LoginController;
 import TeamOrange.instantmessenger.models.AppChats;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
+import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.views.AccountScreen;
+import TeamOrange.instantmessenger.views.ChatScreen;
+import TeamOrange.instantmessenger.views.ChatScreenInput;
 import TeamOrange.instantmessenger.views.GuiBase;
 import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.views.HomeScreenInput;
@@ -24,11 +29,14 @@ public class App {
 	// Screens
 	private AccountScreen accountScreen;
 	private HomeScreen homeScreen;
+	private ChatScreen chatScreen;
 	private ScreenEnum currentScreen;
 
 	// Controllers
 	private CreateAccountController createAccountController;
 	private LoginController loginController;
+	private CreateChatController createChatController;
+	private ChatController chatController;
 
 	//
 	AppContacts contacts;
@@ -38,6 +46,7 @@ public class App {
 		this.guiBase = guiBase;
 		accountScreen = new AccountScreen();
 		homeScreen = new HomeScreen();
+		chatScreen = new ChatScreen();
 		setScreen(ScreenEnum.ACCOUNT);
 
 		//
@@ -45,7 +54,7 @@ public class App {
 		chats = new AppChats();
 		//
 
-		babblerBase = new BabblerBase("teamorange.space", appMessage -> messageListener(appMessage), () -> presenceListener(), () -> rosterListener());
+		babblerBase = new BabblerBase("teamorange.space", appMessage->messageListener(appMessage), appPresence->presenceListener(appPresence), () -> rosterListener());
     	babblerBase.setupConnection();
     	babblerBase.connect();
 
@@ -54,6 +63,12 @@ public class App {
 
 		loginController = new LoginController(babblerBase, accountScreen, contacts);
 		loginController.setOnChangeScreen( screen->setScreen(screen) );
+
+		createChatController = new CreateChatController(chats, babblerBase, homeScreen);
+		createChatController.setOnChangeScreen( screen->setScreen(screen) );
+
+		chatController = new ChatController(babblerBase, chatScreen, chats);
+		chatController.setOnChangeScreen( screen->setScreen(screen) );
 
 	}
 
@@ -65,7 +80,7 @@ public class App {
 
     }
 
-    public void presenceListener(){
+    public void presenceListener(AppPresence appPresence){
 
     }
 
@@ -90,6 +105,12 @@ public class App {
 				HomeScreenInput input = new HomeScreenInput(contacts.getSelf().getJid().getLocal());
 				homeScreen.load(input);
 				guiBase.setScreen(homeScreen);
+			} break;
+			case CHAT:
+			{
+				ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
+				chatScreen.load(input);
+				guiBase.setScreen(chatScreen);
 			} break;
     	}
     }

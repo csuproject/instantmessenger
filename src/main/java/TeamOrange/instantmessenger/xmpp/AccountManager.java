@@ -14,7 +14,7 @@ import rocks.xmpp.extensions.register.model.Registration;
 
 public class AccountManager {
 
-	public static Jid login(XmppClient client, String userName, String password) throws ConfideAuthenticationException {
+	public Jid login(XmppClient client, String userName, String password) throws ConfideAuthenticationException {
 		// TODO: throw exceptions so the different failure reasons can be handled
 		try{
     		client.login(userName, password, null);
@@ -34,7 +34,7 @@ public class AccountManager {
 		return Jid.of(userName, "teamorange.space", null);
 	}
 
-	public static void logout(XmppClient client){
+	public void logout(XmppClient client){
 		try {
 			// TODO: not sure if this logs other user out
 			client.loginAnonymously();
@@ -53,7 +53,7 @@ public class AccountManager {
     	}
 	}
 
-	public static void createUser(XmppClient client, String userName, String password) {
+	public void createUser(XmppClient client, String userName, String password) {
 		// TODO: how to tell if this failed?
 		Registration registration = Registration.builder()
     			.username(userName)

@@ -3,6 +3,7 @@ package TeamOrange.instantmessenger.xmpp;
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
+import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import exceptions.ConfideAuthenticationException;
 import rocks.xmpp.addr.Jid;
@@ -13,6 +14,7 @@ import rocks.xmpp.core.session.NoResponseException;
 import rocks.xmpp.core.session.TcpConnectionConfiguration;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.core.stanza.MessageEvent;
+import rocks.xmpp.core.stanza.PresenceEvent;
 import rocks.xmpp.core.stanza.StanzaException;
 import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stanza.model.Presence;
@@ -34,6 +36,10 @@ public class BabblerBase {
 	private RosterListener rosterListener;
 
 	private MessageManager messageManager;
+	private AccountManager accountManager;
+	private ContactManager contactManager; // TODO: update contact manager to stop using static methods
+	private PresenceManager presenceManager; // TODO: update presence manager to stop using static methods
+	private ConnectionManager connectionManager;
 
 	public BabblerBase(String hostName, MessageListener messageListener, PresenceListener presenceListener, RosterListener rosterListener) {
 		this.hostName = hostName;
@@ -41,6 +47,10 @@ public class BabblerBase {
 		this.presenceListener = presenceListener;
 		this.rosterListener = rosterListener;
 		this.messageManager = new MessageManager();
+		this.accountManager = new AccountManager();
+		this.contactManager = new ContactManager();
+		this.presenceManager = new PresenceManager();
+		this.connectionManager = new ConnectionManager();
 	}
 
 	// MessageManager
@@ -53,37 +63,48 @@ public class BabblerBase {
 
 	// ConnectionMannager
 	public void setupConnection(){
-		client = ConnectionManager.setupConnection(hostName, this);
+		client = connectionManager.setupConnection(hostName, this);
 	}
 
 	public void connect(){
-		ConnectionManager.connect(client);
+		connectionManager.connect(client);
 	}
 
 	public void close(){
-		ConnectionManager.close(client);
+		connectionManager.close(client);
 	}
 
 	// AccountMannager
 	public AppJid login(String userName, String password) throws ConfideAuthenticationException {
-		Jid jid = AccountManager.login(client, userName, password);
+		Jid jid = accountManager.login(client, userName, password);
 		AppJid appJid = new AppJid(jid.getLocal(), jid.getDomain(), jid.getResource());
 		return appJid;
 	}
 
 	public void logout(){
-		AccountManager.logout(client);
+		accountManager.logout(client);
 	}
 
 	public void createUser(String userName, String password){
-		AccountManager.createUser(client, userName, password);
+		accountManager.createUser(client, userName, password);
 	}
 
 	//listeners
-	// these will be passed Babbler constructs, do what they need to, and then alert the listeners from App using our own constructs, so that Babbler never goes past this point
-	// But maybe these should be moved. e.g. newRoster into RosterManager, newMessage into MessageManager.
-	public void newPresence(){
-		presenceListener.presence();
+	public void newPresence(PresenceEvent presenceEvent){
+		//this is called when a new PresenceEvent occurs, and passed a PresenceEvent object by babbler
+		// first we will handle anything that needs to happen here
+		//...
+
+		//then we will pass the information out to the rest of our application,
+		//but to hide the babbler dependency, we will construct a AppPresence object with the information we need,
+		//and pass that on
+		//but first we need to decide what information we need from a Presence/PresenceEvent,
+		//and add that to the AppPresence class, then extract it here, create an AppPresence object with it,
+		//and then pass it on.
+		Presence presence = presenceEvent.getPresence();
+		AppPresence appPresence = new AppPresence();
+		presenceListener.presence(appPresence); // calling this sends it to the presenceListener function in App
+		presenceEvent.consume();
 	}
 
 	public void newMessage(MessageEvent messageEvent){

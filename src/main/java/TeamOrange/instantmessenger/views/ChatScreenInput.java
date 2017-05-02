@@ -16,5 +16,10 @@ public class ChatScreenInput {
 	public String getThread(){
 		return chatSession.getThread();
 	}
+	
+	/////////////////////////////
+	public void printMessages(){
+		chatSession.printMessages();
+	}
 
 }

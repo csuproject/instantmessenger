@@ -2,6 +2,7 @@ package TeamOrange.instantmessenger.xmpp;
 
 import java.util.function.Consumer;
 
+import TeamOrange.instantmessenger.models.AppPresence;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.core.stanza.PresenceEvent;
@@ -9,7 +10,7 @@ import rocks.xmpp.core.stanza.model.Presence;
 
 public interface PresenceListener {
 
-	public void presence();
+	public void presence(AppPresence appPresence);
 
 //	/**
 //	 * Add Contact request listener.

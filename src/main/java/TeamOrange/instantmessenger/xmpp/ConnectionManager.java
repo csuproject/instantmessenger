@@ -11,7 +11,7 @@ import rocks.xmpp.im.roster.RosterManager;
 
 public class ConnectionManager {
 
-	public static XmppClient setupConnection(String hostName, BabblerBase babblerClient){
+	public XmppClient setupConnection(String hostName, BabblerBase babblerClient){
 		TcpConnectionConfiguration tcpConfiguration = TcpConnectionConfiguration.builder()
     		    .hostname(hostName)
     		    .port(5222)
@@ -20,15 +20,15 @@ public class ConnectionManager {
 
     	XmppClient client = XmppClient.create(hostName, tcpConfiguration);
 
-    	client.addInboundPresenceListener(e -> babblerClient.newPresence() );
-    	client.addInboundMessageListener(e -> babblerClient.newMessage(e) );
-    	client.getManager(RosterManager.class).addRosterListener(e -> babblerClient.newRoster(e) );
+    	client.addInboundPresenceListener( presenceEvent->babblerClient.newPresence(presenceEvent) );
+    	client.addInboundMessageListener( messageEvent->babblerClient.newMessage(messageEvent) );
+    	client.getManager(RosterManager.class).addRosterListener( rosterEvent->babblerClient.newRoster(rosterEvent) );
 
     	// TODO: check if this worked
     	return client;
 	}
 
-	public static void connect(XmppClient client) {
+	public void connect(XmppClient client) {
 		try{
     		client.connect();
     	} catch(ConnectionException e){
@@ -47,7 +47,7 @@ public class ConnectionManager {
 
 	}
 
-	public static void close(XmppClient client) {
+	public void close(XmppClient client) {
 		try{
     		client.close();
     	} catch(XmppException e){
