@@ -80,6 +80,22 @@ public class ContactManager {
 	}
 	
 	/**
+	 * Approve Contact to listen to Presence.
+	 */
+	public static void approveContact(XmppClient client, Jid contact) {
+		
+		client.getManager(PresenceManager.class).approveSubscription(contact);
+	}
+	
+	/**
+	 * Deny Contact to listen to Presence.
+	 */
+	public static void denyContact(XmppClient client, Jid contact) {
+		
+		client.getManager(PresenceManager.class).denySubscription(contact);
+	}
+	
+	/**
 	 * Add Contact request listener.
 	 * @param client
 	 * @param event
@@ -117,22 +133,7 @@ public class ContactManager {
 	public static Jid getContactOfEvent(PresenceEvent presenceEvent) {
 		
 		Presence presence = presenceEvent.getPresence();
-		
 		return presence.getFrom();
-	}
-	
-	/**
-	 * Approve Contact to listen to Presence.
-	 */
-	public static void approveContact(XmppClient client, Jid contact) {
-		client.getManager(PresenceManager.class).approveSubscription(contact);
-	}
-	
-	/**
-	 * Deny Contact to listen to Presence.
-	 */
-	public static void denyContact(XmppClient client, Jid contact) {
-		client.getManager(PresenceManager.class).denySubscription(contact);
 	}
 	
 }
