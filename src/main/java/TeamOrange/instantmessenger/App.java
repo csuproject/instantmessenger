@@ -2,6 +2,7 @@ package TeamOrange.instantmessenger;
 
 import TeamOrange.instantmessenger.controllers.CreateAccountController;
 import TeamOrange.instantmessenger.controllers.LoginController;
+import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.views.AccountScreen;
 import TeamOrange.instantmessenger.views.GuiBase;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
@@ -22,19 +23,20 @@ public class App {
 
 	public App(GuiBase guiBase){
 
-		accountScreen = new AccountScreen(guiBase);
+		accountScreen = new AccountScreen();
 
 		createAccountController = new CreateAccountController(babblerBase, accountScreen);
+		createAccountController.setOnChangeScreen( screen->guiBase.setScreen(screen) );
 	}
 
     public void init(){
-    	babblerBase = new BabblerBase("teamorange.space", () -> messageListener(), () -> presenceListener(), () -> rosterListener());
+    	babblerBase = new BabblerBase("teamorange.space", appMessage -> messageListener(appMessage), () -> presenceListener(), () -> rosterListener());
 
     	babblerBase.setupConnection();
     	babblerBase.connect();
     }
 
-    public void messageListener(){
+    public void messageListener(AppMessage message){
 
     }
 
