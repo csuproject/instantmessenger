@@ -21,8 +21,8 @@ public class ConnectionManager {
     	XmppClient client = XmppClient.create(hostName, tcpConfiguration);
 
     	client.addInboundPresenceListener(e -> babblerClient.newPresence() );
-    	client.addInboundMessageListener(e -> babblerClient.newMessage() );
-    	client.getManager(RosterManager.class).addRosterListener(e -> babblerClient.newRoster() );
+    	client.addInboundMessageListener(e -> babblerClient.newMessage(e) );
+    	client.getManager(RosterManager.class).addRosterListener(e -> babblerClient.newRoster(e) );
 
     	// TODO: check if this worked
     	return client;

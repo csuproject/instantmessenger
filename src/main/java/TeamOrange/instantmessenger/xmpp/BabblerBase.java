@@ -1,11 +1,13 @@
 package TeamOrange.instantmessenger.xmpp;
 
+import TeamOrange.instantmessenger.models.AppMessage;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
 import rocks.xmpp.core.session.ConnectionException;
 import rocks.xmpp.core.session.NoResponseException;
 import rocks.xmpp.core.session.TcpConnectionConfiguration;
 import rocks.xmpp.core.session.XmppClient;
+import rocks.xmpp.core.stanza.MessageEvent;
 import rocks.xmpp.core.stanza.StanzaException;
 import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stanza.model.Presence;
@@ -13,6 +15,7 @@ import rocks.xmpp.core.stream.StreamErrorException;
 import rocks.xmpp.core.stream.StreamNegotiationException;
 import rocks.xmpp.extensions.register.RegistrationManager;
 import rocks.xmpp.extensions.register.model.Registration;
+import rocks.xmpp.im.roster.RosterEvent;
 import rocks.xmpp.im.roster.RosterManager;
 
 public class BabblerBase {
@@ -24,11 +27,14 @@ public class BabblerBase {
 	private PresenceListener presenceListener;
 	private RosterListener rosterListener;
 
+	private MessageManager messageManager;
+
 	public BabblerBase(String hostName, MessageListener messageListener, PresenceListener presenceListener, RosterListener rosterListener) {
 		this.hostName = hostName;
 		this.messageListener = messageListener;
 		this.presenceListener = presenceListener;
 		this.rosterListener = rosterListener;
+		this.messageManager = new MessageManager();
 	}
 
 	// ConnectionMannager
@@ -64,11 +70,17 @@ public class BabblerBase {
 		presenceListener.presence();
 	}
 
-	public void newMessage(){
-		messageListener.message();
+	public void newMessage(MessageEvent messageEvent){
+		// fired whenever a message is received or sent
+		// handle anything that should be handeled here
+
+		// pass it onto App
+		messageListener.message(messageManager.messageEventToAppMessage(messageEvent));
+		messageEvent.consume();
 	}
 
-	public void newRoster(){
+	public void newRoster(RosterEvent rosterEvent){
+
 		rosterListener.roster();
 	}
 

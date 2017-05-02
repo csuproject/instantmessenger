@@ -1,6 +1,8 @@
 package TeamOrange.instantmessenger.views;
 
-import TeamOrange.instantmessenger.App;
+import TeamOrange.instantmessenger.lambda.ChangeScreen;
+import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
+import TeamOrange.instantmessenger.lambda.LoginEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,10 +15,13 @@ public class AccountScreen extends StackPane{
 
 	private TextField userNameTextField;
 	private TextField passwordTextField;
-	App app;
+	private Button login;
+	private Button createAccount;
 
-	public AccountScreen(App app){
-		this.app = app;
+	private CreateAccountEvent createAccountEvent;
+	private LoginEvent loginEvent;
+
+	public AccountScreen(){
 		try {
 			create();
 		} catch (Exception e) {
@@ -41,10 +46,10 @@ public class AccountScreen extends StackPane{
 		passwordInput.setSpacing(10);
 
 		// Buttons
-		Button login = new Button();
+		login = new Button();
 		login.setText("Login");
 		login.setOnAction(e -> loginBtnPress() );
-		Button createAccount = new Button();
+		createAccount = new Button();
 		createAccount.setText("Create Account");
 		createAccount.setOnAction(e -> createAccountBtnPress() );
 		HBox buttons = new HBox();
@@ -52,34 +57,35 @@ public class AccountScreen extends StackPane{
 		buttons.setSpacing(20);
 
 		//Pane
-		//StackPane stackPane = new StackPane();
 		GridPane gridPane = new GridPane();
-//		root.setPadding(new Insets(20));
 		gridPane.setVgap(20);
 		gridPane.add(userNameInput, 0, 0);
 		gridPane.add(passwordInput, 0, 1);
 		gridPane.add(buttons, 0, 2);
-//		root.getChildren().addAll(userNameInput, buttons);
 		gridPane.setAlignment(Pos.CENTER);
 
 		this.getChildren().add(gridPane);
-
-		// Scene
-//		Scene scene = new Scene(stackPane, 640, 480);
-//		stage.setScene(scene);
-//		stage.show();
 	}
+
 
 	public void loginBtnPress(){
 		String username = userNameTextField.getText();
 		String password = passwordTextField.getText();
-		app.login(username, password);
+		loginEvent.login(username, password);
 	}
 
 	public void createAccountBtnPress(){
 		String username = userNameTextField.getText();
 		String password = passwordTextField.getText();
-		app.createAccount(username, password);
+		createAccountEvent.createAccount(username, password);
+	}
+
+	public void setOnCreateAccountEvent(CreateAccountEvent createAccountEvent){
+		this.createAccountEvent = createAccountEvent;
+	}
+
+	public void setOnLoginEvent(LoginEvent loginEvent){
+		this.loginEvent = loginEvent;
 	}
 
 }

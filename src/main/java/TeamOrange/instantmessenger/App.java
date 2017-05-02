@@ -1,5 +1,10 @@
 package TeamOrange.instantmessenger;
 
+import TeamOrange.instantmessenger.controllers.CreateAccountController;
+import TeamOrange.instantmessenger.controllers.LoginController;
+import TeamOrange.instantmessenger.models.AppMessage;
+import TeamOrange.instantmessenger.views.AccountScreen;
+import TeamOrange.instantmessenger.views.GuiBase;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -9,14 +14,29 @@ public class App {
 
 	private BabblerBase babblerBase;
 
+	// Screens
+	private AccountScreen accountScreen;
+
+	// Controllers
+	private CreateAccountController createAccountController;
+	private LoginController loginController;
+
+	public App(GuiBase guiBase){
+
+		accountScreen = new AccountScreen();
+
+		createAccountController = new CreateAccountController(babblerBase, accountScreen);
+		createAccountController.setOnChangeScreen( screen->guiBase.setScreen(screen) );
+	}
+
     public void init(){
-    	babblerBase = new BabblerBase("teamorange.space", () -> messageListener(), () -> presenceListener(), () -> rosterListener());
+    	babblerBase = new BabblerBase("teamorange.space", appMessage -> messageListener(appMessage), () -> presenceListener(), () -> rosterListener());
 
     	babblerBase.setupConnection();
     	babblerBase.connect();
     }
 
-    public void messageListener(){
+    public void messageListener(AppMessage message){
 
     }
 
@@ -28,21 +48,19 @@ public class App {
 
     }
 
+    // Screens
+    public AccountScreen getAccountScreen(){
+    	return accountScreen;
+    }
+
 /////////////////////////////////////////////////////
 // These probably shouldnt be here
 /////////////////////////////////////////////////////
 
-    public BabblerBase getClient(){
-    	return babblerBase;
-    }
+//    public BabblerBase getClient(){
+//    	return babblerBase;
+//    }
 
-    public void login(String username, String password){
-    	babblerBase.login(username, password);
-    }
-
-    public void createAccount(String username, String password){
-    	babblerBase.createUser(username, password);
-    }
 
 
 
