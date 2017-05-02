@@ -7,6 +7,7 @@ import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.views.AccountScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
+import exceptions.ConfideAuthenticationException;
 
 public class LoginController {
 
@@ -23,10 +24,17 @@ public class LoginController {
 	}
 
 	public void login(String userName, String password){
-		AppJid appJid = babblerBase.login(userName, password);
-		AppUser appUser = new AppUser(appJid);
-		contacts.setSelf(appUser);
-		changeScreen.SetScreen(ScreenEnum.HOME);
+		AppJid appJid;
+		try{
+			appJid = babblerBase.login(userName, password);
+			AppUser appUser = new AppUser(appJid);
+			contacts.setSelf(appUser);
+			changeScreen.SetScreen(ScreenEnum.HOME);
+		} catch(ConfideAuthenticationException e){
+			System.out.println("Authentication Exception");
+			accountScreen.authenticationException();
+			return;
+		}
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){

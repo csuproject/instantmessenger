@@ -1,5 +1,6 @@
 package TeamOrange.instantmessenger.xmpp;
 
+import exceptions.ConfideAuthenticationException;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
@@ -13,12 +14,12 @@ import rocks.xmpp.extensions.register.model.Registration;
 
 public class AccountManager {
 
-	public static Jid login(XmppClient client, String userName, String password) {
+	public static Jid login(XmppClient client, String userName, String password) throws ConfideAuthenticationException {
 		// TODO: throw exceptions so the different failure reasons can be handled
 		try{
     		client.login(userName, password, null);
     	} catch(AuthenticationException e){
-
+    		throw new ConfideAuthenticationException();
     	} catch(StreamErrorException e){
 
     	} catch(StreamNegotiationException e){

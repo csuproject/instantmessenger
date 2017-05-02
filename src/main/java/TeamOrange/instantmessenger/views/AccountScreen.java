@@ -4,6 +4,8 @@ import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
 import TeamOrange.instantmessenger.lambda.LoginEvent;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -86,6 +88,14 @@ public class AccountScreen extends Screen {
 
 	public void setOnLoginEvent(LoginEvent loginEvent){
 		this.loginEvent = loginEvent;
+	}
+
+	public void authenticationException(){
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Login Failed");
+		alert.setHeaderText(null);
+		alert.setContentText("The username or password that you entered was incorrect. Please try again, or create a new account if you dont already have one.");
+		alert.showAndWait();
 	}
 
 }

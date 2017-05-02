@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 
 public class HomeScreen extends Screen {
 
@@ -26,6 +27,7 @@ public class HomeScreen extends Screen {
 
 		// header
 		header = new Label("Hello, Unknown");
+		header.setFont(Font.font(60));
 
 
 //		// User Name Input

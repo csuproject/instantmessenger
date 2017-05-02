@@ -3,6 +3,7 @@ package TeamOrange.instantmessenger.xmpp;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppUser;
+import exceptions.ConfideAuthenticationException;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
@@ -54,7 +55,7 @@ public class BabblerBase {
 	}
 
 	// AccountMannager
-	public AppJid login(String userName, String password){
+	public AppJid login(String userName, String password) throws ConfideAuthenticationException {
 		Jid jid = AccountManager.login(client, userName, password);
 		AppJid appJid = new AppJid(jid.getLocal(), jid.getDomain(), jid.getResource());
 		return appJid;
