@@ -18,13 +18,10 @@ public class AccountScreen extends StackPane{
 	private Button login;
 	private Button createAccount;
 
-	private ChangeScreen changeScreen;
 	private CreateAccountEvent createAccountEvent;
 	private LoginEvent loginEvent;
 
-	public AccountScreen(GuiBase guiBase){
-		changeScreen = screen -> guiBase.setScreen(screen);
-
+	public AccountScreen(){
 		try {
 			create();
 		} catch (Exception e) {
