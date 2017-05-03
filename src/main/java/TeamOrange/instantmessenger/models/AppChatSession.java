@@ -8,11 +8,11 @@ import TeamOrange.instantmessenger.xmpp.XmppChatSession;
 
 public class AppChatSession {
 	private XmppChatSession xmppChatSession;
-	private LinkedList<AppMessage> messages;
+	private LinkedList<AppChatSessionMessage> messages;
 
 	public AppChatSession(XmppChatSession xmppChatSession){
 		this.xmppChatSession = xmppChatSession;
-		this.messages = new LinkedList<AppMessage>();
+		this.messages = new LinkedList<AppChatSessionMessage>();
 	}
 
 	public AppJid getPartner(){
@@ -23,22 +23,22 @@ public class AppChatSession {
 		return xmppChatSession.getThread();
 	}
 
-	public void addMessage(AppMessage message){
+	public void addMessage(AppChatSessionMessage message){
 		messages.add(message);
 	}
 
-//	public void sendMessage(String body){
+	public void sendChatMessage(String body){
 //		AppJid to = xmppChatSession.getChatPartner();
 //		String thread = xmppChatSession.getThread();
-//		AppMessage appMessage = AppMessage.createOutboundMessage(to, body, thread);
-//		xmppChatSession.sendMessage(appMessage);
-//		messages.add(appMessage);
-//	}
+		AppChatSessionMessage message = AppChatSessionMessage.createOutbound(body);
+		xmppChatSession.sendMessage(body);
+		messages.add(message);
+	}
 
 	public void printMessages(){
-		Iterator<AppMessage> i = messages.iterator();
+		Iterator<AppChatSessionMessage> i = messages.iterator();
 		while(i.hasNext()){
-			AppMessage message = i.next();
+			AppChatSessionMessage message = i.next();
 			if(message.isInbound()){
 				System.out.println(getPartner() + " : " + message.getBody());
 			} else{

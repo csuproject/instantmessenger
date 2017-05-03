@@ -13,7 +13,7 @@ public class AppChats {
 	}
 
 	public void addChat(AppChatSession appChatSession){
-		System.out.println("partner: "+appChatSession.getPartner()+"\nthread: "+appChatSession.getThread());
+//		System.out.println("partner: "+appChatSession.getPartner().getBareJid()+"\nthread: "+appChatSession.getThread());
 		chats.add(appChatSession);
 	}
 
@@ -25,17 +25,14 @@ public class AppChats {
 		return activeChat;
 	}
 
-	public void incomingMessage(AppMessage message){
-//		String thread = message.getThread();
-//		AppChatSession relevantChat = getChatOfThread(thread);
-//		System.out.println("relevantChat: " + relevantChat + "\nmessage thread: " + thread + "\nactive chat thread: " + getActiveChat().getThread());
-//		if(relevantChat != null){
-//			relevantChat.addMessage(message);
-//		} else {
-//			AppChatSession newSession = new AppChatSession();
-//		}
-		// creating a chat from two different computers does not work because they are different, their threads are different.
-		// when receiving a message, if there is no chat with that thread, then a new chatSession with that thread needs to be created
+	public void incomingChatMessage(AppMessage message){
+		String thread = message.getThread();
+		AppChatSession relevantChat = getChatOfThread(thread);
+		if(relevantChat != null){
+			AppChatSessionMessage m = new AppChatSessionMessage(message.getBody(), message.isInbound());
+			relevantChat.addMessage(m);
+			System.out.println(m.getBody());
+		}
 	}
 
 	public AppChatSession getChatOfThread(String thread){

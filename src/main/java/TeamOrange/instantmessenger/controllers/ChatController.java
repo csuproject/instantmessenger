@@ -21,9 +21,9 @@ public class ChatController {
 	}
 
 	public void chat(String message){
-//		chats.getActiveChat().sendMessage(message);
-//		ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
-//		chatScreen.load(input);
+		chats.getActiveChat().sendChatMessage(message);
+		ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
+		chatScreen.load(input);
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){

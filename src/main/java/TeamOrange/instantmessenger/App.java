@@ -94,7 +94,7 @@ public class App {
     			chats.addChat(appChatSession);
     		}
     	} else if(message.getType() == AppMessageType.CHAT){
-
+    		chats.incomingChatMessage(message);
     	}
     }
 

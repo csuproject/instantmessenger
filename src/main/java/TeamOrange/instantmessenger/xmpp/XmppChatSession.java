@@ -1,7 +1,10 @@
 package TeamOrange.instantmessenger.xmpp;
 
+import java.awt.TrayIcon.MessageType;
+
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
+import TeamOrange.instantmessenger.models.AppChatSessionMessage;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.im.chat.ChatSession;
@@ -35,11 +38,13 @@ public class XmppChatSession {
 		chatSession.close();
 	}
 
-//	public void sendMessage(AppMessage appMessage) {
-//		Message message = new Message();
-//		message.setBody(appMessage.getBody());
-//		chatSession.sendMessage(message);
-//	}
+	public void sendMessage(String body) {
+		Message message = new Message();
+		message.setBody(body);
+		message.setType(Message.Type.CHAT);
+		// TODO: assuming that it automatically adds in thread and to
+		chatSession.sendMessage(message);
+	}
 
 	public String getThread(){
 		return chatSession.getThread();
