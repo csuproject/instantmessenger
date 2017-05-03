@@ -84,7 +84,7 @@ public class App {
     	if(chat != null){
     		chat.addMessage(message);
     	} else{
-    		AppChatSession appChatSession = babblerBase.createChat(message.getToJid(), message.getThread());
+    		AppChatSession appChatSession = babblerBase.createChat(message.getFromJid(), message.getThread());
 //    		AppChatSession appChatSession = babblerBase.createChat(message.getFromJid(), message.getThread());
     		chats.addChat(appChatSession);
     	}

@@ -2,10 +2,17 @@ package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.ChatWithUserNameEvent;
 import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
+import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
+import TeamOrange.instantmessenger.models.AppMessage;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -17,6 +24,12 @@ public class HomeScreen extends Screen {
 	private Label header;
 	private TextField chatWithUserNameInputTextField;
 	private Button chatWithButton;
+	//chat list
+	Label chatListLabel;
+	TableView chatsTableView;
+	TableColumn chatColumn;
+	TableColumn buttonColumn;
+
 
 	private ChatWithUserNameEvent chatWithUserNameEvent;
 
@@ -34,6 +47,7 @@ public class HomeScreen extends Screen {
 		header = new Label("Hello, Unknown");
 		header.setFont(Font.font(60));
 
+		// create chat via username
 		Label chatWithUserNameInputLabel = new Label("Chat With: ");
 		chatWithUserNameInputTextField = new TextField();
 		chatWithButton = new Button("Start Chat");
@@ -46,7 +60,7 @@ public class HomeScreen extends Screen {
 		GridPane gridPane = new GridPane();
 		gridPane.setVgap(20);
 		gridPane.add(header, 0, 0);
-		gridPane.add(chatWithUserNameInput, 0, 1);
+		gridPane.add(chatWithUserNameInput, 0, 2);
 		gridPane.setAlignment(Pos.CENTER);
 
 		this.getChildren().add(gridPane);

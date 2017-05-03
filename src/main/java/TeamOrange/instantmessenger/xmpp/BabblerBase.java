@@ -118,6 +118,10 @@ public class BabblerBase {
 		// fired whenever a message is received or sent
 		// handle anything that should be handeled here
 
+		//tmp
+		if(messageEvent.getMessage().getFrom().getLocal() == null)
+			return;
+
 		// pass it onto App
 		messageListener.message(messageManager.inboundMessageEventToAppMessage(messageEvent));
 		messageEvent.consume();
