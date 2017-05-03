@@ -13,6 +13,7 @@ public class AppChats {
 	}
 
 	public void addChat(AppChatSession appChatSession){
+		System.out.println("partner: "+appChatSession.getPartner()+"\nthread: "+appChatSession.getThread());
 		chats.add(appChatSession);
 	}
 

@@ -29,6 +29,18 @@ public class MessageManager {
 		client.sendMessage(message);
 	}
 
+	public ChatSession createChatSession(XmppClient client, AppJid to){
+		ChatManager chatManager = client.getManager(ChatManager.class);
+		ChatSession chatSession = chatManager.createChatSession( jidFromAppJid(to) );
+		return chatSession;
+	}
+
+	public ChatSession createChatSessionWithGivenThread(XmppClient client, AppJid to, String thread){
+		ChatManager chatManager = client.getManager(ChatManager.class);
+		ChatSession chatSession = chatManager.createChatSession( jidFromAppJid(to), thread );
+		return chatSession;
+	}
+
 	// helpers
 	private Jid jidFromAppJid(AppJid appJid){
 		Jid jid = Jid.of(appJid.getLocal(), appJid.getDomain(), appJid.getResource());

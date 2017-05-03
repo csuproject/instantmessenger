@@ -58,12 +58,19 @@ public class BabblerBase {
 		messageManager.requestCreateChatSession(client, to, thread);
 	}
 
-//	public AppChatSession createChat(AppJid to){
-//		ChatSession chatSession = messageManager.createChat(client, to);
-//		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
-//		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
-//		return appChatSession;
-//	}
+	public AppChatSession createChatSession(AppJid to){
+		ChatSession chatSession = messageManager.createChatSession(client, to);
+		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
+		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
+		return appChatSession;
+	}
+
+	public AppChatSession createChatSessionWithGivenThread(AppJid to, String thread){
+		ChatSession chatSession = messageManager.createChatSessionWithGivenThread(client, to, thread);
+		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
+		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
+		return appChatSession;
+	}
 //
 //	public AppChatSession createChat(AppJid to, String thread){
 //		ChatSession chatSession = messageManager.createChat(client, to, thread);

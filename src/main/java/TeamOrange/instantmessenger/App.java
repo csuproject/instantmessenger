@@ -9,6 +9,7 @@ import TeamOrange.instantmessenger.models.AppChats;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
+import TeamOrange.instantmessenger.models.AppMessageType;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.views.AccountScreen;
 import TeamOrange.instantmessenger.views.ChatScreen;
@@ -25,6 +26,8 @@ import javafx.stage.Stage;
 public class App {
 
 	public static final String REQUEST_CREATE_CHAT_SESSION = "0";
+	public static final String REQUEST_CONTACT_ADD = "1";
+	public static final String ACCEPT_CONTACT_ADD = "2";
 
 	private BabblerBase babblerBase;
 	private GuiBase guiBase;
@@ -80,8 +83,19 @@ public class App {
     }
 
     public void messageListener(AppMessage message){
-    	System.out.println("body: " + message.getBody() + "\nthread: " + message.getThread()
-    	+ "\nfrom: " + message.getFromJid().getBareJid() + "\ntype: " + message.getType());
+//    	System.out.println("body: " + message.getBody() + "\nthread: " + message.getThread()
+//    	+ "\nfrom: " + message.getFromJid().getBareJid() + "\ntype: " + message.getType());
+    	if(message.getType() == AppMessageType.NORMAL){
+    		String body = message.getBody();
+    		if(body.equals(App.REQUEST_CREATE_CHAT_SESSION)){
+    			AppJid to = message.getFromJid();
+    			String thread = message.getThread();
+    			AppChatSession appChatSession = babblerBase.createChatSessionWithGivenThread(to, thread);
+    			chats.addChat(appChatSession);
+    		}
+    	} else if(message.getType() == AppMessageType.CHAT){
+
+    	}
     }
 
     public void presenceListener(AppPresence appPresence){
