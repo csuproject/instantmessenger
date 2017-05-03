@@ -28,6 +28,7 @@ public class App {
 		createAccountController = new CreateAccountController(babblerBase, accountScreen);
 		createAccountController.setOnChangeScreen( screen->guiBase.setScreen(screen) );
 	}
+	
 
     public void init(){
     	babblerBase = new BabblerBase("teamorange.space", appMessage -> messageListener(appMessage), () -> presenceListener(), () -> rosterListener());
@@ -60,8 +61,6 @@ public class App {
 //    public BabblerBase getClient(){
 //    	return babblerBase;
 //    }
-
-
 
 
 }

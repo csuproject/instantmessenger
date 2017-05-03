@@ -1,6 +1,7 @@
 package TeamOrange.instantmessenger.xmpp;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.function.Consumer;
 
 import rocks.xmpp.addr.Jid;
@@ -13,6 +14,7 @@ import rocks.xmpp.im.roster.model.ContactGroup;
 import rocks.xmpp.im.subscription.PresenceManager;
 
 public class ContactManager {
+	
 	
 	/**
 	 * Add Contact to Roster.
@@ -64,9 +66,16 @@ public class ContactManager {
 	 * @param client
 	 * @return
 	 */
-	public static Collection<Contact> getContacts(XmppClient client) {
+	public static LinkedList<String> getContacts(XmppClient client) {
 		
-		return client.getManager(RosterManager.class).getContacts();
+		LinkedList<String> contacts = new LinkedList<String>();
+		Collection<Contact> list = new <Contact>LinkedList();
+		list = client.getManager(RosterManager.class).getContacts();
+		for (Contact c : list) {
+		    contacts.add(String.valueOf(Jid.of(c.getJid())));
+		}
+		
+		return contacts;
 	}
 	
 	/**
@@ -74,9 +83,16 @@ public class ContactManager {
 	 * @param client
 	 * @return
 	 */
-	public static Collection<ContactGroup> getGroups(XmppClient client) {
-				
-		return client.getManager(RosterManager.class).getContactGroups();
+	public static LinkedList<String> getContactGroups(XmppClient client) {
+		
+		LinkedList<String> groups = new LinkedList<String>();
+		Collection<ContactGroup> list = new <ContactGroup>LinkedList();
+		list = client.getManager(RosterManager.class).getContactGroups();
+		for (ContactGroup g : list) {
+			groups.add(g.getName());
+		}
+		
+		return groups;
 	}
 	
 	/**
@@ -90,9 +106,9 @@ public class ContactManager {
 	/**
 	 * Deny Contact to listen to Presence.
 	 */
-	public static void denyContact(XmppClient client, Jid contact) {
+	public static void denyContact(XmppClient client, String contact) {
 		
-		client.getManager(PresenceManager.class).denySubscription(contact);
+		client.getManager(PresenceManager.class).denySubscription(Jid.of(contact));
 	}
 	
 	/**
@@ -135,5 +151,7 @@ public class ContactManager {
 		Presence presence = presenceEvent.getPresence();
 		return presence.getFrom();
 	}
+	
+	
 	
 }

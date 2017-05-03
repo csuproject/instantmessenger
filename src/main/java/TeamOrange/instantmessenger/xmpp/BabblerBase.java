@@ -1,5 +1,7 @@
 package TeamOrange.instantmessenger.xmpp;
 
+import java.util.LinkedList;
+
 import TeamOrange.instantmessenger.models.AppMessage;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
@@ -26,41 +28,94 @@ public class BabblerBase {
 	private MessageListener messageListener;
 	private PresenceListener presenceListener;
 	private RosterListener rosterListener;
-
+	
+	//public ContactManager contactManager;
 	private MessageManager messageManager;
 
-	public BabblerBase(String hostName, MessageListener messageListener, PresenceListener presenceListener, RosterListener rosterListener) {
+	public BabblerBase(String hostName, MessageListener messageListener, 
+			PresenceListener presenceListener, RosterListener rosterListener) {
 		this.hostName = hostName;
 		this.messageListener = messageListener;
 		this.presenceListener = presenceListener;
 		this.rosterListener = rosterListener;
 		this.messageManager = new MessageManager();
+		//this.contactManager = new ContactManager();
 	}
 
 	// ConnectionMannager
 	public void setupConnection(){
 		client = ConnectionManager.setupConnection(hostName, this);
 	}
-
+	
+	/**
+	 * Connect to Server
+	 */
 	public void connect(){
 		ConnectionManager.connect(client);
 	}
 
+	/**
+	 * Close Connection to Server
+	 */
 	public void close(){
 		ConnectionManager.close(client);
 	}
 
-	// AccountMannager
+	/**
+	 * Login User to Server
+	 * @param userName
+	 * @param password
+	 */
 	public void login(String userName, String password){
 		AccountManager.login(client, userName, password);
 	}
 
+	/**
+	 * Logout User of Server
+	 */
 	public void logout(){
 		AccountManager.logout(client);
 	}
 
+	/**
+	 * Create User on Server
+	 * @param userName
+	 * @param password
+	 */
 	public void createUser(String userName, String password){
 		AccountManager.createUser(client, userName, password);
+	}
+	
+	/**
+	 * Add Contact to User
+	 * @param contact
+	 */
+	public void addContact(String contact) {
+		ContactManager.addContact(client, contact);
+	}
+	
+	/**
+	 * Remove Contact from User
+	 * @param contact
+	 */
+	public void removeContact(String contact) {
+		ContactManager.removeContact(client, contact);
+	}
+	
+	/**
+	 * List of Contacts
+	 * @return
+	 */
+	public LinkedList<String> getContacts() {
+		return ContactManager.getContacts(client);
+	}
+	
+	/**
+	 * List of ContactGroups
+	 * @return
+	 */
+	public LinkedList<String> getGroups() {
+		return ContactManager.getContactGroups(client);
 	}
 
 	//listeners
