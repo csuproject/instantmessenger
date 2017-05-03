@@ -23,17 +23,17 @@ public class CreateChatController {
 		this.homeScreen.setOnChatWithUserNameEvent( userName->chatWithUserName(userName) );
 	}
 
-	public void createChat(AppJid with){
-		AppChatSession appChatSession = babblerBase.createChat(with);
-		chats.addChat(appChatSession);
-	}
+//	public void createChat(AppJid with){
+//		AppChatSession appChatSession = babblerBase.createChat(with);
+//		chats.addChat(appChatSession);
+//	}
 
 	public void chatWithUserName(String userName){
-		AppJid to = new AppJid(userName, "teamorange.space");
-		AppChatSession appChatSession = babblerBase.createChat(to);
-		chats.addChat(appChatSession);
-		chats.setActiveChat(appChatSession);
-		changeScreen.SetScreen(ScreenEnum.CHAT);
+//		AppJid to = new AppJid(userName, "teamorange.space");
+//		AppChatSession appChatSession = babblerBase.createChat(to);
+//		chats.addChat(appChatSession);
+//		chats.setActiveChat(appChatSession);
+//		changeScreen.SetScreen(ScreenEnum.CHAT);
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){

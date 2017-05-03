@@ -32,13 +32,13 @@ public class AppChatSession {
 		messages.add(message);
 	}
 
-	public void sendMessage(String body){
-		AppJid to = xmppChatSession.getChatPartner();
-		String thread = xmppChatSession.getThread();
-		AppMessage appMessage = AppMessage.createOutboundMessage(to, body, thread);
-		xmppChatSession.sendMessage(appMessage);
-		messages.add(appMessage);
-	}
+//	public void sendMessage(String body){
+//		AppJid to = xmppChatSession.getChatPartner();
+//		String thread = xmppChatSession.getThread();
+//		AppMessage appMessage = AppMessage.createOutboundMessage(to, body, thread);
+//		xmppChatSession.sendMessage(appMessage);
+//		messages.add(appMessage);
+//	}
 
 	public void printMessages(){
 		Iterator<AppMessage> i = messages.iterator();

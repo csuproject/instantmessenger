@@ -54,19 +54,23 @@ public class BabblerBase {
 	}
 
 	// MessageManager
-	public AppChatSession createChat(AppJid to){
-		ChatSession chatSession = messageManager.createChat(client, to);
-		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
-		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
-		return appChatSession;
+	public void requestCreateChatSession(AppJid to, String thread){
+		messageManager.requestCreateChatSession(client, to, thread);
 	}
 
-	public AppChatSession createChat(AppJid to, String thread){
-		ChatSession chatSession = messageManager.createChat(client, to, thread);
-		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
-		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
-		return appChatSession;
-	}
+//	public AppChatSession createChat(AppJid to){
+//		ChatSession chatSession = messageManager.createChat(client, to);
+//		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
+//		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
+//		return appChatSession;
+//	}
+//
+//	public AppChatSession createChat(AppJid to, String thread){
+//		ChatSession chatSession = messageManager.createChat(client, to, thread);
+//		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
+//		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
+//		return appChatSession;
+//	}
 
 	// ConnectionMannager
 	public void setupConnection(){
@@ -115,12 +119,8 @@ public class BabblerBase {
 	}
 
 	public void newMessage(MessageEvent messageEvent){
-		// fired whenever a message is received or sent
+		// fired whenever a message is received
 		// handle anything that should be handeled here
-
-		//tmp
-		if(messageEvent.getMessage().getFrom().getLocal() == null)
-			return;
 
 		// pass it onto App
 		messageListener.message(messageManager.inboundMessageEventToAppMessage(messageEvent));

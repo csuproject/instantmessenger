@@ -24,6 +24,8 @@ import javafx.stage.Stage;
 
 public class App {
 
+	public static final String REQUEST_CREATE_CHAT_SESSION = "0";
+
 	private BabblerBase babblerBase;
 	private GuiBase guiBase;
 
@@ -78,20 +80,8 @@ public class App {
     }
 
     public void messageListener(AppMessage message){
-//    	System.out.println(message.getBody());
-//    	chats.incomingMessage(message);
-    	AppChatSession chat = chats.getChatOfThread(message.getThread());
-    	if(chat != null){
-    		chat.addMessage(message);
-    	} else{
-    		AppChatSession appChatSession = babblerBase.createChat(message.getFromJid(), message.getThread());
-//    		AppChatSession appChatSession = babblerBase.createChat(message.getFromJid(), message.getThread());
-    		chats.addChat(appChatSession);
-    	}
-    	if(currentScreen == ScreenEnum.CHAT){
-    		ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
-    		chatScreen.load(input);
-    	}
+    	System.out.println("body: " + message.getBody() + "\nthread: " + message.getThread()
+    	+ "\nfrom: " + message.getFromJid().getJid() + "\ntype: " + message.getType());
     }
 
     public void presenceListener(AppPresence appPresence){
