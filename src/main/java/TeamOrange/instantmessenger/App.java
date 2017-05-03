@@ -81,7 +81,7 @@ public class App {
 
     public void messageListener(AppMessage message){
     	System.out.println("body: " + message.getBody() + "\nthread: " + message.getThread()
-    	+ "\nfrom: " + message.getFromJid().getJid() + "\ntype: " + message.getType());
+    	+ "\nfrom: " + message.getFromJid().getBareJid() + "\ntype: " + message.getType());
     }
 
     public void presenceListener(AppPresence appPresence){

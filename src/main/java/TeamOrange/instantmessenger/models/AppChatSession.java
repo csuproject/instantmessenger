@@ -13,12 +13,7 @@ public class AppChatSession {
 	public AppChatSession(XmppChatSession xmppChatSession){
 		this.xmppChatSession = xmppChatSession;
 		this.messages = new LinkedList<AppMessage>();
-//		xmppChatSession.addInboundMessageListener( appMessage->messageListener(appMessage) );
 	}
-
-//	public void messageListener(AppMessage appMessage){
-//		messages.add(appMessage);
-//	}
 
 	public AppJid getPartner(){
 		return xmppChatSession.getChatPartner();
