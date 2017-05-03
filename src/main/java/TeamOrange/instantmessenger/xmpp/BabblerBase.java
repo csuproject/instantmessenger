@@ -61,6 +61,13 @@ public class BabblerBase {
 		return appChatSession;
 	}
 
+	public AppChatSession createChat(AppJid to, String thread){
+		ChatSession chatSession = messageManager.createChat(client, to, thread);
+		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
+		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
+		return appChatSession;
+	}
+
 	// ConnectionMannager
 	public void setupConnection(){
 		client = connectionManager.setupConnection(hostName, this);
@@ -112,7 +119,7 @@ public class BabblerBase {
 		// handle anything that should be handeled here
 
 		// pass it onto App
-		messageListener.message(messageManager.messageEventToAppMessage(messageEvent));
+		messageListener.message(messageManager.inboundMessageEventToAppMessage(messageEvent));
 		messageEvent.consume();
 	}
 

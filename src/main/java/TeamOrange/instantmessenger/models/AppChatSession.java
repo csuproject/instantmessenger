@@ -3,6 +3,7 @@ package TeamOrange.instantmessenger.models;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import TeamOrange.instantmessenger.xmpp.MessageListener;
 import TeamOrange.instantmessenger.xmpp.XmppChatSession;
 
 public class AppChatSession {
@@ -12,7 +13,12 @@ public class AppChatSession {
 	public AppChatSession(XmppChatSession xmppChatSession){
 		this.xmppChatSession = xmppChatSession;
 		this.messages = new LinkedList<AppMessage>();
+//		xmppChatSession.addInboundMessageListener( appMessage->messageListener(appMessage) );
 	}
+
+//	public void messageListener(AppMessage appMessage){
+//		messages.add(appMessage);
+//	}
 
 	public AppJid getPartner(){
 		return xmppChatSession.getChatPartner();
@@ -29,8 +35,7 @@ public class AppChatSession {
 	public void sendMessage(String body){
 		AppJid to = xmppChatSession.getChatPartner();
 		String thread = xmppChatSession.getThread();
-		boolean inbound = false;
-		AppMessage appMessage = new AppMessage(to, body, thread, inbound);
+		AppMessage appMessage = AppMessage.createOutboundMessage(to, body, thread);
 		xmppChatSession.sendMessage(appMessage);
 		messages.add(appMessage);
 	}

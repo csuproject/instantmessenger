@@ -29,12 +29,19 @@ public class MessageManager {
 		return chatSession;
 	}
 
+	public ChatSession createChat(XmppClient client, AppJid partner, String thread){
+		ChatManager chatManager = client.getManager(ChatManager.class);
+		Jid chatPartner = Jid.ofLocalAndDomain(partner.getLocal(), partner.getDomain());
+		ChatSession chatSession = chatManager.createChatSession(chatPartner, thread);
+		return chatSession;
+	}
+
 	// helpers
 
-	public AppMessage messageEventToAppMessage(MessageEvent messageEvent){
+	public AppMessage inboundMessageEventToAppMessage(MessageEvent messageEvent){
 		Message xmppMessage = messageEvent.getMessage();
-		//AppJid from = appJidFromjid(xmppMessage.getFrom());
-		AppMessage appMessage = new AppMessage( null, xmppMessage.getBody(), xmppMessage.getThread(), messageEvent.isInbound() );
+		AppJid from = appJidFromjid(xmppMessage.getFrom());
+		AppMessage appMessage = AppMessage.createInboundMessage(from, xmppMessage.getBody(), xmppMessage.getThread());
 		return appMessage;
 	}
 

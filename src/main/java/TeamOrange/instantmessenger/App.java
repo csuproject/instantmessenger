@@ -4,6 +4,7 @@ import TeamOrange.instantmessenger.controllers.ChatController;
 import TeamOrange.instantmessenger.controllers.CreateAccountController;
 import TeamOrange.instantmessenger.controllers.CreateChatController;
 import TeamOrange.instantmessenger.controllers.LoginController;
+import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppChats;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
@@ -77,7 +78,20 @@ public class App {
     }
 
     public void messageListener(AppMessage message){
-
+//    	System.out.println(message.getBody());
+//    	chats.incomingMessage(message);
+    	AppChatSession chat = chats.getChatOfThread(message.getThread());
+    	if(chat != null){
+    		chat.addMessage(message);
+    	} else{
+    		AppChatSession appChatSession = babblerBase.createChat(message.getToJid(), message.getThread());
+//    		AppChatSession appChatSession = babblerBase.createChat(message.getFromJid(), message.getThread());
+    		chats.addChat(appChatSession);
+    	}
+    	if(currentScreen == ScreenEnum.CHAT){
+    		ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
+    		chatScreen.load(input);
+    	}
     }
 
     public void presenceListener(AppPresence appPresence){

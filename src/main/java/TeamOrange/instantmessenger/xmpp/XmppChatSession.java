@@ -26,9 +26,13 @@ public class XmppChatSession implements XmppChatSessionInterface {
 
 	}
 
+	//(AppJid to, String body, String thread, boolean inbound
 	@Override
-	public void addInboundMessageListener() {
-
+	public void addInboundMessageListener(MessageListener messageListener) {
+//		chatSession.addInboundMessageListener(e->{
+//			AppMessage appMessage = new AppMessage( null, e.getMessage().getBody(), e.getMessage().getThread(), true );
+//			messageListener.message(appMessage);
+//		});
 	}
 
 	@Override
