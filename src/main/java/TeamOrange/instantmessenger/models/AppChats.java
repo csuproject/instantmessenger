@@ -13,7 +13,6 @@ public class AppChats {
 	}
 
 	public void addChat(AppChatSession appChatSession){
-//		System.out.println("partner: "+appChatSession.getPartner().getBareJid()+"\nthread: "+appChatSession.getThread());
 		chats.add(appChatSession);
 	}
 
@@ -31,7 +30,6 @@ public class AppChats {
 		if(relevantChat != null){
 			AppChatSessionMessage m = new AppChatSessionMessage(message.getBody(), message.isInbound());
 			relevantChat.addMessage(m);
-			System.out.println(m.getBody());
 		}
 	}
 

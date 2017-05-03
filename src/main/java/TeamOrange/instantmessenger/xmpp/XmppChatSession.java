@@ -1,10 +1,6 @@
 package TeamOrange.instantmessenger.xmpp;
 
-import java.awt.TrayIcon.MessageType;
-
 import TeamOrange.instantmessenger.models.AppJid;
-import TeamOrange.instantmessenger.models.AppMessage;
-import TeamOrange.instantmessenger.models.AppChatSessionMessage;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.im.chat.ChatSession;
@@ -23,16 +19,9 @@ public class XmppChatSession {
 		return appJid;
 	}
 
-	public void addChatPartnerListener() {
-
-	}
-
-	public void addInboundMessageListener(MessageListener messageListener) {
-//		chatSession.addInboundMessageListener(e->{
-//			AppMessage appMessage = new AppMessage( null, e.getMessage().getBody(), e.getMessage().getThread(), true );
-//			messageListener.message(appMessage);
-//		});
-	}
+//	public void addChatPartnerListener() {
+//
+//	}
 
 	public void close() {
 		chatSession.close();

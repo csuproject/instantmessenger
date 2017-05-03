@@ -20,24 +20,16 @@ public class CreateChatController {
 		this.chats = chats;
 		this.babblerBase = babblerBase;
 		this.homeScreen = homeScreen;
-		this.homeScreen.setOnChatWithUserNameEvent( userName->chatWithUserName(userName) );
+		this.homeScreen.setOnChatWithUserNameEvent( userName->createChatWithUserName(userName) );
 	}
 
-//	public void createChat(AppJid with){
-//		AppChatSession appChatSession = babblerBase.createChat(with);
-//		chats.addChat(appChatSession);
-//	}
-
-	public void chatWithUserName(String userName){
+	public void createChatWithUserName(String userName){
 		//create a chat (ChatSession) with this user
 		//request for them to create their version of it
-
 		AppJid to = new AppJid(userName, "teamorange.space");
 		AppChatSession appChatSession = babblerBase.createChatSession(to);
 		chats.addChat(appChatSession);
 		babblerBase.requestCreateChatSession(to, appChatSession.getThread());
-//		chats.setActiveChat(appChatSession);
-//		changeScreen.SetScreen(ScreenEnum.CHAT);
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){

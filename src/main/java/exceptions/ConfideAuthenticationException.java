@@ -1,5 +1,5 @@
 package exceptions;
 
-public class ConfideAuthenticationException extends Exception {
+public class ConfideAuthenticationException extends ConfideXmppException {
 
 }

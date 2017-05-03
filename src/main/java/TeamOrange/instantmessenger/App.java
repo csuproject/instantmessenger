@@ -19,20 +19,22 @@ import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.views.HomeScreenInput;
 import TeamOrange.instantmessenger.views.ScreenEnum;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
+import exceptions.ConfideXmppException;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class App {
-
+	// constants for messages
 	public static final String REQUEST_CREATE_CHAT_SESSION = "0";
 	public static final String REQUEST_CONTACT_ADD = "1";
 	public static final String ACCEPT_CONTACT_ADD = "2";
 
+	// xmpp
 	private BabblerBase babblerBase;
-	private GuiBase guiBase;
 
-	// Screens
+	// views
+	private GuiBase guiBase;
 	private AccountScreen accountScreen;
 	private HomeScreen homeScreen;
 	private ChatScreen chatScreen;
@@ -44,26 +46,32 @@ public class App {
 	private CreateChatController createChatController;
 	private ChatController chatController;
 
-	//
+	// models
 	AppContacts contacts;
 	AppChats chats;
 
 	public App(GuiBase guiBase){
+		// views
 		this.guiBase = guiBase;
 		accountScreen = new AccountScreen();
 		homeScreen = new HomeScreen();
 		chatScreen = new ChatScreen();
 		setScreen(ScreenEnum.ACCOUNT);
 
-		//
+		// models
 		contacts = new AppContacts();
 		chats = new AppChats();
-		//
 
+		// xmpp
 		babblerBase = new BabblerBase("teamorange.space", appMessage->messageListener(appMessage), appPresence->presenceListener(appPresence), () -> rosterListener());
     	babblerBase.setupConnection();
-    	babblerBase.connect();
+    	try {
+			babblerBase.connect();
+		} catch (ConfideXmppException e) {
+			e.printStackTrace();
+		}
 
+    	// controllers
 		createAccountController = new CreateAccountController(babblerBase, accountScreen);
 		createAccountController.setOnChangeScreen( screen->setScreen(screen) );
 
@@ -83,8 +91,6 @@ public class App {
     }
 
     public void messageListener(AppMessage message){
-//    	System.out.println("body: " + message.getBody() + "\nthread: " + message.getThread()
-//    	+ "\nfrom: " + message.getFromJid().getBareJid() + "\ntype: " + message.getType());
     	if(message.getType() == AppMessageType.NORMAL){
     		String body = message.getBody();
     		if(body.equals(App.REQUEST_CREATE_CHAT_SESSION)){

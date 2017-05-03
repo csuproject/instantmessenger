@@ -55,9 +55,4 @@ public class AppMessage {
 		return type;
 	}
 
-//	@Override
-//	public String toString(){
-//		return from.getBareJid() + " : " + body;
-//	}
-
 }

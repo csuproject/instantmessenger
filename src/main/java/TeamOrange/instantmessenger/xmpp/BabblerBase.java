@@ -6,6 +6,7 @@ import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import exceptions.ConfideAuthenticationException;
+import exceptions.ConfideXmppException;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
@@ -71,35 +72,29 @@ public class BabblerBase {
 		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
 		return appChatSession;
 	}
-//
-//	public AppChatSession createChat(AppJid to, String thread){
-//		ChatSession chatSession = messageManager.createChat(client, to, thread);
-//		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
-//		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
-//		return appChatSession;
-//	}
 
 	// ConnectionMannager
 	public void setupConnection(){
 		client = connectionManager.setupConnection(hostName, this);
 	}
 
-	public void connect(){
+	public void connect() throws ConfideXmppException{
 		connectionManager.connect(client);
 	}
 
-	public void close(){
+	public void close() throws ConfideXmppException{
 		connectionManager.close(client);
 	}
 
 	// AccountMannager
-	public AppJid login(String userName, String password) throws ConfideAuthenticationException {
+	public AppJid login(String userName, String password)
+			throws ConfideXmppException {
 		Jid jid = accountManager.login(client, userName, password);
 		AppJid appJid = new AppJid(jid.getLocal(), jid.getDomain(), jid.getResource());
 		return appJid;
 	}
 
-	public void logout(){
+	public void logout() throws ConfideXmppException {
 		accountManager.logout(client);
 	}
 

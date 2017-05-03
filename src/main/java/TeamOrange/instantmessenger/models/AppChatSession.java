@@ -28,8 +28,6 @@ public class AppChatSession {
 	}
 
 	public void sendChatMessage(String body){
-//		AppJid to = xmppChatSession.getChatPartner();
-//		String thread = xmppChatSession.getThread();
 		AppChatSessionMessage message = AppChatSessionMessage.createOutbound(body);
 		xmppChatSession.sendMessage(body);
 		messages.add(message);

@@ -1,5 +1,5 @@
 package TeamOrange.instantmessenger.lambda;
 
-public interface ChatWithUserNameEvent {
+public interface CreateChatWithUserNameEvent {
 	public void chatWithUserName(String userName);
 }

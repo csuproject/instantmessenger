@@ -1,6 +1,6 @@
 package TeamOrange.instantmessenger.views;
 
-import TeamOrange.instantmessenger.lambda.ChatWithUserNameEvent;
+import TeamOrange.instantmessenger.lambda.CreateChatWithUserNameEvent;
 import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
@@ -31,7 +31,7 @@ public class HomeScreen extends Screen {
 	TableColumn buttonColumn;
 
 
-	private ChatWithUserNameEvent chatWithUserNameEvent;
+	private CreateChatWithUserNameEvent chatWithUserNameEvent;
 
 	public HomeScreen(){
 		try {
@@ -75,7 +75,7 @@ public class HomeScreen extends Screen {
 		chatWithUserNameEvent.chatWithUserName(userName);
 	}
 
-	public void setOnChatWithUserNameEvent(ChatWithUserNameEvent chatWithUserNameEvent){
+	public void setOnChatWithUserNameEvent(CreateChatWithUserNameEvent chatWithUserNameEvent){
 		this.chatWithUserNameEvent = chatWithUserNameEvent;
 	}
 

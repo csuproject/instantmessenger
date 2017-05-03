@@ -8,6 +8,8 @@ import TeamOrange.instantmessenger.views.AccountScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideAuthenticationException;
+import exceptions.ConfideNoResponseException;
+import exceptions.ConfideXmppException;
 
 public class LoginController {
 
@@ -31,9 +33,12 @@ public class LoginController {
 			contacts.setSelf(appUser);
 			changeScreen.SetScreen(ScreenEnum.HOME);
 		} catch(ConfideAuthenticationException e){
-			System.out.println("Authentication Exception");
-			accountScreen.authenticationException();
+			accountScreen.exception("The username or password that you entered was incorrect. Please try again, or create a new account if you dont already have one.");
 			return;
+		} catch(ConfideNoResponseException e){
+			accountScreen.exception("No response was recieved from the server.");
+		} catch(ConfideXmppException e){
+			accountScreen.exception("Something went wrong.");
 		}
 	}
 

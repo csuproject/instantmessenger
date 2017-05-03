@@ -16,11 +16,11 @@ public class ChatController {
 	public ChatController(BabblerBase babblerBase, ChatScreen chatScreen, AppChats chats){
 		this.babblerBase = babblerBase;
 		this.chatScreen = chatScreen;
-		chatScreen.setOnSendNewMessageEvent( userName->chat(userName) );
+		chatScreen.setOnSendNewMessageEvent( userName->sendChatSessionMessage(userName) );
 		this.chats = chats;
 	}
 
-	public void chat(String message){
+	public void sendChatSessionMessage(String message){
 		chats.getActiveChat().sendChatMessage(message);
 		ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
 		chatScreen.load(input);

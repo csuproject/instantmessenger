@@ -90,11 +90,11 @@ public class AccountScreen extends Screen {
 		this.loginEvent = loginEvent;
 	}
 
-	public void authenticationException(){
+	public void exception(String message){
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Login Failed");
 		alert.setHeaderText(null);
-		alert.setContentText("The username or password that you entered was incorrect. Please try again, or create a new account if you dont already have one.");
+		alert.setContentText(message);
 		alert.showAndWait();
 	}
 

@@ -1,6 +1,8 @@
 package TeamOrange.instantmessenger.xmpp;
 
 import exceptions.ConfideAuthenticationException;
+import exceptions.ConfideNoResponseException;
+import exceptions.ConfideXmppException;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
@@ -14,42 +16,46 @@ import rocks.xmpp.extensions.register.model.Registration;
 
 public class AccountManager {
 
-	public Jid login(XmppClient client, String userName, String password) throws ConfideAuthenticationException {
-		// TODO: throw exceptions so the different failure reasons can be handled
+	public Jid login(XmppClient client, String userName, String password)
+			throws ConfideXmppException {
 		try{
     		client.login(userName, password, null);
     	} catch(AuthenticationException e){
     		throw new ConfideAuthenticationException();
-    	} catch(StreamErrorException e){
-
-    	} catch(StreamNegotiationException e){
-
     	} catch(NoResponseException e){
-
-    	} catch(StanzaException e){
-
-    	} catch(XmppException e){
-
+    		throw new ConfideNoResponseException();
+    	}
+//		catch(StreamErrorException e){
+//
+//    	} catch(StreamNegotiationException e){
+//
+//    	} catch(StanzaException e){
+//
+//    	}
+		catch(XmppException e){
+			throw new ConfideXmppException();
     	}
 		return Jid.of(userName, "teamorange.space", null);
 	}
 
-	public void logout(XmppClient client){
+	public void logout(XmppClient client) throws ConfideXmppException {
 		try {
 			// TODO: not sure if this logs other user out
 			client.loginAnonymously();
 		} catch(AuthenticationException e){
-
-    	} catch(StreamErrorException e){
-
-    	} catch(StreamNegotiationException e){
-
+			throw new ConfideAuthenticationException();
     	} catch(NoResponseException e){
-
-    	} catch(StanzaException e){
-
-    	} catch(XmppException e){
-
+    		throw new ConfideNoResponseException();
+    	}
+//		catch(StreamErrorException e){
+//
+//    	} catch(StreamNegotiationException e){
+//
+//    	} catch(StanzaException e){
+//
+//    	}
+		catch(XmppException e){
+			throw new ConfideXmppException();
     	}
 	}
 

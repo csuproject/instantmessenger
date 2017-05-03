@@ -1,5 +1,8 @@
 package TeamOrange.instantmessenger.xmpp;
 
+import exceptions.ConfideConnectionException;
+import exceptions.ConfideNoResponseException;
+import exceptions.ConfideXmppException;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.session.ConnectionException;
 import rocks.xmpp.core.session.NoResponseException;
@@ -28,30 +31,33 @@ public class ConnectionManager {
     	return client;
 	}
 
-	public void connect(XmppClient client) {
+	public void connect(XmppClient client) throws ConfideXmppException {
 		try{
     		client.connect();
     	} catch(ConnectionException e){
-
-    	} catch(StreamErrorException e){
-
-    	} catch(StreamNegotiationException e){
-
-    	} catch(NoResponseException e){
-
-    	} catch(XmppException e){
-
-    	} catch(IllegalStateException e){
-
+    		throw new ConfideConnectionException();
+    	}
+//		catch(StreamErrorException e){
+//
+//    	} catch(StreamNegotiationException e){
+//
+//    	} catch(IllegalStateException e){
+//
+//    	}
+		catch(NoResponseException e){
+			throw new ConfideNoResponseException();
+    	}
+		catch(XmppException e){
+			throw new ConfideXmppException();
     	}
 
 	}
 
-	public void close(XmppClient client) {
+	public void close(XmppClient client) throws ConfideXmppException {
 		try{
     		client.close();
     	} catch(XmppException e){
-
+    		throw new ConfideXmppException();
     	}
 
 	}
