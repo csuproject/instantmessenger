@@ -4,6 +4,8 @@ import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
 import TeamOrange.instantmessenger.lambda.LoginEvent;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -11,7 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
-public class AccountScreen extends StackPane{
+public class AccountScreen extends Screen {
 
 	private TextField userNameTextField;
 	private TextField passwordTextField;
@@ -86,6 +88,14 @@ public class AccountScreen extends StackPane{
 
 	public void setOnLoginEvent(LoginEvent loginEvent){
 		this.loginEvent = loginEvent;
+	}
+
+	public void exception(String message){
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Login Failed");
+		alert.setHeaderText(null);
+		alert.setContentText(message);
+		alert.showAndWait();
 	}
 
 }

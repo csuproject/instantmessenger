@@ -1,7 +1,7 @@
 package TeamOrange.instantmessenger.lambda;
 
-import TeamOrange.instantmessenger.views.Screen;
+import TeamOrange.instantmessenger.views.ScreenEnum;
 
 public interface ChangeScreen {
-	public void SetScreen(Screen screen);
+	public void SetScreen(ScreenEnum screen);
 }

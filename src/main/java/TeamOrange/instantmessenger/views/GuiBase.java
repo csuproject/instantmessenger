@@ -3,14 +3,14 @@ package TeamOrange.instantmessenger.views;
 import TeamOrange.instantmessenger.App;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class GuiBase extends Application {
 	private Stage stage;
-	private Screen currentScreen;
 	private App app;
 
-	Scene accountScene;
+	Scene scene;
 
 	public static void main(String[] args){
 		launch(args);
@@ -18,25 +18,20 @@ public class GuiBase extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		app = new App(this);
-		app.init();
-
+		scene = new Scene( new StackPane(), 640, 480);
 		this.stage = primaryStage;
 		stage.setTitle("Confide");
 
-		accountScene = new Scene( app.getAccountScreen(), 640, 480 );
-		setScreen(Screen.ACCOUNT);
+		app = new App(this);
+		app.init();
+
 
 		stage.show();
 	}
 
 	public void setScreen(Screen screen){
-		this.currentScreen = screen;
-		switch(currentScreen){
-			case ACCOUNT:
-			{
-				stage.setScene(accountScene);
-			} break;
-		}
+		scene.setRoot(screen);
+		stage.setScene(scene);
+		stage.show();
 	}
 }

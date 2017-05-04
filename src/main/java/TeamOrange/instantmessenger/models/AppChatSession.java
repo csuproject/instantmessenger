@@ -3,33 +3,45 @@ package TeamOrange.instantmessenger.models;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class AppChatSession {
-	private AppJid partner;
-	private String thread;
-	private LinkedList<AppMessage> messages;
+import TeamOrange.instantmessenger.xmpp.MessageListener;
+import TeamOrange.instantmessenger.xmpp.XmppChatSession;
 
-	public AppChatSession(AppJid partner, String thread){
-		this.partner = partner;
-		this.thread = thread;
-		this.messages = new LinkedList<AppMessage>();
+public class AppChatSession {
+	private XmppChatSession xmppChatSession;
+	private LinkedList<AppChatSessionMessage> messages;
+
+	public AppChatSession(XmppChatSession xmppChatSession){
+		this.xmppChatSession = xmppChatSession;
+		this.messages = new LinkedList<AppChatSessionMessage>();
 	}
 
 	public AppJid getPartner(){
-		return partner;
+		return xmppChatSession.getChatPartner();
 	}
 
 	public String getThread(){
-		return thread;
+		return xmppChatSession.getThread();
 	}
 
-	public void addMessage(AppMessage message){
+	public void addMessage(AppChatSessionMessage message){
+		messages.add(message);
+	}
+
+	public void sendChatMessage(String body){
+		AppChatSessionMessage message = AppChatSessionMessage.createOutbound(body);
+		xmppChatSession.sendMessage(body);
 		messages.add(message);
 	}
 
 	public void printMessages(){
-		Iterator<AppMessage> i = messages.iterator();
+		Iterator<AppChatSessionMessage> i = messages.iterator();
 		while(i.hasNext()){
-			System.out.println(i.next());
+			AppChatSessionMessage message = i.next();
+			if(message.isInbound()){
+				System.out.println(getPartner() + " : " + message.getBody());
+			} else{
+				System.out.println("self : " + message.getBody());
+			}
 		}
 	}
 

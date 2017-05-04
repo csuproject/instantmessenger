@@ -34,7 +34,7 @@ public class AppJid {
 
 	public String getJid(){
 		String jid = getBareJid();
-		if(resource.length() > 0){
+		if(resource != null && resource.length() > 0){
 			jid += "/" + resource;
 		}
 		return jid;
