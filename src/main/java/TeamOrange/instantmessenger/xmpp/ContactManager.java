@@ -14,12 +14,12 @@ import rocks.xmpp.im.roster.model.ContactGroup;
 import rocks.xmpp.im.subscription.PresenceManager;
 
 public class ContactManager {
-<<<<<<< HEAD
-	
-	
-=======
+//<<<<<<< HEAD
 
->>>>>>> refs/remotes/origin/E2_2
+
+//=======
+
+//>>>>>>> refs/remotes/origin/E2_2
 	/**
 	 * Add Contact to Roster.
 	 * @param client
@@ -70,22 +70,22 @@ public class ContactManager {
 	 * @param client
 	 * @return
 	 */
-<<<<<<< HEAD
+//<<<<<<< HEAD
 	public static LinkedList<String> getContacts(XmppClient client) {
-		
+
 		LinkedList<String> contacts = new LinkedList<String>();
 		Collection<Contact> list = new <Contact>LinkedList();
 		list = client.getManager(RosterManager.class).getContacts();
 		for (Contact c : list) {
 		    contacts.add(String.valueOf(Jid.of(c.getJid())));
 		}
-		
+
 		return contacts;
-=======
+//=======
 	public static Collection<Contact> getContacts(XmppClient client) {
 
 		return client.getManager(RosterManager.class).getContacts();
->>>>>>> refs/remotes/origin/E2_2
+//>>>>>>> refs/remotes/origin/E2_2
 	}
 
 	/**
@@ -93,38 +93,38 @@ public class ContactManager {
 	 * @param client
 	 * @return
 	 */
-<<<<<<< HEAD
+//<<<<<<< HEAD
 	public static LinkedList<String> getContactGroups(XmppClient client) {
-		
+
 		LinkedList<String> groups = new LinkedList<String>();
 		Collection<ContactGroup> list = new <ContactGroup>LinkedList();
 		list = client.getManager(RosterManager.class).getContactGroups();
 		for (ContactGroup g : list) {
 			groups.add(g.getName());
 		}
-		
+
 		return groups;
 	}
-	
+
 	/**
 	 * Approve Contact to listen to Presence.
 	 */
 	public static void approveContact(XmppClient client, Jid contact) {
-		
+
 		client.getManager(PresenceManager.class).approveSubscription(contact);
 	}
-	
+
 	/**
 	 * Deny Contact to listen to Presence.
 	 */
 	public static void denyContact(XmppClient client, String contact) {
-		
+
 		client.getManager(PresenceManager.class).denySubscription(Jid.of(contact));
-=======
+//=======
 	public static Collection<ContactGroup> getGroups(XmppClient client) {
 
 		return client.getManager(RosterManager.class).getContactGroups();
->>>>>>> refs/remotes/origin/E2_2
+//>>>>>>> refs/remotes/origin/E2_2
 	}
 
 	/**
@@ -165,13 +165,13 @@ public class ContactManager {
 	public static Jid getContactOfEvent(PresenceEvent presenceEvent) {
 
 		Presence presence = presenceEvent.getPresence();
-<<<<<<< HEAD
+//<<<<<<< HEAD
 		return presence.getFrom();
 	}
-	
-	
-	
-=======
+
+
+
+//=======
 
 		return presence.getFrom();
 	}
@@ -190,5 +190,5 @@ public class ContactManager {
 		client.getManager(PresenceManager.class).denySubscription(contact);
 	}
 
->>>>>>> refs/remotes/origin/E2_2
+//>>>>>>> refs/remotes/origin/E2_2
 }

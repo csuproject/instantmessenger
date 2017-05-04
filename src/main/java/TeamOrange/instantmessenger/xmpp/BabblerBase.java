@@ -1,12 +1,12 @@
 package TeamOrange.instantmessenger.xmpp;
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 import java.util.LinkedList;
 
-=======
+//=======
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
->>>>>>> refs/remotes/origin/E2_2
+//>>>>>>> refs/remotes/origin/E2_2
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
@@ -40,7 +40,7 @@ public class BabblerBase {
 	private MessageListener messageListener;
 	private PresenceListener presenceListener;
 	private RosterListener rosterListener;
-	
+
 	//public ContactManager contactManager;
 	private MessageManager messageManager;
 	private AccountManager accountManager;
@@ -48,16 +48,16 @@ public class BabblerBase {
 	private PresenceManager presenceManager; // TODO: update presence manager to stop using static methods
 	private ConnectionManager connectionManager;
 
-	public BabblerBase(String hostName, MessageListener messageListener, 
+	public BabblerBase(String hostName, MessageListener messageListener,
 			PresenceListener presenceListener, RosterListener rosterListener) {
 		this.hostName = hostName;
 		this.messageListener = messageListener;
 		this.presenceListener = presenceListener;
 		this.rosterListener = rosterListener;
 		this.messageManager = new MessageManager();
-<<<<<<< HEAD
+//<<<<<<< HEAD
 		//this.contactManager = new ContactManager();
-=======
+//=======
 		this.accountManager = new AccountManager();
 		this.contactManager = new ContactManager();
 		this.presenceManager = new PresenceManager();
@@ -81,44 +81,13 @@ public class BabblerBase {
 		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
 		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
 		return appChatSession;
->>>>>>> refs/remotes/origin/E2_2
+//>>>>>>> refs/remotes/origin/E2_2
 	}
 
 	// ConnectionMannager
 	public void setupConnection(){
 		client = connectionManager.setupConnection(hostName, this);
 	}
-<<<<<<< HEAD
-	
-	/**
-	 * Connect to Server
-	 */
-	public void connect(){
-		ConnectionManager.connect(client);
-	}
-
-	/**
-	 * Close Connection to Server
-	 */
-	public void close(){
-		ConnectionManager.close(client);
-	}
-
-	/**
-	 * Login User to Server
-	 * @param userName
-	 * @param password
-	 */
-	public void login(String userName, String password){
-		AccountManager.login(client, userName, password);
-	}
-
-	/**
-	 * Logout User of Server
-	 */
-	public void logout(){
-		AccountManager.logout(client);
-=======
 
 	public void connect() throws ConfideXmppException{
 		connectionManager.connect(client);
@@ -138,7 +107,7 @@ public class BabblerBase {
 
 	public void logout() throws ConfideXmppException {
 		accountManager.logout(client);
->>>>>>> refs/remotes/origin/E2_2
+//>>>>>>> refs/remotes/origin/E2_2
 	}
 
 	/**
@@ -149,7 +118,7 @@ public class BabblerBase {
 	public void createUser(String userName, String password){
 		accountManager.createUser(client, userName, password);
 	}
-	
+
 	/**
 	 * Add Contact to User
 	 * @param contact
@@ -157,7 +126,7 @@ public class BabblerBase {
 	public void addContact(String contact) {
 		ContactManager.addContact(client, contact);
 	}
-	
+
 	/**
 	 * Remove Contact from User
 	 * @param contact
@@ -165,7 +134,7 @@ public class BabblerBase {
 	public void removeContact(String contact) {
 		ContactManager.removeContact(client, contact);
 	}
-	
+
 	/**
 	 * List of Contacts
 	 * @return
@@ -173,7 +142,7 @@ public class BabblerBase {
 	public LinkedList<String> getContacts() {
 		return ContactManager.getContacts(client);
 	}
-	
+
 	/**
 	 * List of ContactGroups
 	 * @return
