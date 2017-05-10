@@ -123,33 +123,33 @@ public class BabblerBase {
 	 * Add Contact to User
 	 * @param contact
 	 */
-//	public void addContact(String contact) {
-//		ContactManager.addContact(client, contact);
-//	}
-//
-//	/**
-//	 * Remove Contact from User
-//	 * @param contact
-//	 */
-//	public void removeContact(String contact) {
-//		ContactManager.removeContact(client, contact);
-//	}
-//
-//	/**
-//	 * List of Contacts
-//	 * @return
-//	 */
-//	public LinkedList<String> getContacts() {
-//		return ContactManager.getContacts(client);
-//	}
-//
-//	/**
-//	 * List of ContactGroups
-//	 * @return
-//	 */
-//	public LinkedList<String> getGroups() {
-//		return ContactManager.getContactGroups(client);
-//	}
+	public void addContact(String contact) {
+		ContactManager.addContact(client, contact);
+	}
+
+	/**
+	 * Remove Contact from User
+	 * @param contact
+	 */
+	public void removeContact(String contact) {
+		ContactManager.removeContact(client, contact);
+	}
+
+	/**
+	 * List of Contacts
+	 * @return
+	 */
+	public LinkedList<String> getContacts() {
+		return ContactManager.getContacts(client);
+	}
+
+	/**
+	 * List of ContactGroups
+	 * @return
+	 */
+	public LinkedList<String> getGroups() {
+		return ContactManager.getContactGroups(client);
+	}
 
 	//listeners
 	public void newPresence(PresenceEvent presenceEvent){
