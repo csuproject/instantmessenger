@@ -30,6 +30,7 @@ public class AppChats {
 		if(relevantChat != null){
 			AppChatSessionMessage m = new AppChatSessionMessage(message.getBody(), message.isInbound());
 			relevantChat.addMessage(m);
+			System.out.println(message.getBody());
 		}
 	}
 

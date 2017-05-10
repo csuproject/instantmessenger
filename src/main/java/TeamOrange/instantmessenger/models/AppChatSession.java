@@ -31,6 +31,7 @@ public class AppChatSession {
 		AppChatSessionMessage message = AppChatSessionMessage.createOutbound(body);
 		xmppChatSession.sendMessage(body);
 		messages.add(message);
+		System.out.println(body);
 	}
 
 	public void printMessages(){

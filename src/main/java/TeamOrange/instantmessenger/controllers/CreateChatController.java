@@ -30,6 +30,8 @@ public class CreateChatController {
 		AppChatSession appChatSession = babblerBase.createChatSession(to);
 		chats.addChat(appChatSession);
 		babblerBase.requestCreateChatSession(to, appChatSession.getThread());
+		chats.setActiveChat(appChatSession);
+		changeScreen.SetScreen(ScreenEnum.CHAT);
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){
