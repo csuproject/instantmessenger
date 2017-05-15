@@ -38,7 +38,7 @@ public class ChatScreen extends Screen {
 
 		//scrollpane
 		this.scrollPane = new ScrollPane();
-		this.scrollPane.setPadding(new Insets(20, 20, 20, 20));
+		//this.scrollPane.setPadding(new Insets(20, 20, 20, 20));
 
 		//send message
 		newMessageTextField = new TextField();
@@ -52,6 +52,7 @@ public class ChatScreen extends Screen {
 		// add fake data
 		MessageDisplay m = new MessageDisplay("Tim", "Hello");
 		scrollPaneContent.getChildren().add(m);
+		scrollPaneContent.setPadding(new Insets(20,20,20,20));
 
 		m = new MessageDisplay("Self", "Hey Mate");
 		scrollPaneContent.getChildren().add(m);
