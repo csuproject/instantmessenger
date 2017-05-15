@@ -46,4 +46,8 @@ public class AppChatSession {
 		}
 	}
 
+	public LinkedList<AppChatSessionMessage> getMessages(){
+		return messages;
+	}
+
 }
