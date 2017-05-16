@@ -35,7 +35,10 @@ public class AcceptOrDeclineContactRequestController {
 	}
 
 	public void onDeclineContactRequestEvent(String username){
-
+		AppJid jid = new AppJid(username, "teamorange.space");
+		contacts.removeContactRequest(jid);
+		babblerBase.alertUserOfContactRequestResponse(jid, false);
+		homeScreen.loadLater(new HomeScreenInput(contacts));
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){
