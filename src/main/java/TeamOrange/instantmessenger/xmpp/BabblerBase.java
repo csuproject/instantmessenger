@@ -19,6 +19,7 @@ import rocks.xmpp.core.session.ConnectionException;
 import rocks.xmpp.core.session.NoResponseException;
 import rocks.xmpp.core.session.TcpConnectionConfiguration;
 import rocks.xmpp.core.session.XmppClient;
+import rocks.xmpp.core.session.XmppSession;
 import rocks.xmpp.core.stanza.MessageEvent;
 import rocks.xmpp.core.stanza.PresenceEvent;
 import rocks.xmpp.core.stanza.StanzaException;
@@ -132,6 +133,12 @@ public class BabblerBase {
 	 * @param contact
 	 */
 	public void addContact(String contact) {
+		// spin until in correct state
+		while(client.getStatus() != XmppSession.Status.AUTHENTICATED) {
+			try { Thread.sleep(50); }
+			catch (InterruptedException e) { }
+		}
+
 		ContactManager.addContact(client, contact);
 	}
 
@@ -148,10 +155,22 @@ public class BabblerBase {
 	 * @return
 	 */
 	public LinkedList<String> getContacts() {
+		// spin until in correct state
+		while(client.getStatus() != XmppSession.Status.AUTHENTICATED) {
+			try { Thread.sleep(50); }
+			catch (InterruptedException e) { }
+		}
+
 		return ContactManager.getContacts(client);
 	}
 
 	public LinkedList<AppUser> getContactsAsAppUsers() {
+		// spin until in correct state
+		while(client.getStatus() != XmppSession.Status.AUTHENTICATED) {
+			try { Thread.sleep(50); }
+			catch (InterruptedException e) { }
+		}
+
 		return ContactManager.getContactsAsAppUsers(client);
 	}
 
