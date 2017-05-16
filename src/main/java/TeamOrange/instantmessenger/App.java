@@ -1,5 +1,7 @@
 package TeamOrange.instantmessenger;
 
+import TeamOrange.instantmessenger.controllers.AcceptOrDeclineContactRequestController;
+import TeamOrange.instantmessenger.controllers.AddContactController;
 import TeamOrange.instantmessenger.controllers.ChatController;
 import TeamOrange.instantmessenger.controllers.CreateAccountController;
 import TeamOrange.instantmessenger.controllers.OpenChatController;
@@ -45,6 +47,8 @@ public class App {
 	private LoginController loginController;
 	private OpenChatController openChatController;
 	private ChatController chatController;
+	private AddContactController addContactController;
+	private AcceptOrDeclineContactRequestController acceptOrDeclineContactRequestController;
 
 	// models
 	AppContacts contacts;
@@ -83,6 +87,12 @@ public class App {
 
 		chatController = new ChatController(babblerBase, chatScreen, chats);
 		chatController.setOnChangeScreen( screen->setScreen(screen) );
+
+		addContactController = new AddContactController(babblerBase, homeScreen, contacts);
+		addContactController.setOnChangeScreen( screen->setScreen(screen) );
+
+		acceptOrDeclineContactRequestController = new AcceptOrDeclineContactRequestController(babblerBase, homeScreen, contacts);
+		acceptOrDeclineContactRequestController.setOnChangeScreen( screen->setScreen(screen) );
 
 	}
 
