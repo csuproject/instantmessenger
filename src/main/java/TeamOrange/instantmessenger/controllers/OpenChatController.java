@@ -31,7 +31,7 @@ public class OpenChatController {
 			AppJid to = new AppJid(username, "teamorange.space");
 			chatSession = babblerBase.createChatSession(to);
 			chats.addChat(chatSession);
-			babblerBase.requestCreateChatSession(to, chatSession.getThread());
+//			babblerBase.requestCreateChatSession(to, chatSession.getThread());
 		}
 		chats.setActiveChat(chatSession);
 		changeScreen.SetScreen(ScreenEnum.CHAT);

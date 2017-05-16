@@ -1,11 +1,13 @@
 package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.CreateChatWithUserNameEvent;
+import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.ChatWithContactEvent;
 import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
+import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -24,15 +26,15 @@ import javafx.scene.layout.VBox;
 
 public class HomeScreen extends Screen {
 
-	private Label header;
-	private TextField chatWithUserNameInputTextField;
-	private Button chatWithButton;
+	private TextField addContactWithUsernameInputTextField;
+	private Button addContactButton;
 	//chat list
 	private ScrollPane contacts;
 	private VBox contactsContent;
 
 	//private CreateChatWithUserNameEvent chatWithUserNameEvent;
 	private ChatWithContactEvent chatWithContactEvent;
+	private AddContactEvent addContactEvent;
 
 	public HomeScreen(){
 		try {
@@ -44,6 +46,8 @@ public class HomeScreen extends Screen {
 
 	public void create() throws Exception {
 
+		VBox vbox = new VBox();
+
 		//contacts
 		contacts = new ScrollPane();
 //		contacts.setPrefHeight(400);
@@ -52,6 +56,15 @@ public class HomeScreen extends Screen {
 		contactsContent.setPrefHeight(400);
 		contactsContent.setPrefWidth(400);
 		contacts.setContent(contactsContent);
+
+		// add contact
+		Label addContactWithUsername = new Label("Add Contact Via Username: ");
+		addContactWithUsernameInputTextField = new TextField();
+		addContactButton = new Button("Add");
+		addContactButton.setOnAction( e->addContactBtnPress() );
+		HBox addContactInput = new HBox();
+		addContactInput.getChildren().addAll(addContactWithUsername, addContactWithUsernameInputTextField, addContactButton);
+		addContactInput.setSpacing(10);
 
 		// add fake data
 		ContactDisplay c = new ContactDisplay(this, "tim");
@@ -66,6 +79,8 @@ public class HomeScreen extends Screen {
 		contactsContent.getChildren().add(c);
 
 
+		vbox.getChildren().addAll(contacts, addContactInput);
+		this.getChildren().add(vbox);
 
 		// header
 //		header = new Label("Hello, Unknown");
@@ -88,14 +103,16 @@ public class HomeScreen extends Screen {
 //		gridPane.setAlignment(Pos.CENTER);
 //
 //		this.getChildren().add(gridPane);
-
-
-		this.getChildren().add(contacts);
 	}
 
 	public void chatButtonPress(String username) {
 		System.out.println("Chat with " + username);
 		chatWithContactEvent.openChat(username);
+	}
+
+	public void addContactBtnPress(){
+		String username = addContactWithUsernameInputTextField.getText();
+		this.addContactEvent.add(username);
 	}
 
 	public void load(HomeScreenInput input){
@@ -104,6 +121,10 @@ public class HomeScreen extends Screen {
 
 	public void setOnChatWithContactEvent(ChatWithContactEvent chatWithContactEvent){
 		this.chatWithContactEvent = chatWithContactEvent;
+	}
+
+	public void setOnAddContactEvent(AddContactEvent addContactEvent){
+		this.addContactEvent = addContactEvent;
 	}
 
 //	public void chatWithBtnPress(){

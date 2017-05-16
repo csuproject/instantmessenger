@@ -1,5 +1,7 @@
 package TeamOrange.instantmessenger.xmpp;
 
+import java.util.concurrent.ExecutionException;
+
 import exceptions.ConfideConnectionException;
 import exceptions.ConfideNoResponseException;
 import exceptions.ConfideXmppException;
@@ -8,9 +10,13 @@ import rocks.xmpp.core.session.ConnectionException;
 import rocks.xmpp.core.session.NoResponseException;
 import rocks.xmpp.core.session.TcpConnectionConfiguration;
 import rocks.xmpp.core.session.XmppClient;
+import rocks.xmpp.core.stanza.model.IQ;
+import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stream.StreamErrorException;
 import rocks.xmpp.core.stream.StreamNegotiationException;
+import rocks.xmpp.extensions.offline.OfflineMessageManager;
 import rocks.xmpp.im.roster.RosterManager;
+import rocks.xmpp.util.concurrent.AsyncResult;
 
 public class ConnectionManager {
 
