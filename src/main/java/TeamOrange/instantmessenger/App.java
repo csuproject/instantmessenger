@@ -2,7 +2,7 @@ package TeamOrange.instantmessenger;
 
 import TeamOrange.instantmessenger.controllers.ChatController;
 import TeamOrange.instantmessenger.controllers.CreateAccountController;
-import TeamOrange.instantmessenger.controllers.CreateChatController;
+import TeamOrange.instantmessenger.controllers.OpenChatController;
 import TeamOrange.instantmessenger.controllers.LoginController;
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppChats;
@@ -43,7 +43,7 @@ public class App {
 	// Controllers
 	private CreateAccountController createAccountController;
 	private LoginController loginController;
-	private CreateChatController createChatController;
+	private OpenChatController openChatController;
 	private ChatController chatController;
 
 	// models
@@ -78,14 +78,14 @@ public class App {
 		loginController = new LoginController(babblerBase, accountScreen, contacts);
 		loginController.setOnChangeScreen( screen->setScreen(screen) );
 
-		createChatController = new CreateChatController(chats, contacts, babblerBase, homeScreen);
-		createChatController.setOnChangeScreen( screen->setScreen(screen) );
+		openChatController = new OpenChatController(chats, contacts, babblerBase, homeScreen);
+		openChatController.setOnChangeScreen( screen->setScreen(screen) );
 
 		chatController = new ChatController(babblerBase, chatScreen, chats);
 		chatController.setOnChangeScreen( screen->setScreen(screen) );
 
 	}
-	
+
 
     public void init(){
 

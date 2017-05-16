@@ -1,17 +1,16 @@
 package TeamOrange.instantmessenger.views;
 
 
-import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
+import java.util.LinkedList;
+
 import TeamOrange.instantmessenger.lambda.SendNewMessageEvent;
+import TeamOrange.instantmessenger.models.AppChatSessionMessage;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 
 public class ChatScreen extends Screen {
 
@@ -33,6 +32,7 @@ public class ChatScreen extends Screen {
 
 	public void create() throws Exception {
 		scrollPaneContent = new VBox();
+		scrollPaneContent.setPadding(new Insets(20,20,20,20));
 		// vboc
 		VBox vbox = new VBox();
 
@@ -49,22 +49,21 @@ public class ChatScreen extends Screen {
 		HBox newMessage = new HBox();
 		newMessage.getChildren().addAll(newMessageTextField, sendNewMessageButton);
 
-		// add fake data
-		MessageDisplay m = new MessageDisplay("Tim", "Hello");
-		scrollPaneContent.getChildren().add(m);
-		scrollPaneContent.setPadding(new Insets(20,20,20,20));
-
-		m = new MessageDisplay("Self", "Hey Mate");
-		scrollPaneContent.getChildren().add(m);
-
-		m = new MessageDisplay("Tim", "A Control that provides a scrolled, clipped viewport of its contents. It allows the user to scroll the content around either directly (panning) or by using scroll bars. The ScrollPane allows specification of the scroll bar policy, which determines when scroll bars are displayed: always, never, or only when they are needed. The scroll bar policy can be specified independently for the horizontal and vertical scroll bars.");
-		scrollPaneContent.getChildren().add(m);
-
-		m = new MessageDisplay("Self", "Wow");
-		scrollPaneContent.getChildren().add(m);
-
-		m = new MessageDisplay("Self", "That was a long message");
-		scrollPaneContent.getChildren().add(m);
+//		// add fake data
+//		MessageDisplay m = new MessageDisplay("Tim", "Hello");
+//		scrollPaneContent.getChildren().add(m);
+//
+//		m = new MessageDisplay("Self", "Hey Mate");
+//		scrollPaneContent.getChildren().add(m);
+//
+//		m = new MessageDisplay("Tim", "A Control that provides a scrolled, clipped viewport of its contents. It allows the user to scroll the content around either directly (panning) or by using scroll bars. The ScrollPane allows specification of the scroll bar policy, which determines when scroll bars are displayed: always, never, or only when they are needed. The scroll bar policy can be specified independently for the horizontal and vertical scroll bars.");
+//		scrollPaneContent.getChildren().add(m);
+//
+//		m = new MessageDisplay("Self", "Wow");
+//		scrollPaneContent.getChildren().add(m);
+//
+//		m = new MessageDisplay("Self", "That was a long message");
+//		scrollPaneContent.getChildren().add(m);
 
 		scrollPane.setContent(scrollPaneContent);
 
@@ -100,9 +99,15 @@ public class ChatScreen extends Screen {
 
 	public void load(ChatScreenInput input){
 		//header.setText("Chat with " + input.getPartner());
-		System.out.println("\n\nMessages: \n");
-		input.printMessages();
 		// TODO: load messages
+		String partner = input.getPartner();
+		LinkedList<AppChatSessionMessage> messages = input.getMessages();
+		scrollPaneContent.getChildren().clear();
+		for(AppChatSessionMessage m : messages){
+			String username = m.isInbound() ? partner : "Self";
+			MessageDisplay md = new MessageDisplay(username, m.getBody());
+			scrollPaneContent.getChildren().add(md);
+		}
 		// TODO: make a method to simply append a single message
 	}
 

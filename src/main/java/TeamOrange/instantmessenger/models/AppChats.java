@@ -42,4 +42,13 @@ public class AppChats {
 		}
 		return null;
 	}
+
+	public AppChatSession getChatWithContact(String username){
+		for(AppChatSession chat : chats){
+			if(chat.getPartner().getLocal().equals(username)){
+				return chat;
+			}
+		}
+		return null;
+	}
 }
