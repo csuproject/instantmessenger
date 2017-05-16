@@ -9,7 +9,8 @@ public class AppContacts {
 	private LinkedList<AppJid> contactRequestList;
 
 	public AppContacts(){
-
+		this.contactList = new LinkedList<AppUser>();
+		this.contactRequestList = new LinkedList<AppJid>();
 	}
 
 	public void setSelf(AppUser self){
