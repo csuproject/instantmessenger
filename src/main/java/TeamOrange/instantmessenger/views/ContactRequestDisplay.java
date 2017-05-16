@@ -19,10 +19,10 @@ public class ContactRequestDisplay extends HBox {
 		usernameLabel = new Label(username);
 		usernameLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 25));
 
-		this.acceptButton = new Button("Chat");
+		this.acceptButton = new Button("Accept");
 		this.acceptButton.setOnAction(e->parent.acceptContactRequestButtonPress(username));
 
-		this.declineButton = new Button("Chat");
+		this.declineButton = new Button("Decline");
 		this.declineButton.setOnAction(e->parent.declineContactRequestButtonPress(username));
 
 		this.setStyle("-fx-padding: 5;" +

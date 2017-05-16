@@ -13,6 +13,7 @@ import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMessageType;
 import TeamOrange.instantmessenger.models.AppPresence;
+import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.views.AccountScreen;
 import TeamOrange.instantmessenger.views.ChatScreen;
 import TeamOrange.instantmessenger.views.ChatScreenInput;
@@ -31,6 +32,7 @@ public class App {
 	public static final String REQUEST_CREATE_CHAT_SESSION = "0";
 	public static final String REQUEST_CONTACT_ADD = "1";
 	public static final String ACCEPT_CONTACT_ADD = "2";
+	public static final String DECLINE_CONTACT_ADD = "2";
 
 	// xmpp
 	private BabblerBase babblerBase;
@@ -115,8 +117,19 @@ public class App {
     			contacts.addContactRequest(jid);
     			if(currentScreen == ScreenEnum.HOME){
     				HomeScreenInput homeScreenInput = new HomeScreenInput(contacts);
-    				homeScreen.load(homeScreenInput);
+    				homeScreen.loadLater(homeScreenInput);
     			}
+    		}
+    		else if(body.equals(App.ACCEPT_CONTACT_ADD)){
+    			AppJid jid = message.getFromJid();
+    			contacts.addContact( new AppUser(jid) );
+    			if(currentScreen == ScreenEnum.HOME){
+    				HomeScreenInput homeScreenInput = new HomeScreenInput(contacts);
+    				homeScreen.loadLater(homeScreenInput);
+    			}
+    		}
+    		else if(body.equals(App.DECLINE_CONTACT_ADD)){
+
     		}
     	} else if(message.getType() == AppMessageType.CHAT){
     		chatController.incomingChatMessage(message, currentScreen==ScreenEnum.CHAT);

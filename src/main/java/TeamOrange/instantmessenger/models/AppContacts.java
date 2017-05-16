@@ -25,6 +25,16 @@ public class AppContacts {
 		contactRequestList.add(jid);
 	}
 
+	public void removeContactRequest(AppJid jid){
+		String username = jid.getLocal();
+		for(int i = 0; i < contactRequestList.size(); ++i){
+			if(contactRequestList.get(i).getLocal().equals(username)){
+				contactRequestList.remove(i);
+				break;
+			}
+		}
+	}
+
 	public AppUser getSelf(){
 		return self;
 	}
@@ -35,5 +45,14 @@ public class AppContacts {
 
 	public LinkedList<AppJid> getContactRequestList(){
 		return contactRequestList;
+	}
+
+	public AppUser getContactWithUsername(String username){
+		for(AppUser user : contactList){
+			if(user.getJid().getLocal().equals(username)){
+				return user;
+			}
+		}
+		return null;
 	}
 }

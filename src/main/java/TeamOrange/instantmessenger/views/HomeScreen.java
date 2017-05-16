@@ -103,11 +103,11 @@ public class HomeScreen extends Screen {
 	}
 
 	public void acceptContactRequestButtonPress(String username) {
-
+		acceptContactRequestEvent.accept(username);
 	}
 
 	public void declineContactRequestButtonPress(String username) {
-
+		declineContactRequestEvent.decline(username);
 	}
 
 	public void loadLater(HomeScreenInput input){

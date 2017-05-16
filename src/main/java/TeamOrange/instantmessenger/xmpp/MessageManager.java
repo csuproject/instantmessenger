@@ -38,6 +38,19 @@ public class MessageManager {
 		client.sendMessage(message);
 	}
 
+	public void alertUserOfContactRequestResponse(XmppClient client, AppJid to, boolean accepted){
+		Message message = new Message();
+		message.setType(Message.Type.NORMAL);
+		if(accepted){
+			message.setBody(App.ACCEPT_CONTACT_ADD);
+		} else {
+			message.setBody(App.DECLINE_CONTACT_ADD);
+		}
+		Jid toJid = jidFromAppJid(to);
+		message.setTo(toJid);
+		client.sendMessage(message);
+	}
+
 	public ChatSession createChatSession(XmppClient client, AppJid to){
 		ChatManager chatManager = client.getManager(ChatManager.class);
 		ChatSession chatSession = chatManager.createChatSession( jidFromAppJid(to) );

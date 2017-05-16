@@ -73,6 +73,10 @@ public class BabblerBase {
 		messageManager.requestContactAdd(client, to);
 	}
 
+	public void alertUserOfContactRequestResponse(AppJid jid, boolean accepted){
+		messageManager.alertUserOfContactRequestResponse(client, jid, accepted);
+	}
+
 	public AppChatSession createChatSession(AppJid to){
 		ChatSession chatSession = messageManager.createChatSession(client, to);
 		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
