@@ -32,7 +32,7 @@ public class App {
 	public static final String REQUEST_CREATE_CHAT_SESSION = "0";
 	public static final String REQUEST_CONTACT_ADD = "1";
 	public static final String ACCEPT_CONTACT_ADD = "2";
-	public static final String DECLINE_CONTACT_ADD = "2";
+	public static final String DECLINE_CONTACT_ADD = "3";
 
 	// xmpp
 	private BabblerBase babblerBase;
