@@ -33,7 +33,7 @@ public class ChatController {
 		if(chatSession != null){
 			if( currentScreenIsChatScreen  &&  chats.isActiveChat(chatSession) ){
 				ChatScreenInput input = new ChatScreenInput(chatSession);
-				chatScreen.loadFromDifferentThread(input);
+				chatScreen.loadLater(input);
 			}
 		}
 	}

@@ -69,6 +69,10 @@ public class BabblerBase {
 		messageManager.requestCreateChatSession(client, to, thread);
 	}
 
+	public void requestContactAdd(AppJid to){
+		messageManager.requestContactAdd(client, to);
+	}
+
 	public AppChatSession createChatSession(AppJid to){
 		ChatSession chatSession = messageManager.createChatSession(client, to);
 		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);

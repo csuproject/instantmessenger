@@ -1,13 +1,20 @@
 package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.CreateChatWithUserNameEvent;
+import TeamOrange.instantmessenger.lambda.DeclineContactRequestEvent;
+
+import java.util.LinkedList;
+
+import TeamOrange.instantmessenger.lambda.AcceptContactRequestEvent;
 import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.ChatWithContactEvent;
 import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
+import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -35,6 +42,8 @@ public class HomeScreen extends Screen {
 	//private CreateChatWithUserNameEvent chatWithUserNameEvent;
 	private ChatWithContactEvent chatWithContactEvent;
 	private AddContactEvent addContactEvent;
+	private AcceptContactRequestEvent acceptContactRequestEvent;
+	private DeclineContactRequestEvent declineContactRequestEvent;
 
 	public HomeScreen(){
 		try {
@@ -81,28 +90,6 @@ public class HomeScreen extends Screen {
 
 		vbox.getChildren().addAll(contacts, addContactInput);
 		this.getChildren().add(vbox);
-
-		// header
-//		header = new Label("Hello, Unknown");
-//		header.setFont(Font.font(60));
-//
-//		// create chat via username
-//		Label chatWithUserNameInputLabel = new Label("Chat With: ");
-//		chatWithUserNameInputTextField = new TextField();
-//		chatWithButton = new Button("Start Chat");
-//		chatWithButton.setOnAction( e->chatWithBtnPress() );
-//		HBox chatWithUserNameInput = new HBox();
-//		chatWithUserNameInput.getChildren().addAll(chatWithUserNameInputLabel, chatWithUserNameInputTextField, chatWithButton);
-//		chatWithUserNameInput.setSpacing(10);
-
-		//Pane
-//		GridPane gridPane = new GridPane();
-//		gridPane.setVgap(20);
-//		gridPane.add(header, 0, 0);
-//		gridPane.add(chatWithUserNameInput, 0, 2);
-//		gridPane.setAlignment(Pos.CENTER);
-//
-//		this.getChildren().add(gridPane);
 	}
 
 	public void chatButtonPress(String username) {
@@ -115,8 +102,36 @@ public class HomeScreen extends Screen {
 		this.addContactEvent.add(username);
 	}
 
+	public void acceptContactRequestButtonPress(String username) {
+
+	}
+
+	public void declineContactRequestButtonPress(String username) {
+
+	}
+
+	public void loadLater(HomeScreenInput input){
+		Platform.runLater(new Runnable(){
+			@Override public void run(){
+				load(input);
+			}
+		});
+	}
+
 	public void load(HomeScreenInput input){
-		//header.setText("Hello, " + input.getName());
+		contactsContent.getChildren().clear();
+
+		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
+		for(AppJid jid : contactRequestList){
+			ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
+			contactsContent.getChildren().add(request);
+		}
+
+		LinkedList<AppUser> contactList = input.getContactList();
+		for(AppUser user : contactList){
+			ContactDisplay contact = new ContactDisplay(this, user.getJid().getLocal());
+			contactsContent.getChildren().add(contact);
+		}
 	}
 
 	public void setOnChatWithContactEvent(ChatWithContactEvent chatWithContactEvent){
@@ -125,6 +140,14 @@ public class HomeScreen extends Screen {
 
 	public void setOnAddContactEvent(AddContactEvent addContactEvent){
 		this.addContactEvent = addContactEvent;
+	}
+
+	public void setOnAcceptContactRequestEvent(AcceptContactRequestEvent acceptContactRequestEvent){
+		this.acceptContactRequestEvent = acceptContactRequestEvent;
+	}
+
+	public void setOnDeclineContactRequestEvent(DeclineContactRequestEvent declineContactRequestEvent){
+		this.declineContactRequestEvent = declineContactRequestEvent;
 	}
 
 //	public void chatWithBtnPress(){

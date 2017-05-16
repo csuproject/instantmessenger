@@ -31,7 +31,6 @@ public class XmppChatSession {
 		Message message = new Message();
 		message.setBody(body);
 		message.setType(Message.Type.CHAT);
-		// TODO: assuming that it automatically adds in thread and to
 		chatSession.sendMessage(message);
 	}
 

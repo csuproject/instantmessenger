@@ -57,7 +57,7 @@ public class ChatScreen extends Screen {
 		this.getChildren().add(vbox);
 	}
 
-	public void loadFromDifferentThread(ChatScreenInput input){
+	public void loadLater(ChatScreenInput input){
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
 				load(input);

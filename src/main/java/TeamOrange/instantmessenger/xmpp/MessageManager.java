@@ -29,6 +29,15 @@ public class MessageManager {
 		client.sendMessage(message);
 	}
 
+	public void requestContactAdd(XmppClient client, AppJid to){
+		Message message = new Message();
+		message.setType(Message.Type.NORMAL);
+		message.setBody(App.REQUEST_CONTACT_ADD);
+		Jid toJid = jidFromAppJid(to);
+		message.setTo(toJid);
+		client.sendMessage(message);
+	}
+
 	public ChatSession createChatSession(XmppClient client, AppJid to){
 		ChatManager chatManager = client.getManager(ChatManager.class);
 		ChatSession chatSession = chatManager.createChatSession( jidFromAppJid(to) );

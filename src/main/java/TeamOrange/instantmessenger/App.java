@@ -95,10 +95,18 @@ public class App {
     	if(message.getType() == AppMessageType.NORMAL){
     		String body = message.getBody();
     		if(body.equals(App.REQUEST_CREATE_CHAT_SESSION)){
-//    			AppJid to = message.getFromJid();
-//    			String thread = message.getThread();
-//    			AppChatSession appChatSession = babblerBase.createChatSessionWithGivenThread(to, thread);
-//    			chats.addChat(appChatSession);
+    			AppJid to = message.getFromJid();
+    			String thread = message.getThread();
+    			AppChatSession appChatSession = babblerBase.createChatSessionWithGivenThread(to, thread);
+    			chats.addChat(appChatSession);
+    		}
+    		else if(body.equals(App.REQUEST_CONTACT_ADD)){
+    			AppJid jid = message.getFromJid();
+    			contacts.addContactRequest(jid);
+    			if(currentScreen == ScreenEnum.HOME){
+    				HomeScreenInput homeScreenInput = new HomeScreenInput(contacts);
+    				homeScreen.load(homeScreenInput);
+    			}
     		}
     	} else if(message.getType() == AppMessageType.CHAT){
     		chatController.incomingChatMessage(message, currentScreen==ScreenEnum.CHAT);
@@ -127,7 +135,7 @@ public class App {
 			} break;
 			case HOME:
 			{
-				HomeScreenInput input = new HomeScreenInput(contacts.getSelf().getJid().getLocal());
+				HomeScreenInput input = new HomeScreenInput(contacts);
 				homeScreen.load(input);
 				guiBase.setScreen(homeScreen);
 			} break;

@@ -29,7 +29,7 @@ public class ContactDisplay extends HBox {
                 "-fx-border-width: 2;" +
                 "-fx-border-insets: 3;" +
                 "-fx-border-radius: 5;" +
-                "-fx-border-color: red;");
+                "-fx-border-color: green;");
 		this.getChildren().addAll(usernameLabel, chatButton);
 	}
 }
