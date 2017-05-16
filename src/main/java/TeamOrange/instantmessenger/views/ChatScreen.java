@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import TeamOrange.instantmessenger.lambda.SendNewMessageEvent;
 import TeamOrange.instantmessenger.models.AppChatSessionMessage;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -49,52 +50,19 @@ public class ChatScreen extends Screen {
 		HBox newMessage = new HBox();
 		newMessage.getChildren().addAll(newMessageTextField, sendNewMessageButton);
 
-//		// add fake data
-//		MessageDisplay m = new MessageDisplay("Tim", "Hello");
-//		scrollPaneContent.getChildren().add(m);
-//
-//		m = new MessageDisplay("Self", "Hey Mate");
-//		scrollPaneContent.getChildren().add(m);
-//
-//		m = new MessageDisplay("Tim", "A Control that provides a scrolled, clipped viewport of its contents. It allows the user to scroll the content around either directly (panning) or by using scroll bars. The ScrollPane allows specification of the scroll bar policy, which determines when scroll bars are displayed: always, never, or only when they are needed. The scroll bar policy can be specified independently for the horizontal and vertical scroll bars.");
-//		scrollPaneContent.getChildren().add(m);
-//
-//		m = new MessageDisplay("Self", "Wow");
-//		scrollPaneContent.getChildren().add(m);
-//
-//		m = new MessageDisplay("Self", "That was a long message");
-//		scrollPaneContent.getChildren().add(m);
-
 		scrollPane.setContent(scrollPaneContent);
 
 		// add elements
 		vbox.getChildren().addAll(scrollPane, newMessage);
 		this.getChildren().add(vbox);
+	}
 
-
-
-
-
-		// header
-//		header = new Label("Chat with Unknown");
-//		header.setFont(Font.font(40));
-//
-		// new message
-//		newMessageTextField = new TextField();
-//		sendNewMessageButton = new Button("Send");
-//		sendNewMessageButton.setOnAction( e->sendNewMessageBtnPress() );
-//		HBox newMessage = new HBox();
-//		newMessage.getChildren().addAll(newMessageTextField, sendNewMessageButton);
-//
-//		GridPane gridPane = new GridPane();
-//		gridPane.setVgap(20);
-//		gridPane.add(header, 0, 0);
-//		gridPane.add(newMessage, 0, 2);
-//		gridPane.setAlignment(Pos.CENTER);
-
-
-
-		//this.getChildren().add(gridPane);
+	public void loadFromDifferentThread(ChatScreenInput input){
+		Platform.runLater(new Runnable(){
+			@Override public void run(){
+				load(input);
+			}
+		});
 	}
 
 	public void load(ChatScreenInput input){

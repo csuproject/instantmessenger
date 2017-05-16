@@ -2,11 +2,12 @@ package TeamOrange.instantmessenger.models;
 
 import java.util.LinkedList;
 
+import TeamOrange.instantmessenger.views.ChatScreenInput;
 import TeamOrange.instantmessenger.xmpp.XmppChatSession;
 
 public class AppChats {
-	LinkedList<AppChatSession> chats;
-	AppChatSession activeChat;
+	private LinkedList<AppChatSession> chats;
+	private AppChatSession activeChat;
 
 	public AppChats(){
 		chats = new LinkedList<AppChatSession>();
@@ -14,6 +15,7 @@ public class AppChats {
 
 	public void addChat(AppChatSession appChatSession){
 		chats.add(appChatSession);
+		System.out.println(appChatSession.getPartner() + " : " + appChatSession.getThread());
 	}
 
 	public void setActiveChat(AppChatSession chat){
@@ -24,7 +26,7 @@ public class AppChats {
 		return activeChat;
 	}
 
-	public void incomingChatMessage(AppMessage message){
+	public AppChatSession incomingChatMessage(AppMessage message){
 		String thread = message.getThread();
 		AppChatSession relevantChat = getChatOfThread(thread);
 		if(relevantChat != null){
@@ -32,6 +34,7 @@ public class AppChats {
 			relevantChat.addMessage(m);
 			System.out.println(message.getBody());
 		}
+		return relevantChat;
 	}
 
 	public AppChatSession getChatOfThread(String thread){
@@ -50,5 +53,9 @@ public class AppChats {
 			}
 		}
 		return null;
+	}
+
+	public boolean isActiveChat(AppChatSession chat){
+		return chat == activeChat;
 	}
 }

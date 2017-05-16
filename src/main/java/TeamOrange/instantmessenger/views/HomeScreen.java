@@ -54,13 +54,15 @@ public class HomeScreen extends Screen {
 		contacts.setContent(contactsContent);
 
 		// add fake data
-		ContactDisplay c = new ContactDisplay(this, "Tim");
+		ContactDisplay c = new ContactDisplay(this, "tim");
 		contactsContent.getChildren().add(c);
-		c = new ContactDisplay(this, "Shaun");
+		c = new ContactDisplay(this, "shaun");
 		contactsContent.getChildren().add(c);
-		c = new ContactDisplay(this, "Murray");
+		c = new ContactDisplay(this, "murray");
 		contactsContent.getChildren().add(c);
-		c = new ContactDisplay(this, "Jim");
+		c = new ContactDisplay(this, "jim");
+		contactsContent.getChildren().add(c);
+		c = new ContactDisplay(this, "test");
 		contactsContent.getChildren().add(c);
 
 

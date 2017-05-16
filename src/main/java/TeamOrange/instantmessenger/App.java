@@ -101,7 +101,7 @@ public class App {
     			chats.addChat(appChatSession);
     		}
     	} else if(message.getType() == AppMessageType.CHAT){
-    		chats.incomingChatMessage(message);
+    		chatController.incomingChatMessage(message, currentScreen==ScreenEnum.CHAT);
     	}
     }
 
