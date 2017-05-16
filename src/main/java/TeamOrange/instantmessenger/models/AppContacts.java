@@ -21,6 +21,14 @@ public class AppContacts {
 		contactList.add(user);
 	}
 
+	public void addAllContacts(LinkedList<AppUser> list){
+		if(list != null){
+			for(AppUser au : list){
+				addContact(au);
+			}
+		}
+	}
+
 	public void addContactRequest(AppJid jid){
 		contactRequestList.add(jid);
 	}

@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
+import TeamOrange.instantmessenger.models.AppJid;
+import TeamOrange.instantmessenger.models.AppUser;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.core.stanza.PresenceEvent;
@@ -73,6 +75,20 @@ public class ContactManager {
 		list = client.getManager(RosterManager.class).getContacts();
 		for (Contact c : list) {
 		    contacts.add(String.valueOf(Jid.of(c.getJid())));
+		}
+
+		return contacts;
+	}
+
+	public static LinkedList<AppUser> getContactsAsAppUsers(XmppClient client) {
+
+		LinkedList<AppUser> contacts = new LinkedList<AppUser>();
+		Collection<Contact> list = new <Contact>LinkedList();
+		list = client.getManager(RosterManager.class).getContacts();
+		for (Contact c : list) {
+			Jid jid = c.getJid();
+			AppJid appJid = new AppJid(jid.getLocal(), jid.getDomain());
+		    contacts.add( new AppUser(appJid) );
 		}
 
 		return contacts;

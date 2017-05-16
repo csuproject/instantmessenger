@@ -27,6 +27,7 @@ public class AcceptOrDeclineContactRequestController {
 		AppUser contact = contacts.getContactWithUsername(username);
 		if(contact == null){
 			AppJid jid = new AppJid(username, "teamorange.space");
+			babblerBase.addContact(jid.getBareJid());
 			contacts.removeContactRequest(jid);
 			contacts.addContact(new AppUser(jid));
 			babblerBase.alertUserOfContactRequestResponse(jid, true);

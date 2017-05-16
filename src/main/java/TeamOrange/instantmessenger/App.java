@@ -122,6 +122,7 @@ public class App {
     		}
     		else if(body.equals(App.ACCEPT_CONTACT_ADD)){
     			AppJid jid = message.getFromJid();
+    			babblerBase.addContact( jid.getBareJid() );
     			contacts.addContact( new AppUser(jid) );
     			if(currentScreen == ScreenEnum.HOME){
     				HomeScreenInput homeScreenInput = new HomeScreenInput(contacts);

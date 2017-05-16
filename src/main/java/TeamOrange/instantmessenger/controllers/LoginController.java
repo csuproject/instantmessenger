@@ -1,5 +1,7 @@
 package TeamOrange.instantmessenger.controllers;
 
+import java.util.LinkedList;
+
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
@@ -31,6 +33,8 @@ public class LoginController {
 			appJid = babblerBase.login(userName, password);
 			AppUser appUser = new AppUser(appJid);
 			contacts.setSelf(appUser);
+			LinkedList<AppUser> contactsFromServer = babblerBase.getContactsAsAppUsers();
+			contacts.addAllContacts(contactsFromServer);
 			changeScreen.SetScreen(ScreenEnum.HOME);
 		} catch(ConfideAuthenticationException e){
 			accountScreen.exception("The username or password that you entered was incorrect. Please try again, or create a new account if you dont already have one.");

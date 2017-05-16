@@ -115,7 +115,6 @@ public class BabblerBase {
 
 	public void logout() throws ConfideXmppException {
 		accountManager.logout(client);
-//>>>>>>> refs/remotes/origin/E2_2
 	}
 
 	/**
@@ -127,6 +126,7 @@ public class BabblerBase {
 		accountManager.createUser(client, userName, password);
 	}
 
+	// Contact Manager
 	/**
 	 * Add Contact to User
 	 * @param contact
@@ -149,6 +149,10 @@ public class BabblerBase {
 	 */
 	public LinkedList<String> getContacts() {
 		return ContactManager.getContacts(client);
+	}
+
+	public LinkedList<AppUser> getContactsAsAppUsers() {
+		return ContactManager.getContactsAsAppUsers(client);
 	}
 
 	/**
