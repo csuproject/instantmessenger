@@ -6,11 +6,12 @@ public class AppContacts {
 
 	private AppUser self;
 	private LinkedList<AppUser> contactList;
-	private LinkedList<AppJid> contactRequestList;
+	private LinkedList<AppJid> incomingContactRequestList;
+	private LinkedList<AppJid> outgoingContactRequestList;
 
 	public AppContacts(){
 		this.contactList = new LinkedList<AppUser>();
-		this.contactRequestList = new LinkedList<AppJid>();
+		this.incomingContactRequestList = new LinkedList<AppJid>();
 	}
 
 	public void setSelf(AppUser self){
@@ -22,22 +23,25 @@ public class AppContacts {
 	}
 
 	public void addAllContacts(LinkedList<AppUser> list){
+		System.out.println("addAllContacts");
+		System.out.println(list);
 		if(list != null){
 			for(AppUser au : list){
 				addContact(au);
+				System.out.println(au.getJid().getBareJid());
 			}
 		}
 	}
 
 	public void addContactRequest(AppJid jid){
-		contactRequestList.add(jid);
+		incomingContactRequestList.add(jid);
 	}
 
 	public void removeContactRequest(AppJid jid){
 		String username = jid.getLocal();
-		for(int i = 0; i < contactRequestList.size(); ++i){
-			if(contactRequestList.get(i).getLocal().equals(username)){
-				contactRequestList.remove(i);
+		for(int i = 0; i < incomingContactRequestList.size(); ++i){
+			if(incomingContactRequestList.get(i).getLocal().equals(username)){
+				incomingContactRequestList.remove(i);
 				break;
 			}
 		}
@@ -52,7 +56,7 @@ public class AppContacts {
 	}
 
 	public LinkedList<AppJid> getContactRequestList(){
-		return contactRequestList;
+		return incomingContactRequestList;
 	}
 
 	public AppUser getContactWithUsername(String username){

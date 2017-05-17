@@ -2,6 +2,6 @@ package TeamOrange.instantmessenger.xmpp;
 
 import TeamOrange.instantmessenger.models.AppPresence;
 
-public interface PresenceListener {
+public interface StatusListener {
 	public void presence(AppPresence appPresence);
 }
