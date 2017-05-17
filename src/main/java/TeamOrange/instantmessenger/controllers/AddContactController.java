@@ -22,7 +22,8 @@ public class AddContactController {
 
 	public void addContact(String username){
 		AppJid jid = new AppJid(username, "teamorange.space");
-		babblerBase.requestContactAdd(jid);
+		//babblerBase.requestContactAdd(jid);
+		babblerBase.addContact(username);
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){
