@@ -3,6 +3,8 @@ package TeamOrange.instantmessenger.xmpp;
 //<<<<<<< HEAD
 import java.util.LinkedList;
 
+import TeamOrange.instantmessenger.lambda.LoginEvent;
+import TeamOrange.instantmessenger.lambda.StatusEvent;
 //=======
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
@@ -10,6 +12,7 @@ import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
+import TeamOrange.instantmessenger.models.UserStatus;
 import exceptions.ConfideAuthenticationException;
 import exceptions.ConfideXmppException;
 import rocks.xmpp.addr.Jid;
@@ -19,6 +22,7 @@ import rocks.xmpp.core.session.ConnectionException;
 import rocks.xmpp.core.session.NoResponseException;
 import rocks.xmpp.core.session.TcpConnectionConfiguration;
 import rocks.xmpp.core.session.XmppClient;
+import rocks.xmpp.core.session.XmppSession;
 import rocks.xmpp.core.stanza.MessageEvent;
 import rocks.xmpp.core.stanza.PresenceEvent;
 import rocks.xmpp.core.stanza.StanzaException;
@@ -31,6 +35,7 @@ import rocks.xmpp.extensions.register.model.Registration;
 import rocks.xmpp.im.chat.ChatSession;
 import rocks.xmpp.im.roster.RosterEvent;
 import rocks.xmpp.im.roster.RosterManager;
+import rocks.xmpp.im.roster.model.Contact;
 
 public class BabblerBase {
 
@@ -38,21 +43,23 @@ public class BabblerBase {
 	private XmppClient client;
 
 	private MessageListener messageListener;
-	private PresenceListener presenceListener;
+	private StatusListener statusListener;
 	private RosterListener rosterListener;
+	
+	private StatusEvent statusEvent;
 
 	//public ContactManager contactManager;
 	private MessageManager messageManager;
 	private AccountManager accountManager;
 	private ContactManager contactManager; // TODO: update contact manager to stop using static methods
-	private PresenceManager presenceManager; // TODO: update presence manager to stop using static methods
+	private StatusManager statusManager; // TODO: update presence manager to stop using static methods
 	private ConnectionManager connectionManager;
 
 	public BabblerBase(String hostName, MessageListener messageListener,
-			PresenceListener presenceListener, RosterListener rosterListener) {
+			StatusListener presenceListener, RosterListener rosterListener) {
 		this.hostName = hostName;
 		this.messageListener = messageListener;
-		this.presenceListener = presenceListener;
+		this.statusListener = statusListener;
 		this.rosterListener = rosterListener;
 		this.messageManager = new MessageManager();
 //<<<<<<< HEAD
@@ -60,7 +67,7 @@ public class BabblerBase {
 //=======
 		this.accountManager = new AccountManager();
 		this.contactManager = new ContactManager();
-		this.presenceManager = new PresenceManager();
+		this.statusManager = new StatusManager();
 		this.connectionManager = new ConnectionManager();
 	}
 
@@ -99,6 +106,7 @@ public class BabblerBase {
 
 	public void connect() throws ConfideXmppException{
 		connectionManager.connect(client);
+		client.addInboundPresenceListener(presenceListener->newPresence(presenceListener));
 	}
 
 	public void close() throws ConfideXmppException{
@@ -132,6 +140,12 @@ public class BabblerBase {
 	 * @param contact
 	 */
 	public void addContact(String contact) {
+		// spin until in correct state
+		while(client.getStatus() != XmppSession.Status.AUTHENTICATED) {
+			try { Thread.sleep(50); }
+			catch (InterruptedException e) { }
+		}
+
 		ContactManager.addContact(client, contact);
 	}
 
@@ -148,10 +162,22 @@ public class BabblerBase {
 	 * @return
 	 */
 	public LinkedList<String> getContacts() {
+		// spin until in correct state
+		while(client.getStatus() != XmppSession.Status.AUTHENTICATED) {
+			try { Thread.sleep(50); }
+			catch (InterruptedException e) { }
+		}
+
 		return ContactManager.getContacts(client);
 	}
 
 	public LinkedList<AppUser> getContactsAsAppUsers() {
+		// spin until in correct state
+		while(client.getStatus() != XmppSession.Status.AUTHENTICATED) {
+			try { Thread.sleep(50); }
+			catch (InterruptedException e) { }
+		}
+
 		return ContactManager.getContactsAsAppUsers(client);
 	}
 
@@ -175,10 +201,18 @@ public class BabblerBase {
 		//but first we need to decide what information we need from a Presence/PresenceEvent,
 		//and add that to the AppPresence class, then extract it here, create an AppPresence object with it,
 		//and then pass it on.
-		Presence presence = presenceEvent.getPresence();
-		AppPresence appPresence = new AppPresence();
-		presenceListener.presence(appPresence); // calling this sends it to the presenceListener function in App
-		presenceEvent.consume();
+		//Presence presence = presenceEvent.getPresence();
+		//AppPresence appPresence = new AppPresence();
+		//statusListener.presence(appPresence); // calling this sends it to the presenceListener function in App
+		//presenceEvent.consume();
+		
+		
+	    Presence presence = presenceEvent.getPresence();
+	    Contact contact = client.getManager(RosterManager.class).getContact(presence.getFrom());
+	    if (contact != null) {
+	    	statusEvent.status(new UserStatus(presence.getId(),presence.getStatus()));
+	    }
+	    presenceEvent.consume();
 	}
 
 	public void newMessage(MessageEvent messageEvent){
@@ -193,6 +227,10 @@ public class BabblerBase {
 	public void newRoster(RosterEvent rosterEvent){
 
 		rosterListener.roster();
+	}
+	
+	public void setOnStatusEvent(StatusEvent statusEvent){
+		this.statusEvent = statusEvent;
 	}
 
 }

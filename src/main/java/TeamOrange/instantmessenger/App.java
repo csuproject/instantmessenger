@@ -5,6 +5,7 @@ import TeamOrange.instantmessenger.controllers.AddContactController;
 import TeamOrange.instantmessenger.controllers.ChatController;
 import TeamOrange.instantmessenger.controllers.CreateAccountController;
 import TeamOrange.instantmessenger.controllers.OpenChatController;
+import TeamOrange.instantmessenger.controllers.PresenceController;
 import TeamOrange.instantmessenger.controllers.LoginController;
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppChats;
@@ -51,6 +52,7 @@ public class App {
 	private ChatController chatController;
 	private AddContactController addContactController;
 	private AcceptOrDeclineContactRequestController acceptOrDeclineContactRequestController;
+	private PresenceController presenceController;
 
 	// models
 	AppContacts contacts;
@@ -69,7 +71,11 @@ public class App {
 		chats = new AppChats();
 
 		// xmpp
-		babblerBase = new BabblerBase("teamorange.space", appMessage->messageListener(appMessage), appPresence->presenceListener(appPresence), () -> rosterListener());
+		babblerBase = new BabblerBase("teamorange.space", 
+				appMessage->messageListener(appMessage), 
+				appPresence->presenceListener(appPresence), 
+				() -> rosterListener());
+		
     	babblerBase.setupConnection();
     	try {
 			babblerBase.connect();
@@ -93,11 +99,12 @@ public class App {
 		addContactController = new AddContactController(babblerBase, homeScreen, contacts);
 		addContactController.setOnChangeScreen( screen->setScreen(screen) );
 
-		acceptOrDeclineContactRequestController = new AcceptOrDeclineContactRequestController(babblerBase, homeScreen, contacts);
+		acceptOrDeclineContactRequestController = 
+				new AcceptOrDeclineContactRequestController(babblerBase, homeScreen, contacts);
 		acceptOrDeclineContactRequestController.setOnChangeScreen( screen->setScreen(screen) );
-
+		
+		presenceController = new PresenceController(babblerBase, accountScreen, contacts);
 	}
-
 
     public void init(){
 
@@ -138,7 +145,7 @@ public class App {
     }
 
     public void presenceListener(AppPresence appPresence){
-
+    	
     }
 
     public void rosterListener(){
