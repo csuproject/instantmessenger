@@ -32,8 +32,8 @@ public class Test2ContactManagement {
 	private RosterListener rl;
 	private AppContacts contacts;
 	
-	BabblerBase bb = new BabblerBase(hostName, ml,pl, rl);
-
+	//BabblerBase bb = new BabblerBase(hostName, ml,pl, rl);
+	BabblerBase bb = null;
 		
 	//Team Orange View Layer
 	@Mock

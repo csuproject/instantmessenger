@@ -36,6 +36,7 @@ import rocks.xmpp.im.chat.ChatSession;
 import rocks.xmpp.im.roster.RosterEvent;
 import rocks.xmpp.im.roster.RosterManager;
 import rocks.xmpp.im.roster.model.Contact;
+import rocks.xmpp.im.subscription.PresenceManager;
 
 public class BabblerBase {
 
@@ -209,8 +210,17 @@ public class BabblerBase {
 		
 	    Presence presence = presenceEvent.getPresence();
 	    Contact contact = client.getManager(RosterManager.class).getContact(presence.getFrom());
-	    if (contact != null) {
-	    	statusEvent.status(new UserStatus(presence.getId(),presence.getStatus()));
+	    
+	    // Available
+	    if (presence.getType() == null) {
+	    	statusEvent.status(new UserStatus(
+	    			presence.getFrom().getLocal()+"@"+presence.getFrom().getDomain(),"AVAILABLE"));
+	    }
+	    
+	    // Unavailable
+	    if (presence.getType() == Presence.Type.UNAVAILABLE) {
+	    	statusEvent.status(new UserStatus(
+	    			presence.getFrom().getLocal()+"@"+presence.getFrom().getDomain(),"UNAVAILABLE"));
 	    }
 	    presenceEvent.consume();
 	}
@@ -225,12 +235,15 @@ public class BabblerBase {
 	}
 
 	public void newRoster(RosterEvent rosterEvent){
-
 		rosterListener.roster();
 	}
 	
 	public void setOnStatusEvent(StatusEvent statusEvent){
 		this.statusEvent = statusEvent;
+	}
+	
+	public void requestSubsription(String jid, String message) {
+    	client.getManager(PresenceManager.class).requestSubscription(Jid.of(jid), message);
 	}
 
 }

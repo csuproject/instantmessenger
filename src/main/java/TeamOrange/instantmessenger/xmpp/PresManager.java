@@ -7,7 +7,7 @@ import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.core.stanza.PresenceEvent;
 import rocks.xmpp.core.stanza.model.Presence;
 
-public class PresenceManager {
+public class PresManager {
 
 	/**
 	 * Add Contact request listener.
