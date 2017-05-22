@@ -6,7 +6,9 @@ import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideXmppException;
 
 public class ContactListTest {
-	public static void main(String[] args) throws ConfideXmppException{
+
+	public static void main(String[] args) throws ConfideXmppException, InterruptedException{
+
 
 		BabblerBase client = new BabblerBase("teamorange.space", appMessage->messageListener(appMessage), appPresence->presenceListener(appPresence), () -> rosterListener());
 		client.setupConnection();
@@ -16,12 +18,24 @@ public class ContactListTest {
 			e.printStackTrace();
 		}
 
+
     	client.createUser("1", "1");
     	client.createUser("2", "2");
 
     	client.login("1", "1");
 
     	client.addContact("2");
+
+    	Thread.sleep(3000);
+    	client.createUser("aaa", "aaa");
+    	Thread.sleep(3000);
+    	client.createUser("bbb", "bbb");
+    	Thread.sleep(3000);
+    	client.login("tim", "tim95bell");
+    	Thread.sleep(3000);
+
+    	client.addContact("test");
+    	Thread.sleep(9000);
 
     	System.out.println(client.getContacts());
 

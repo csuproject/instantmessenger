@@ -1,14 +1,11 @@
 package TeamOrange.instantmessenger.xmpp;
 
-//<<<<<<< HEAD
-import java.util.LinkedList;
 
+import java.util.LinkedList;
 import TeamOrange.instantmessenger.lambda.LoginEvent;
 import TeamOrange.instantmessenger.lambda.StatusEvent;
-//=======
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
-//>>>>>>> refs/remotes/origin/E2_2
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
@@ -38,6 +35,7 @@ import rocks.xmpp.im.roster.RosterManager;
 import rocks.xmpp.im.roster.model.Contact;
 import rocks.xmpp.im.subscription.PresenceManager;
 
+
 public class BabblerBase {
 
 	private String hostName;
@@ -53,7 +51,6 @@ public class BabblerBase {
 	private MessageManager messageManager;
 	private AccountManager accountManager;
 	private ContactManager contactManager; // TODO: update contact manager to stop using static methods
-	private StatusManager statusManager; // TODO: update presence manager to stop using static methods
 	private ConnectionManager connectionManager;
 
 	public BabblerBase(String hostName, MessageListener messageListener,
@@ -63,12 +60,8 @@ public class BabblerBase {
 		this.statusListener = statusListener;
 		this.rosterListener = rosterListener;
 		this.messageManager = new MessageManager();
-//<<<<<<< HEAD
-		//this.contactManager = new ContactManager();
-//=======
 		this.accountManager = new AccountManager();
 		this.contactManager = new ContactManager();
-		this.statusManager = new StatusManager();
 		this.connectionManager = new ConnectionManager();
 	}
 
@@ -97,7 +90,6 @@ public class BabblerBase {
 		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
 		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
 		return appChatSession;
-//>>>>>>> refs/remotes/origin/E2_2
 	}
 
 	// ConnectionMannager
@@ -192,22 +184,7 @@ public class BabblerBase {
 
 	//listeners
 	public void newPresence(PresenceEvent presenceEvent){
-		//this is called when a new PresenceEvent occurs, and passed a PresenceEvent object by babbler
-		// first we will handle anything that needs to happen here
-		//...
 
-		//then we will pass the information out to the rest of our application,
-		//but to hide the babbler dependency, we will construct a AppPresence object with the information we need,
-		//and pass that on
-		//but first we need to decide what information we need from a Presence/PresenceEvent,
-		//and add that to the AppPresence class, then extract it here, create an AppPresence object with it,
-		//and then pass it on.
-		//Presence presence = presenceEvent.getPresence();
-		//AppPresence appPresence = new AppPresence();
-		//statusListener.presence(appPresence); // calling this sends it to the presenceListener function in App
-		//presenceEvent.consume();
-		
-		
 	    Presence presence = presenceEvent.getPresence();
 	    Contact contact = client.getManager(RosterManager.class).getContact(presence.getFrom());
 	    
@@ -228,6 +205,10 @@ public class BabblerBase {
 	    	client.getManager(PresenceManager.class).approveSubscription(presence.getFrom());
 	    }
 	    
+	    if (contact != null) {
+	    	statusEvent.status(new UserStatus(presence.getId(),presence.getStatus()));
+	    }
+
 	    presenceEvent.consume();
 	}
 
@@ -247,6 +228,7 @@ public class BabblerBase {
 	public void setOnStatusEvent(StatusEvent statusEvent){
 		this.statusEvent = statusEvent;
 	}
+
 	
 	public void requestSubsription(String jid, String message) {
     	client.getManager(PresenceManager.class).requestSubscription(Jid.of(jid), message);
