@@ -222,6 +222,12 @@ public class BabblerBase {
 	    	statusEvent.status(new UserStatus(
 	    			presence.getFrom().getLocal()+"@"+presence.getFrom().getDomain(),"UNAVAILABLE"));
 	    }
+	    
+	    // Subscribe
+	    if (presence.getType() == Presence.Type.SUBSCRIBE) {
+	    	client.getManager(PresenceManager.class).approveSubscription(presence.getFrom());
+	    }
+	    
 	    presenceEvent.consume();
 	}
 
