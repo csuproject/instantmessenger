@@ -22,8 +22,8 @@ public class AddContactController {
 
 	public void addContact(String username){
 		AppJid jid = new AppJid(username, "teamorange.space");
-		//babblerBase.requestContactAdd(jid);
-		babblerBase.addContact(username);
+		babblerBase.requestContactAdd(jid);
+		//babblerBase.addContact(username);
 		babblerBase.requestSubsription(username, "Hello, I would like to to chat!?");
 	}
 
