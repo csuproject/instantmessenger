@@ -93,7 +93,7 @@ public class App {
 		openChatController = new OpenChatController(chats, contacts, babblerBase, homeScreen);
 		openChatController.setOnChangeScreen( screen->setScreen(screen) );
 
-		chatController = new ChatController(babblerBase, chatScreen, chats);
+		chatController = new ChatController(babblerBase, chatScreen, chats, contacts);
 		chatController.setOnChangeScreen( screen->setScreen(screen) );
 
 		addContactController = new AddContactController(babblerBase, homeScreen, contacts);
@@ -113,13 +113,14 @@ public class App {
     public void messageListener(AppMessage message){
     	if(message.getType() == AppMessageType.NORMAL){
     		String body = message.getBody();
-    		if(body.equals(App.REQUEST_CREATE_CHAT_SESSION)){
+    		/* if(body.equals(App.REQUEST_CREATE_CHAT_SESSION)){
     			AppJid to = message.getFromJid();
     			String thread = message.getThread();
     			AppChatSession appChatSession = babblerBase.createChatSessionWithGivenThread(to, thread);
     			chats.addChat(appChatSession);
     		}
-    		else if(body.equals(App.REQUEST_CONTACT_ADD)){
+    		else */
+    		if(body.equals(App.REQUEST_CONTACT_ADD)){
     			AppJid jid = message.getFromJid();
     			contacts.addContactRequest(jid);
     			if(currentScreen == ScreenEnum.HOME){
