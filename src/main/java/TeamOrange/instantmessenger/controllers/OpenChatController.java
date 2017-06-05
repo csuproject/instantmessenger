@@ -32,7 +32,7 @@ public class OpenChatController {
 			// no chat exists with that contact
 			AppJid to = new AppJid(username, "teamorange.space");
 
-			String other = username+"teamorange.space";
+			String other = username+"@teamorange.space";
 			String self = contacts.getSelf().getJid().getBareJid();
 			String thread = null;
 			if(other.compareTo(self) < 0){
