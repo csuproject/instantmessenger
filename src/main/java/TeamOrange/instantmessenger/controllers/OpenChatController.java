@@ -13,11 +13,13 @@ public class OpenChatController {
 
 	private BabblerBase babblerBase;
 	private AppChats chats;
+	private AppContacts contacts;
 	private HomeScreen homeScreen;
 	private ChangeScreen changeScreen;
 
 	public OpenChatController(AppChats chats, AppContacts contacts, BabblerBase babblerBase, HomeScreen homeScreen){
 		this.chats = chats;
+		this.contacts = contacts;
 		this.babblerBase = babblerBase;
 		this.homeScreen = homeScreen;
 		this.homeScreen.setOnChatWithContactEvent(username->chatWithContact(username));
@@ -29,7 +31,19 @@ public class OpenChatController {
 		if(chatSession == null){
 			// no chat exists with that contact
 			AppJid to = new AppJid(username, "teamorange.space");
-			chatSession = babblerBase.createChatSession(to);
+
+			String other = username+"teamorange.space";
+			String self = contacts.getSelf().getJid().getBareJid();
+			String thread = null;
+			if(other.compareTo(self) < 0){
+				// other is smaller
+				thread = other + "AND" + self;
+			} else {
+				// other is larger
+				thread = self + "AND" + other;
+			}
+
+			chatSession = babblerBase.createChatSessionWithGivenThread(to, thread);
 			chats.addChat(chatSession);
 			babblerBase.requestCreateChatSession(to, chatSession.getThread());
 		}
