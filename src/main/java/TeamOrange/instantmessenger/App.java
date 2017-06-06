@@ -71,7 +71,7 @@ public class App {
 		chats = new AppChats();
 
 		// xmpp
-		babblerBase = new BabblerBase("teamorange.space", 
+		babblerBase = new BabblerBase("localhost", 
 				appMessage->messageListener(appMessage), 
 				appPresence->presenceListener(appPresence), 
 				() -> rosterListener());
