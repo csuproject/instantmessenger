@@ -26,6 +26,7 @@ import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideXmppException;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class App {
@@ -80,7 +81,9 @@ public class App {
     	try {
 			babblerBase.connect();
 		} catch (ConfideXmppException e) {
-			e.printStackTrace();
+			accountScreen.alert("Failed to connect", "connection error", AlertType.ERROR);
+			// TODO: fix this, try to connect again, find out if the user wants to exit or keep trying
+			System.exit(1);
 		}
 
     	// controllers

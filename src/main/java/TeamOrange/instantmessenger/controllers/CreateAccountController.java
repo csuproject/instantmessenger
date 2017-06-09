@@ -3,6 +3,7 @@ package TeamOrange.instantmessenger.controllers;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.views.AccountScreen;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
+import exceptions.CreateUserInvalidFormatException;
 
 public class CreateAccountController {
 
@@ -16,7 +17,7 @@ public class CreateAccountController {
 		accountScreen.setOnCreateAccountEvent( (userName, password)->createAccount(userName, password) );
 	}
 
-	public void createAccount(String userName, String password){
+	public void createAccount(String userName, String password) {
 		babblerBase.createUser(userName, password);
 	}
 

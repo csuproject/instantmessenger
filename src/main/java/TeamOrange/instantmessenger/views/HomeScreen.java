@@ -18,12 +18,14 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -98,8 +100,13 @@ public class HomeScreen extends Screen {
 	}
 
 	public void addContactBtnPress(){
-		String username = addContactWithUsernameInputTextField.getText();
-		this.addContactEvent.add(username);
+		String username = addContactWithUsernameInputTextField.getText().trim();
+		if(username.isEmpty()){
+			alert("Username field must not be empty.", "empty username field", AlertType.WARNING);
+		} else {
+			this.addContactEvent.add(username);
+			alert("Contact-add request sent to user( \""+username+"\")", "request sent", AlertType.CONFIRMATION);
+		}
 	}
 
 	public void acceptContactRequestButtonPress(String username) {
@@ -148,6 +155,14 @@ public class HomeScreen extends Screen {
 
 	public void setOnDeclineContactRequestEvent(DeclineContactRequestEvent declineContactRequestEvent){
 		this.declineContactRequestEvent = declineContactRequestEvent;
+	}
+
+	public void alert(String message, String title, AlertType type){
+		Alert alert = new Alert(type);
+		alert.setTitle(title);
+		alert.setHeaderText(null);
+		alert.setContentText(message);
+		alert.showAndWait();
 	}
 
 //	public void chatWithBtnPress(){

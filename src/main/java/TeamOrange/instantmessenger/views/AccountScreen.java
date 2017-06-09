@@ -3,6 +3,7 @@ package TeamOrange.instantmessenger.views;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
 import TeamOrange.instantmessenger.lambda.LoginEvent;
+import exceptions.CreateUserInvalidFormatException;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -71,15 +72,28 @@ public class AccountScreen extends Screen {
 
 
 	public void loginBtnPress(){
-		String username = userNameTextField.getText();
-		String password = passwordTextField.getText();
+		String username = userNameTextField.getText().trim();
+		String password = passwordTextField.getText().trim();
 		loginEvent.login(username, password);
 	}
 
 	public void createAccountBtnPress(){
-		String username = userNameTextField.getText();
-		String password = passwordTextField.getText();
-		createAccountEvent.createAccount(username, password);
+		String username = userNameTextField.getText().trim();
+		String password = passwordTextField.getText().trim();
+
+		if(isValidCreateAccountFormat(username, password)){
+			createAccountEvent.createAccount(username, password);
+			alert("User( \""+username+"\" ) successfully created", "user created", AlertType.CONFIRMATION);
+		} else{
+			alert("Please ensure that you have filled out both username and password fields.", "invalid input", AlertType.WARNING);
+		}
+	}
+
+	private boolean isValidCreateAccountFormat(String userName, String password){
+		if(userName.isEmpty() || password.isEmpty()){
+			return false;
+		}
+		return true;
 	}
 
 	public void setOnCreateAccountEvent(CreateAccountEvent createAccountEvent){
@@ -90,9 +104,9 @@ public class AccountScreen extends Screen {
 		this.loginEvent = loginEvent;
 	}
 
-	public void exception(String message){
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Login Failed");
+	public void alert(String message, String title, AlertType type){
+		Alert alert = new Alert(type);
+		alert.setTitle(title);
 		alert.setHeaderText(null);
 		alert.setContentText(message);
 		alert.showAndWait();
