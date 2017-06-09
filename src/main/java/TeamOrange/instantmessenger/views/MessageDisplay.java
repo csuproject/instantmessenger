@@ -19,12 +19,13 @@ public class MessageDisplay extends VBox{
 		this.message.setWrapText(true);
 		//this.message.setPrefWidth(640-20-20-20);
 
+		String borderColor = username.equals("Self") ? "green" : "blue";
 		this.setStyle("-fx-padding: 10;" +
                 "-fx-border-style: solid inside;" +
                 "-fx-border-width: 2;" +
                 "-fx-border-insets: 5;" +
                 "-fx-border-radius: 5;" +
-                "-fx-border-color: blue;");
+                "-fx-border-color: "+borderColor+";");
 		this.setPrefWidth(640-20-20-20);
 		this.getChildren().addAll(this.username, this.message);
 	}

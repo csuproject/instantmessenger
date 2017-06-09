@@ -12,6 +12,7 @@ import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideAuthenticationException;
 import exceptions.ConfideNoResponseException;
 import exceptions.ConfideXmppException;
+import javafx.scene.control.Alert.AlertType;
 
 public class LoginController {
 
@@ -37,12 +38,12 @@ public class LoginController {
 			contacts.addAllContacts(contactsFromServer);
 			changeScreen.SetScreen(ScreenEnum.HOME);
 		} catch(ConfideAuthenticationException e){
-			accountScreen.exception("The username or password that you entered was incorrect. Please try again, or create a new account if you dont already have one.");
+			accountScreen.alert("The username or password that you entered was incorrect. Please try again, or create a new account if you dont already have one.", "login error", AlertType.WARNING);
 			return;
 		} catch(ConfideNoResponseException e){
-			accountScreen.exception("No response was recieved from the server.");
+			accountScreen.alert("No response was recieved from the server.", "login error", AlertType.WARNING);
 		} catch(ConfideXmppException e){
-			accountScreen.exception("Something went wrong.");
+			accountScreen.alert("Something went wrong.", "login error", AlertType.WARNING);
 		}
 	}
 

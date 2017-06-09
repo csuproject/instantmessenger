@@ -1,5 +1,7 @@
 package TeamOrange.instantmessenger.xmpp;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 import exceptions.ConfideAuthenticationException;
@@ -70,7 +72,11 @@ public class AccountManager {
     			.username(userName)
     			.password(password)
     			.build();
-    	RegistrationManager registrationManager = client.getManager(RegistrationManager.class);
+//		if( registration.isRegistered() ){
+//			System.out.println("already registered");
+//		}
+
+		RegistrationManager registrationManager = client.getManager(RegistrationManager.class);
     	registrationManager.register(registration);
 	}
 
