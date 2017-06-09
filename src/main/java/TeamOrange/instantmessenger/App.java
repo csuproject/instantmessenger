@@ -71,11 +71,11 @@ public class App {
 		chats = new AppChats();
 
 		// xmpp
-		babblerBase = new BabblerBase("localhost", 
-				appMessage->messageListener(appMessage), 
-				appPresence->presenceListener(appPresence), 
+		babblerBase = new BabblerBase("teamorange.space",
+				appMessage->messageListener(appMessage),
+				appPresence->presenceListener(appPresence),
 				() -> rosterListener());
-		
+
     	babblerBase.setupConnection();
     	try {
 			babblerBase.connect();
@@ -93,16 +93,16 @@ public class App {
 		openChatController = new OpenChatController(chats, contacts, babblerBase, homeScreen);
 		openChatController.setOnChangeScreen( screen->setScreen(screen) );
 
-		chatController = new ChatController(babblerBase, chatScreen, chats);
+		chatController = new ChatController(babblerBase, chatScreen, chats, contacts);
 		chatController.setOnChangeScreen( screen->setScreen(screen) );
 
 		addContactController = new AddContactController(babblerBase, homeScreen, contacts);
 		addContactController.setOnChangeScreen( screen->setScreen(screen) );
 
-		acceptOrDeclineContactRequestController = 
+		acceptOrDeclineContactRequestController =
 				new AcceptOrDeclineContactRequestController(babblerBase, homeScreen, contacts);
 		acceptOrDeclineContactRequestController.setOnChangeScreen( screen->setScreen(screen) );
-		
+
 		presenceController = new PresenceController(babblerBase, accountScreen, contacts);
 	}
 
@@ -113,13 +113,14 @@ public class App {
     public void messageListener(AppMessage message){
     	if(message.getType() == AppMessageType.NORMAL){
     		String body = message.getBody();
-    		if(body.equals(App.REQUEST_CREATE_CHAT_SESSION)){
+    		/* if(body.equals(App.REQUEST_CREATE_CHAT_SESSION)){
     			AppJid to = message.getFromJid();
     			String thread = message.getThread();
     			AppChatSession appChatSession = babblerBase.createChatSessionWithGivenThread(to, thread);
     			chats.addChat(appChatSession);
     		}
-    		else if(body.equals(App.REQUEST_CONTACT_ADD)){
+    		else */
+    		if(body.equals(App.REQUEST_CONTACT_ADD)){
     			AppJid jid = message.getFromJid();
     			contacts.addContactRequest(jid);
     			if(currentScreen == ScreenEnum.HOME){
@@ -130,6 +131,7 @@ public class App {
     		else if(body.equals(App.ACCEPT_CONTACT_ADD)){
     			AppJid jid = message.getFromJid();
     			babblerBase.addContact( jid.getBareJid() );
+    			System.out.println(jid.getBareJid());
     			contacts.addContact( new AppUser(jid) );
     			if(currentScreen == ScreenEnum.HOME){
     				HomeScreenInput homeScreenInput = new HomeScreenInput(contacts);
@@ -145,7 +147,7 @@ public class App {
     }
 
     public void presenceListener(AppPresence appPresence){
-    	
+
     }
 
     public void rosterListener(){

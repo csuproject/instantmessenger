@@ -67,4 +67,13 @@ public class AppContacts {
 		}
 		return null;
 	}
+
+	public boolean containsBareJid(String bareJid){
+		for(AppUser user : contactList){
+			if(user.getJid().getBareJid().equals(bareJid)){
+				return true;
+			}
+		}
+		return false;
+	}
 }

@@ -37,6 +37,16 @@ public class AppChats {
 		return relevantChat;
 	}
 
+	public void handleMessage(AppMessage message){
+		String thread = message.getThread();
+		AppChatSession relevantChat = getChatOfThread(thread);
+		if(relevantChat != null){
+			AppChatSessionMessage m = new AppChatSessionMessage(message.getBody(), message.isInbound());
+			relevantChat.addMessage(m);
+			System.out.println(message.getBody());
+		}
+	}
+
 	public AppChatSession getChatOfThread(String thread){
 		for(AppChatSession chat : chats){
 			if(chat.getThread().equals(thread)){
