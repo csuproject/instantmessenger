@@ -71,9 +71,15 @@ public class App {
 		chats = new AppChats();
 
 		// xmpp
+<<<<<<< HEAD
 		babblerBase = new BabblerBase("teamorange.space",
 				appMessage->messageListener(appMessage),
 				appPresence->presenceListener(appPresence),
+=======
+		babblerBase = new BabblerBase("localhost", 
+				appMessage->messageListener(appMessage), 
+				appPresence->presenceListener(appPresence), 
+>>>>>>> refs/remotes/origin/master
 				() -> rosterListener());
 
     	babblerBase.setupConnection();
