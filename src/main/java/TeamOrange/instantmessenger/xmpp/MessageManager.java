@@ -23,7 +23,7 @@ public class MessageManager {
 		Message message = new Message();
 		message.setType(Message.Type.NORMAL);
 		message.setBody(App.REQUEST_CREATE_CHAT_SESSION);
-		Jid toJid = jidFromAppJid(to);
+		Jid toJid = JidUtilities.jidFromAppJid(to);
 		message.setTo(toJid);
 		message.setThread(thread);
 		client.sendMessage(message);
@@ -33,7 +33,7 @@ public class MessageManager {
 		Message message = new Message();
 		message.setType(Message.Type.NORMAL);
 		message.setBody(App.REQUEST_CONTACT_ADD);
-		Jid toJid = jidFromAppJid(to);
+		Jid toJid = JidUtilities.jidFromAppJid(to);
 		message.setTo(toJid);
 		client.sendMessage(message);
 	}
@@ -46,37 +46,26 @@ public class MessageManager {
 		} else {
 			message.setBody(App.DECLINE_CONTACT_ADD);
 		}
-		Jid toJid = jidFromAppJid(to);
+		Jid toJid = JidUtilities.jidFromAppJid(to);
 		message.setTo(toJid);
 		client.sendMessage(message);
 	}
 
 	public ChatSession createChatSession(XmppClient client, AppJid to){
 		ChatManager chatManager = client.getManager(ChatManager.class);
-		ChatSession chatSession = chatManager.createChatSession( jidFromAppJid(to) );
+		ChatSession chatSession = chatManager.createChatSession( JidUtilities.jidFromAppJid(to) );
 		return chatSession;
 	}
 
 	public ChatSession createChatSessionWithGivenThread(XmppClient client, AppJid to, String thread){
 		ChatManager chatManager = client.getManager(ChatManager.class);
-		ChatSession chatSession = chatManager.createChatSession( jidFromAppJid(to), thread );
+		ChatSession chatSession = chatManager.createChatSession( JidUtilities.jidFromAppJid(to), thread );
 		return chatSession;
-	}
-
-	// helpers
-	private Jid jidFromAppJid(AppJid appJid){
-		Jid jid = Jid.of(appJid.getLocal(), appJid.getDomain(), appJid.getResource());
-		return jid;
-	}
-
-	private AppJid appJidFromJid(Jid jid){
-		AppJid appJid = new AppJid( jid.getLocal(), jid.getDomain(), jid.getResource());
-		return appJid;
 	}
 
 	//AppJid from, String body, String thread, AppMessageType type
 	public AppMessage inboundMessageEventToAppMessage(MessageEvent messageEvent){
-		AppJid from = appJidFromJid( messageEvent.getMessage().getFrom() );
+		AppJid from = JidUtilities.appJidFromJid( messageEvent.getMessage().getFrom() );
 		String body = messageEvent.getMessage().getBody();
 		String thread = messageEvent.getMessage().getThread();
 		AppMessageType type = null;

@@ -1,12 +1,16 @@
 package TeamOrange.instantmessenger.xmpp;
 
 
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
+
 import TeamOrange.instantmessenger.lambda.LoginEvent;
 import TeamOrange.instantmessenger.lambda.StatusEvent;
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
+import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.UserStatus;
@@ -27,6 +31,8 @@ import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stanza.model.Presence;
 import rocks.xmpp.core.stream.StreamErrorException;
 import rocks.xmpp.core.stream.StreamNegotiationException;
+import rocks.xmpp.extensions.disco.model.items.Item;
+import rocks.xmpp.extensions.muc.Occupant;
 import rocks.xmpp.extensions.register.RegistrationManager;
 import rocks.xmpp.extensions.register.model.Registration;
 import rocks.xmpp.im.chat.ChatSession;
@@ -44,7 +50,7 @@ public class BabblerBase {
 	private MessageListener messageListener;
 	private StatusListener statusListener;
 	private RosterListener rosterListener;
-	
+
 	private StatusEvent statusEvent;
 
 	//public ContactManager contactManager;
@@ -52,6 +58,7 @@ public class BabblerBase {
 	private AccountManager accountManager;
 	private ContactManager contactManager; // TODO: update contact manager to stop using static methods
 	private ConnectionManager connectionManager;
+	private MucManager mucManager;
 
 	public BabblerBase(String hostName, MessageListener messageListener,
 			StatusListener presenceListener, RosterListener rosterListener) {
@@ -63,6 +70,7 @@ public class BabblerBase {
 		this.accountManager = new AccountManager();
 		this.contactManager = new ContactManager();
 		this.connectionManager = new ConnectionManager();
+		this.mucManager = new MucManager();
 	}
 
 	// MessageManager
@@ -187,24 +195,28 @@ public class BabblerBase {
 
 	    Presence presence = presenceEvent.getPresence();
 	    Contact contact = client.getManager(RosterManager.class).getContact(presence.getFrom());
-	    
+
+	    // TODO: added temporarily
+	    if(contact == null || contact == null)
+	    	return;
+
 	    // Available
 	    if (presence.getType() == null) {
 	    	statusEvent.status(new UserStatus(
 	    			presence.getFrom().getLocal()+"@"+presence.getFrom().getDomain(),"AVAILABLE"));
 	    }
-	    
+
 	    // Unavailable
 	    if (presence.getType() == Presence.Type.UNAVAILABLE) {
 	    	statusEvent.status(new UserStatus(
 	    			presence.getFrom().getLocal()+"@"+presence.getFrom().getDomain(),"UNAVAILABLE"));
 	    }
-	    
+
 	    // Subscribe
 	    if (presence.getType() == Presence.Type.SUBSCRIBE) {
 	    	client.getManager(PresenceManager.class).approveSubscription(presence.getFrom());
 	    }
-	    
+
 	    if (contact != null) {
 	    	statusEvent.status(new UserStatus(presence.getId(),presence.getStatus()));
 	    }
@@ -224,14 +236,53 @@ public class BabblerBase {
 	public void newRoster(RosterEvent rosterEvent){
 		rosterListener.roster();
 	}
-	
+
 	public void setOnStatusEvent(StatusEvent statusEvent){
 		this.statusEvent = statusEvent;
 	}
 
-	
+
 	public void requestSubsription(String jid, String message) {
     	client.getManager(PresenceManager.class).requestSubscription(Jid.of(jid), message);
+	}
+
+	// MucManager
+	/*public void getEnteredRooms(AppJid appJid){
+		Jid jid = JidUtilities.jidFromAppJid(appJid);
+		System.out.println(jid);
+		List<Item> enteredRooms = mucManager.getEnteredRooms(client, jid);
+		if(enteredRooms != null){
+		for(Item i : enteredRooms){
+			System.out.println("entered room( id: " + i.getId() + "  name: " + i.getName() + " )\n" );
+		}
+		}
+	}*/
+
+//	public void getMembers(String roomID, String nick){
+//		Jid roomJid = Jid.of(roomID + "@conference.teamorange.space");
+//		mucManager.getMembers(client, roomJid, nick);
+//	}
+
+	public Collection<Occupant> getOccupants(String roomID){
+		Jid roomJid = Jid.of(roomID + "@conference.teamorange.space");
+		Collection<Occupant> occupants = mucManager.getOccupants(client, roomJid);
+		return occupants;
+	}
+
+	public AppMuc createAndOrEnterRoom(String roomID, String nickname){
+		Jid roomJid = Jid.of(roomID + "@conference.teamorange.space");
+		AppMuc muc = mucManager.createAndOrEnterRoom(client, this, roomJid, nickname);
+		return muc;
+	}
+
+	public void sendGroupMessage(String roomID, String message){
+		Jid roomJid = Jid.of(roomID + "@conference.teamorange.space");
+		mucManager.sendMessage(client, roomJid, message);
+	}
+
+	public void leaveRoom(String roomID){
+		Jid roomJid = Jid.of(roomID + "@conference.teamorange.space");
+		mucManager.leaveRoom(client, roomJid);
 	}
 
 }
