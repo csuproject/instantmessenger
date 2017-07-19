@@ -2,9 +2,7 @@ package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.CreateChatWithUserNameEvent;
 import TeamOrange.instantmessenger.lambda.DeclineContactRequestEvent;
-
 import java.util.LinkedList;
-
 import TeamOrange.instantmessenger.lambda.AcceptContactRequestEvent;
 import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.ChatWithContactEvent;

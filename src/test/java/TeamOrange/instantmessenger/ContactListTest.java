@@ -10,7 +10,7 @@ public class ContactListTest {
 
 
 		BabblerBase client = 
-				new BabblerBase("localhost", 
+				new BabblerBase("teamorange.space", 
 						appMessage->messageListener(appMessage), 
 						appPresence->presenceListener(appPresence), 
 						() -> rosterListener());
