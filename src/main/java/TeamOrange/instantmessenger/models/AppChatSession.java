@@ -6,6 +6,11 @@ import java.util.LinkedList;
 import TeamOrange.instantmessenger.xmpp.MessageListener;
 import TeamOrange.instantmessenger.xmpp.XmppChatSession;
 
+/**
+ * A chat between two users.
+ * Holds and manages a list of messages.
+ *
+ */
 public class AppChatSession {
 	private XmppChatSession xmppChatSession;
 	private LinkedList<AppChatSessionMessage> messages;
@@ -27,11 +32,15 @@ public class AppChatSession {
 		messages.add(message);
 	}
 
+	/**
+	 * Sends a message with the given body,
+	 * Adds the message to the message list
+	 * @param body the body of the message to send
+	 */
 	public void sendChatMessage(String body){
 		AppChatSessionMessage message = AppChatSessionMessage.createOutbound(body);
 		xmppChatSession.sendMessage(body);
 		messages.add(message);
-		System.out.println(body);
 	}
 
 	public void printMessages(){

@@ -9,6 +9,10 @@ import TeamOrange.instantmessenger.models.AppChats;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppMessage;
 
+/**
+ * controls the flow when the user is engaging in a chat session
+ *
+ */
 public class ChatController {
 
 	private ChatScreen chatScreen;
@@ -25,14 +29,27 @@ public class ChatController {
 		this.contacts = contacts;
 	}
 
+	/**
+	 * This is called by ChatScren when the onSendNewMessageEvent occurs
+	 * Sends the message to the active chat, and reloads the chat screen
+	 * @param message
+	 */
 	public void sendChatSessionMessage(String message){
 		chats.getActiveChat().sendChatMessage(message);
 		ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
 		chatScreen.load(input);
 	}
 
+	/**
+	 * Called when there is an incoming chat session message
+	 * Retrieves the relevant chat if it exists, or creates one if the relevant user is a contact
+	 * passes the message to the relevant chat to handle
+	 * if the relevant chat session is the current chat session, and teh current screen is the chat scren,
+	 * 		then the chatscreen re loads
+	 * @param message
+	 * @param currentScreenIsChatScreen
+	 */
 	public void incomingChatMessage(AppMessage message, boolean currentScreenIsChatScreen){
-		//AppChatSession chatSession = chats.incomingChatMessage(message);
 		AppChatSession chatSession = chats.getChatOfThread(message.getThread());
 		if(chatSession == null){
 			if(contacts.containsBareJid(message.getFromJid().getBareJid())){

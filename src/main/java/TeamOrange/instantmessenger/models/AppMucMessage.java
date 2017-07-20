@@ -1,5 +1,9 @@
 package TeamOrange.instantmessenger.models;
 
+/**
+ * Represents a muc message
+ *
+ */
 public class AppMucMessage {
 	private String body;
 	private String fromNick;

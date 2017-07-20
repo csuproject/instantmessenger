@@ -21,8 +21,8 @@ public class PresenceController {
 	private BabblerBase babblerBase;
 	private AppContacts contacts;
 	private ChangeScreen changeScreen;
-	
-	public PresenceController(BabblerBase babblerBase, AccountScreen accountScreen, 
+
+	public PresenceController(BabblerBase babblerBase, AccountScreen accountScreen,
 			AppContacts contacts){
 		this.babblerBase = babblerBase;
 		this.accountScreen = accountScreen;
@@ -31,6 +31,6 @@ public class PresenceController {
 	}
 
 	public void status(UserStatus userStatus) {
-		System.out.println(userStatus.getUser() + " " + userStatus.getStatus());		
+		System.out.println(userStatus.getUser() + " " + userStatus.getStatus());
 	}
 }

@@ -31,7 +31,6 @@ import javafx.stage.Stage;
 
 public class App {
 	// constants for messages
-	public static final String REQUEST_CREATE_CHAT_SESSION = "0";
 	public static final String REQUEST_CONTACT_ADD = "1";
 	public static final String ACCEPT_CONTACT_ADD = "2";
 	public static final String DECLINE_CONTACT_ADD = "3";
@@ -53,7 +52,7 @@ public class App {
 	private ChatController chatController;
 	private AddContactController addContactController;
 	private AcceptOrDeclineContactRequestController acceptOrDeclineContactRequestController;
-	private PresenceController presenceController;
+	private PresenceController presenceController; // TODO: never used ?
 
 	// models
 	AppContacts contacts;
@@ -109,20 +108,18 @@ public class App {
 		presenceController = new PresenceController(babblerBase, accountScreen, contacts);
 	}
 
-    public void init(){
 
-    }
-
+	// Listeners
+	/**
+	 * This function is called by BabblerBase when there is a new message event
+	 * If the message type is NORMAL, then it is handled accordingly
+	 * Otherwise if the message type is CHAT, then it is passed to the chatController,
+	 * 		along with a variable representing if the current screen is the chat screen.
+	 * @param message the new message
+	 */
     public void messageListener(AppMessage message){
     	if(message.getType() == AppMessageType.NORMAL){
     		String body = message.getBody();
-    		/* if(body.equals(App.REQUEST_CREATE_CHAT_SESSION)){
-    			AppJid to = message.getFromJid();
-    			String thread = message.getThread();
-    			AppChatSession appChatSession = babblerBase.createChatSessionWithGivenThread(to, thread);
-    			chats.addChat(appChatSession);
-    		}
-    		else */
     		if(body.equals(App.REQUEST_CONTACT_ADD)){
     			AppJid jid = message.getFromJid();
     			contacts.addContactRequest(jid);
@@ -149,10 +146,17 @@ public class App {
     	}
     }
 
+    /**
+     * This is called by BabblerBase when there is a new presence event
+     * @param appPresence the new presence
+     */
     public void presenceListener(AppPresence appPresence){
 
     }
 
+    /**
+     * This is called by BabblerBase when there is a new roster event
+     */
     public void rosterListener(){
 
     }
@@ -162,6 +166,11 @@ public class App {
     	return accountScreen;
     }
 
+    /**
+     * changes the current screen, and updates guiBase accordingly.
+     * Certain screens are required to load some input when they are changed to.
+     * @param screen
+     */
     public void setScreen(ScreenEnum screen){
     	this.currentScreen = screen;
     	switch(currentScreen){

@@ -6,6 +6,11 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+/**
+ * This is the starting point for the application
+ * It creates the javafx stage, and changes the screen
+ *
+ */
 public class GuiBase extends Application {
 	private Stage stage;
 	private App app;
@@ -23,7 +28,6 @@ public class GuiBase extends Application {
 		stage.setTitle("Confide");
 
 		app = new App(this);
-		app.init();
 
 
 		stage.show();

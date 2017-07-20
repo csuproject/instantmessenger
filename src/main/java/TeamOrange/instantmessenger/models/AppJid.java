@@ -8,6 +8,7 @@ public class AppJid {
 	public AppJid(String local, String domain){
 		this.local = local;
 		this.domain = domain;
+		this.resource = null;
 	}
 
 	public AppJid(String local, String domain, String resource){

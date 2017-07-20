@@ -25,7 +25,7 @@ public class ContactManager {
 	 * @param name
 	 * @param message
 	 */
-	public static void addContact(XmppClient client, String contact, String name, String message) {
+	public void addContact(XmppClient client, String contact, String name, String message) {
 
 		client.getManager(RosterManager.class).addContact(new Contact(Jid.of(contact),
 				name), true, message);
@@ -37,7 +37,7 @@ public class ContactManager {
 	 * @param contact
 	 * @param name
 	 */
-	public static void addContact(XmppClient client, String contact, String name) {
+	public void addContact(XmppClient client, String contact, String name) {
 
 		client.getManager(RosterManager.class).addContact(new Contact(Jid.of(contact),
 				name), true, null);
@@ -48,7 +48,7 @@ public class ContactManager {
 	 * @param client
 	 * @param contact
 	 */
-	public static void addContact(XmppClient client, String contact) {
+	public void addContact(XmppClient client, String contact) {
 
 		client.getManager(RosterManager.class).addContact(new Contact(Jid.of(contact)), true, null);
 	}
@@ -58,7 +58,7 @@ public class ContactManager {
 	 * @param client
 	 * @param contact
 	 */
-	public static void removeContact(XmppClient client, String contact) {
+	public void removeContact(XmppClient client, String contact) {
 
 		client.getManager(RosterManager.class).removeContact(Jid.of(contact));
 	}
@@ -69,7 +69,7 @@ public class ContactManager {
 	 * @return
 	 */
 
-	public static LinkedList<String> getContacts(XmppClient client) {
+	public LinkedList<String> getContacts(XmppClient client) {
 
 		LinkedList<String> contacts = new LinkedList<String>();
 		Collection<Contact> list = new <Contact>LinkedList();
@@ -81,7 +81,12 @@ public class ContactManager {
 		return contacts;
 	}
 
-	public static LinkedList<AppUser> getContactsAsAppUsers(XmppClient client) {
+	/**
+	 * Gets a LinkedList of AppUser which represents the users contacts
+	 * @param client
+	 * @return contacts a LinkedList of AppUser representing the users contacts
+	 */
+	public LinkedList<AppUser> getContactsAsAppUsers(XmppClient client) {
 
 		LinkedList<AppUser> contacts = new LinkedList<AppUser>();
 		Collection<Contact> list = new <Contact>LinkedList();
@@ -101,7 +106,7 @@ public class ContactManager {
 	 * @return
 	 */
 
-	public static LinkedList<String> getContactGroups(XmppClient client) {
+	public LinkedList<String> getContactGroups(XmppClient client) {
 
 		LinkedList<String> groups = new LinkedList<String>();
 		Collection<ContactGroup> list = new <ContactGroup>LinkedList();
@@ -118,7 +123,7 @@ public class ContactManager {
 	 * @param client
 	 * @param event
 	 */
-	public static void addListenerPresence(XmppClient client, Consumer<PresenceEvent> presenceListener) {
+	public void addListenerPresence(XmppClient client, Consumer<PresenceEvent> presenceListener) {
 
 		client.addInboundPresenceListener(presenceListener);
 	}
@@ -128,7 +133,7 @@ public class ContactManager {
 	 * @param client
 	 * @param event
 	 */
-	public static void removeListenerPresence(XmppClient client, Consumer<PresenceEvent> presenceListener) {
+	public void removeListenerPresence(XmppClient client, Consumer<PresenceEvent> presenceListener) {
 
 		client.removeInboundPresenceListener(presenceListener);
 	}
@@ -138,7 +143,7 @@ public class ContactManager {
 	 * @param presenceEvent
 	 * @return
 	 */
-	public static Presence getPresenceOfEvent(PresenceEvent presenceEvent) {
+	public Presence getPresenceOfEvent(PresenceEvent presenceEvent) {
 
 	    return presenceEvent.getPresence();
 	}
@@ -148,7 +153,7 @@ public class ContactManager {
 	 * @param presenceEvent
 	 * @return
 	 */
-	public static Jid getContactOfEvent(PresenceEvent presenceEvent) {
+	public Jid getContactOfEvent(PresenceEvent presenceEvent) {
 
 		Presence presence = presenceEvent.getPresence();
 
@@ -159,14 +164,14 @@ public class ContactManager {
 	/**
 	 * Approve Contact to listen to Presence.
 	 */
-	public static void approveContact(XmppClient client, Jid contact) {
+	public void approveContact(XmppClient client, Jid contact) {
 		client.getManager(PresenceManager.class).approveSubscription(contact);
 	}
 
 	/**
 	 * Deny Contact to listen to Presence.
 	 */
-	public static void denyContact(XmppClient client, Jid contact) {
+	public void denyContact(XmppClient client, Jid contact) {
 		client.getManager(PresenceManager.class).denySubscription(contact);
 	}
 

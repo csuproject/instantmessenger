@@ -9,6 +9,10 @@ import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 
+/**
+ * This controls the flow when the user opens a chat session
+ *
+ */
 public class OpenChatController {
 
 	private BabblerBase babblerBase;
@@ -26,6 +30,15 @@ public class OpenChatController {
 		//this.homeScreen.setOnChatWithUserNameEvent( userName->createChatWithUserName(userName) );
 	}
 
+	/**
+	 * Opens a chat with the contact who has the given username,
+	 * making that chat session the active one, and changing the screen to the chat screen.
+	 *
+	 * If a chat session already exists then it uses that one, otherwise it creates it and adds it to the chats list.
+	 * The thread is always created as {the lexicographically smaller Jid}AND{the lexicographically larger Jid}
+	 *
+	 * @param username the username of the contact
+	 */
 	public void chatWithContact(String username){
 		AppChatSession chatSession = chats.getChatWithContact(username);
 		if(chatSession == null){
@@ -45,22 +58,10 @@ public class OpenChatController {
 
 			chatSession = babblerBase.createChatSessionWithGivenThread(to, thread);
 			chats.addChat(chatSession);
-			babblerBase.requestCreateChatSession(to, chatSession.getThread());
 		}
 		chats.setActiveChat(chatSession);
 		changeScreen.SetScreen(ScreenEnum.CHAT);
 	}
-
-//	public void createChatWithUserName(String userName){
-//		//create a chat (ChatSession) with this user
-//		//request for them to create their version of it
-//		AppJid to = new AppJid(userName, "teamorange.space");
-//		AppChatSession appChatSession = babblerBase.createChatSession(to);
-//		chats.addChat(appChatSession);
-//		babblerBase.requestCreateChatSession(to, appChatSession.getThread());
-//		chats.setActiveChat(appChatSession);
-//		changeScreen.SetScreen(ScreenEnum.CHAT);
-//	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;

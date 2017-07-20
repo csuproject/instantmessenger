@@ -19,16 +19,6 @@ public class MessageManager {
 
 	}
 
-	public void requestCreateChatSession(XmppClient client, AppJid to, String thread){
-		Message message = new Message();
-		message.setType(Message.Type.NORMAL);
-		message.setBody(App.REQUEST_CREATE_CHAT_SESSION);
-		Jid toJid = JidUtilities.jidFromAppJid(to);
-		message.setTo(toJid);
-		message.setThread(thread);
-		client.sendMessage(message);
-	}
-
 	public void requestContactAdd(XmppClient client, AppJid to){
 		Message message = new Message();
 		message.setType(Message.Type.NORMAL);

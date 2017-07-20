@@ -61,6 +61,12 @@ public class MucManager {
 //		}
 //	}
 
+	/**
+	 * Gets a Collection of Occupants of the chat room, that is people currently in the chat room.
+	 * @param client the XmppClient object used to communicate with the server
+	 * @param roomAddress a Jid representing the address of the room
+	 * @return a Collection of Occupant representing each person in the room
+	 */
 	public Collection<Occupant> getOccupants(XmppClient client, Jid roomAddress){
 		MultiUserChatManager manager = client.getManager(MultiUserChatManager.class);
 		ChatRoom room = manager.createChatRoom(roomAddress);
@@ -68,6 +74,20 @@ public class MucManager {
 		return occupants;
 	}
 
+	/**
+	 * Creates a room with address roomJid, or retreives it if it already exists.
+	 * Configures the room.
+	 * Enters the room with the given nickname
+	 * Creates a AppMuc object to represent the room
+	 * Retrieves a list of occupants and puts them in the AppMuc object
+	 * Sets up message adn occupant listeners, and connects them to the AppMuc object
+	 * returns the AppMuc object
+	 * @param client the XmppClient object used to communicate with the server
+	 * @param babblerBase
+	 * @param roomJid a Jid representing the address of the room
+	 * @param nick the nickname to enter with
+	 * @return an AppMuc object representing the room
+	 */
 	public AppMuc createAndOrEnterRoom(XmppClient client, BabblerBase babblerBase, Jid roomJid, String nick){
 		// assuming using roomID@conference.teamorange.space
 		MultiUserChatManager manager = client.getManager(MultiUserChatManager.class);
@@ -116,25 +136,27 @@ public class MucManager {
 		return muc;
 	}
 
+	/**
+	 * Sends a message to the muc with the given jid
+	 * @param client
+	 * @param roomJid a Jid representing the address of the room
+	 * @param message the message to send
+	 */
 	public void sendMessage(XmppClient client, Jid roomJid, String message){
 		MultiUserChatManager manager = client.getManager(MultiUserChatManager.class);
 		ChatRoom chatRoom = manager.createChatRoom(roomJid);
 		chatRoom.sendMessage(message);
 	}
 
+	/**
+	 * Leaves the muc room
+	 * @param client
+	 * @param roomJid a Jid representing the address of the room
+	 */
 	public void leaveRoom(XmppClient client, Jid roomJid){
 		MultiUserChatManager manager = client.getManager(MultiUserChatManager.class);
 		ChatRoom chatRoom = manager.createChatRoom(roomJid);
 		chatRoom.exit();
 	}
-
-	// discover ocupants
-	// enter and leave
-	// invite
-	// accept and deny invitation
-	// send messages
-	// recieve messages and other events
-
-
 
 }
