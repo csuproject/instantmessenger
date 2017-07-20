@@ -8,22 +8,31 @@ import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideXmppException;
 
-public class MucTestA {
+public class MucTestInteractive {
 
+	/**
+	 * Made to test Multi user chats,
+	 *
+	 * @param args
+	 */
 	public static void main(String[] args){
 		BabblerBase client = init();
 		String roomID = "MucTestRoom";
 		Scanner in = new Scanner(System.in);
 		String name = "";
+		String password = "";
 		AppMuc muc = null;
 		boolean running = true;
 
 		try {
 			System.out.print("name: ");
 			name = in.nextLine();
-			client.login(name, name);
+			System.out.print("password: ");
+			password = in.nextLine();
+			client.login(name, password);
 			muc = client.createAndOrEnterRoom(roomID, name+"Nick");
 			while(running){
+				System.out.print("Enter a message or exit: ");
 				String input = in.nextLine();
 				if(input.toUpperCase().equals("EXIT")){
 					running = false;
