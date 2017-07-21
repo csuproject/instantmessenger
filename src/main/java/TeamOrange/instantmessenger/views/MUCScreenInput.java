@@ -1,14 +1,15 @@
 package TeamOrange.instantmessenger.views;
 
 import java.util.LinkedList;
+
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppUser;
 
-public class HomeScreenInput {
+public class MUCScreenInput {
 	private AppContacts contacts;
 
-	public HomeScreenInput(AppContacts contacts){
+	public MUCScreenInput(AppContacts contacts){
 		this.contacts = contacts;
 	}
 
