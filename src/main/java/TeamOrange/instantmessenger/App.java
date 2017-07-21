@@ -1,7 +1,5 @@
 package TeamOrange.instantmessenger;
 
-import java.util.LinkedList;
-
 import TeamOrange.instantmessenger.controllers.AcceptOrDeclineContactRequestController;
 import TeamOrange.instantmessenger.controllers.AddContactController;
 import TeamOrange.instantmessenger.controllers.ChatController;
@@ -11,7 +9,6 @@ import TeamOrange.instantmessenger.controllers.PresenceController;
 import TeamOrange.instantmessenger.controllers.LoginController;
 import TeamOrange.instantmessenger.controllers.MUCController;
 import TeamOrange.instantmessenger.controllers.NavigationController;
-import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppChats;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
@@ -22,7 +19,6 @@ import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.views.AccountScreen;
 import TeamOrange.instantmessenger.views.ChatScreen;
 import TeamOrange.instantmessenger.views.ChatScreenInput;
-import TeamOrange.instantmessenger.views.ContactDisplay;
 import TeamOrange.instantmessenger.views.CreateMUCScreen;
 import TeamOrange.instantmessenger.views.GuiBase;
 import TeamOrange.instantmessenger.views.HomeScreen;
@@ -33,11 +29,7 @@ import TeamOrange.instantmessenger.views.NavigationScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideXmppException;
-import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 public class App {
 	// constants for messages
@@ -65,13 +57,9 @@ public class App {
 	private ChatController chatController;
 	private AddContactController addContactController;
 	private AcceptOrDeclineContactRequestController acceptOrDeclineContactRequestController;
-<<<<<<< HEAD
 	private PresenceController presenceController; // TODO: never used ?
-=======
-	private PresenceController presenceController;
 	private NavigationController naviationController;
 	private MUCController mucController;
->>>>>>> refs/remotes/origin/C1-feature-mucscreen
 
 	// models
 	AppContacts contacts;
@@ -128,10 +116,10 @@ public class App {
 		acceptOrDeclineContactRequestController.setOnChangeScreen( screen->setScreen(screen) );
 
 		presenceController = new PresenceController(babblerBase, accountScreen, contacts);
-		
+
 		naviationController = new NavigationController(navigationScreen);
 		naviationController.setOnChangeScreen(screen->setScreen(screen));
-		
+
 		mucController = new MUCController(mucScreen,createMUCScreen);
 		mucController.setOnChangeScreen(screen->setScreen(screen));
 	}
@@ -195,16 +183,14 @@ public class App {
     }
 
     /**
-<<<<<<< HEAD
      * changes the current screen, and updates guiBase accordingly.
      * Certain screens are required to load some input when they are changed to.
-=======
+	 *
      * Set Screen to current View.
->>>>>>> refs/remotes/origin/C1-feature-mucscreen
      * @param screen
      */
     public void setScreen(ScreenEnum screen){
-    	
+
     	this.currentScreen = screen;
     	switch(currentScreen){
 			case ACCOUNT:

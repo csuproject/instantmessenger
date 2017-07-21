@@ -2,7 +2,6 @@ package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.App;
 import javafx.application.Application;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -32,16 +31,10 @@ public class GuiBase extends Application {
 		stage.setTitle("Confide");
 		button = new Button();
 		app = new App(this);
-<<<<<<< HEAD
-
-=======
-		app.init();
-		
->>>>>>> refs/remotes/origin/C1-feature-mucscreen
 
 		stage.show();
 	}
-	
+
 	public void setScreen(Screen screen){
 		scene.setRoot(screen);
 		stage.setScene(scene);
