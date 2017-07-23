@@ -2,19 +2,25 @@ package TeamOrange.instantmessenger.xmpp;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppUser;
 import rocks.xmpp.addr.Jid;
+import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.core.session.XmppSession;
 import rocks.xmpp.core.stanza.PresenceEvent;
 import rocks.xmpp.core.stanza.model.Presence;
+import rocks.xmpp.extensions.privacy.PrivacyListManager;
+import rocks.xmpp.extensions.privacy.model.PrivacyList;
+import rocks.xmpp.extensions.privacy.model.PrivacyRule;
 import rocks.xmpp.im.roster.RosterManager;
 import rocks.xmpp.im.roster.model.Contact;
 import rocks.xmpp.im.roster.model.ContactGroup;
 import rocks.xmpp.im.subscription.PresenceManager;
+import rocks.xmpp.util.concurrent.AsyncResult;
 
 public class ContactManager {
 
@@ -61,6 +67,55 @@ public class ContactManager {
 	public void removeContact(XmppClient client, String contact) {
 
 		client.getManager(RosterManager.class).removeContact(Jid.of(contact));
+	}
+
+	/**
+	 * Blocks all communication with the user
+	 * @param client
+	 * @param user the jid of the user to block
+	 */
+	public void blockUser(XmppClient client, String user) {
+		Jid contactJid = Jid.of(user);
+		PrivacyRule newRule = PrivacyRule.blockAllCommunicationWith(contactJid, 1);
+		PrivacyListManager plManager = client.getManager(PrivacyListManager.class);
+		try {
+			AsyncResult<PrivacyList> arPList = plManager.getPrivacyList("blocked");
+
+			LinkedList<PrivacyRule> ruleList =  new LinkedList<PrivacyRule>();
+			ruleList.add(newRule);
+			plManager.createOrUpdateList( new PrivacyList("blocked", ruleList) );
+
+			PrivacyList currentBlockedList;
+			synchronized(arPList){
+				currentBlockedList = arPList.getResult();
+			}
+
+			Collection<PrivacyRule> rules = currentBlockedList.getPrivacyRules();
+			Collection<PrivacyRule> newRules = new LinkedList(rules);
+			newRules.add(newRule);
+			PrivacyList newBlockedList = new PrivacyList("blocked", newRules);
+			plManager.createOrUpdateList(newBlockedList);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void printBlockList(XmppClient client){
+		try {
+			PrivacyListManager plManager = client.getManager(PrivacyListManager.class);
+			PrivacyList currentBlockedList = plManager.getPrivacyList("blocked").getResult();
+			Collection<PrivacyRule> rules = currentBlockedList.getPrivacyRules();
+			System.out.println("Block List");
+			for(PrivacyRule pr : rules){
+				pr.getType();
+				System.out.println( pr.getType() + " : " + pr.getAction() );
+			}
+			System.out.println("Block List End");
+		} catch (XmppException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**

@@ -213,6 +213,17 @@ public class BabblerBase {
 	}
 
 	/**
+	 * Blocks the user
+	 */
+	public void blockUser(String user){
+		contactManager.blockUser(client, user);
+	}
+
+	public void printBlockList(){
+		contactManager.printBlockList(client);
+	}
+
+	/**
 	 * List of Contacts
 	 * @return
 	 */
