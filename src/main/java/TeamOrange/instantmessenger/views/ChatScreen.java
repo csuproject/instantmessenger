@@ -14,6 +14,7 @@ import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -29,23 +30,19 @@ public class ChatScreen extends Screen {
 	private TextField newMessageTextField;
 	private Button sendNewMessageButton;
 	private SendNewMessageEvent sendNewMessageEvent;
-
 	private ScrollPane scrollPane;
 	private VBox scrollPaneContent;
+	private MUCScreenInput mucScreenInput;
+	VBox vbox;
+	HBox newMessage;
+	Label chatNameLabel;
 
 	public ChatScreen(){
-		try {
-			create();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void create() throws Exception {
+		
 		scrollPaneContent = new VBox();
 		scrollPaneContent.setPadding(new Insets(20,20,20,20));
 		// vboc
-		VBox vbox = new VBox();
+		vbox = new VBox();
 
 		//scrollpane
 		scrollPane = new ScrollPane();
@@ -66,19 +63,55 @@ public class ChatScreen extends Screen {
 			      }
 			});
 		});
-		
 		sendNewMessageButton = new Button("Send");
-		sendNewMessageButton.setOnAction( e->sendNewMessageBtnPress() );		
 		scrollPane.setContent(scrollPaneContent);
 		sendNewMessageButton.setPrefWidth(50);
 		newMessageTextField.setPrefWidth(350-sendNewMessageButton.getWidth());
-
-		HBox newMessage = new HBox();
+		newMessage = new HBox();
 		newMessage.getChildren().addAll(newMessageTextField, sendNewMessageButton);
+		try {
+			create();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public ChatScreen(MUCScreenInput mucScreenInput){
+		try {
+			create(mucScreenInput);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-
+	public void create() throws Exception {
+		sendNewMessageButton.setOnAction( e->sendNewMessageBtnPress() );		
 		// add elements
 		vbox.getChildren().addAll(scrollPane, newMessage);
+		this.getChildren().add(vbox);
+	}
+	
+	public void create(MUCScreenInput mucScreenInput) throws Exception {
+		
+		// MCU create control Top HBox
+		Button destroyButton = new Button("Delete");
+		destroyButton.setMinWidth(100);
+		//destroyButton.setOnAction(e->clear());
+		Button exitButton = new Button("Exit");
+		exitButton.setMinWidth(100);
+		//exitButton.setOnAction(e->createMUC());
+		chatNameLabel = new Label();
+		chatNameLabel.setText(mucScreenInput.getGroupName());
+		chatNameLabel.setMinWidth(100);
+		chatNameLabel.setAlignment(Pos.CENTER);
+		HBox topHbox = new HBox(
+				destroyButton,chatNameLabel,exitButton);
+		topHbox.setAlignment(Pos.CENTER);
+				
+		sendNewMessageButton.setOnAction( e->sendNewMessageBtnPress() );		
+		newMessage.getChildren().addAll(newMessageTextField, sendNewMessageButton);
+		// add elements
+		vbox.getChildren().addAll(topHbox, scrollPane, newMessage);
 		this.getChildren().add(vbox);
 	}
 
@@ -104,6 +137,14 @@ public class ChatScreen extends Screen {
 		scrollChat();
 
 		// TODO: make a method to simply append a single message
+	}
+	
+	public void load(MUCScreenInput input){
+		
+		scrollPaneContent.getChildren().clear();
+		scrollChat();
+		chatNameLabel.setText(input.getGroupName());
+
 	}
 	
 	/**

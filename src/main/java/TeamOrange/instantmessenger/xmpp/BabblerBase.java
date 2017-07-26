@@ -47,6 +47,7 @@ public class BabblerBase {
 
 	private String hostName;
 	private XmppClient client;
+	private AppJid appJid;
 
 	// Listeners
 	private MessageListener messageListener;
@@ -167,8 +168,10 @@ public class BabblerBase {
 			throws ConfideXmppException {
 		Jid jid = accountManager.login(client, userName, password);
 		AppJid appJid = new AppJid(jid.getLocal(), jid.getDomain(), jid.getResource());
+		this.appJid = appJid;
 		return appJid;
 	}
+	
 
 //	/**
 //	 * logs out by logging in anonymously

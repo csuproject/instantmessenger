@@ -51,6 +51,10 @@ public class AppContacts {
 	public AppUser getSelf(){
 		return self;
 	}
+	
+	public String getSelfName() {
+		return self.getJid().getLocal();
+	}
 
 	public LinkedList<AppUser> getContactList(){
 		return contactList;

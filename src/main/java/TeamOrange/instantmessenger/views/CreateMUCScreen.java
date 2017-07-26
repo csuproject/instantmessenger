@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.CreateMUCEvent;
+import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.MUCChat;
 import javafx.application.Platform;
@@ -26,6 +27,7 @@ public class CreateMUCScreen extends Screen	{
 	private List<AppUser> mucList;
 	MUCChat mucChat;
 	CreateMUCEvent createMUCEvent;
+
 
 
 	public CreateMUCScreen(){
@@ -66,6 +68,8 @@ public class CreateMUCScreen extends Screen	{
 		contactsContent.setPrefHeight(400);
 		contactsContent.setPrefWidth(400);
 		contacts.setContent(contactsContent);
+		contacts.setFitToWidth(true);
+		contacts.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		contactDisplayList = new LinkedList<MUCContactDisplay>();
 		mucList = new ArrayList<AppUser>();
 		
@@ -142,4 +146,5 @@ public class CreateMUCScreen extends Screen	{
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;
 	}
+
 }

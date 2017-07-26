@@ -1,27 +1,27 @@
 package TeamOrange.instantmessenger.views;
 
-import java.util.LinkedList;
+import TeamOrange.instantmessenger.models.AppMuc;
 
-import TeamOrange.instantmessenger.models.AppContacts;
-import TeamOrange.instantmessenger.models.AppJid;
-import TeamOrange.instantmessenger.models.AppUser;
 
 public class MUCScreenInput {
-	private AppContacts contacts;
+	private AppMuc muc;
 
-	public MUCScreenInput(AppContacts contacts){
-		this.contacts = contacts;
+	public MUCScreenInput(AppMuc muc){
+		this.muc = muc;
+	}
+	
+	public MUCScreenInput() {
+	}
+	
+	public String getGroupName() {
+		
+		if (muc == null){
+			return "Group";
+		} else {
+			return muc.getRoomID();
+		}
+		
 	}
 
-	public String getUserName(){
-		return contacts.getSelf().getJid().getLocal();
-	}
 
-	public LinkedList<AppUser> getContactList(){
-		return contacts.getContactList();
-	}
-
-	public LinkedList<AppJid> getContactRequestList(){
-		return contacts.getContactRequestList();
-	}
 }

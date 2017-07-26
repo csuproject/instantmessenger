@@ -1,5 +1,8 @@
 package TeamOrange.instantmessenger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import TeamOrange.instantmessenger.controllers.AcceptOrDeclineContactRequestController;
 import TeamOrange.instantmessenger.controllers.AddContactController;
 import TeamOrange.instantmessenger.controllers.ChatController;
@@ -14,6 +17,7 @@ import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMessageType;
+import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.views.AccountScreen;
@@ -45,6 +49,7 @@ public class App {
 	private AccountScreen accountScreen;
 	private HomeScreen homeScreen;
 	private ChatScreen chatScreen;
+	private ChatScreen mucChatScreen;
 	private ScreenEnum currentScreen;
 	private NavigationScreen navigationScreen;
 	private MUCScreen mucScreen;
@@ -60,10 +65,12 @@ public class App {
 	private PresenceController presenceController; // TODO: never used ?
 	private NavigationController naviationController;
 	private MUCController mucController;
+	private MUCScreenInput mucinput;
 
 	// models
 	AppContacts contacts;
 	AppChats chats;
+	List<AppMuc> mucList;
 
 	public App(GuiBase guiBase){
 		// views
@@ -74,6 +81,9 @@ public class App {
 		navigationScreen = new NavigationScreen();
 		mucScreen = new MUCScreen();
 		createMUCScreen = new CreateMUCScreen();
+		mucChatScreen = new ChatScreen(new MUCScreenInput());
+		mucList = new ArrayList<AppMuc>();
+		mucinput = new MUCScreenInput();
 		setScreen(ScreenEnum.ACCOUNT);
 
 		// models
@@ -120,10 +130,14 @@ public class App {
 		naviationController = new NavigationController(navigationScreen);
 		naviationController.setOnChangeScreen(screen->setScreen(screen));
 
-		mucController = new MUCController(mucScreen,createMUCScreen);
+		mucController = new MUCController(babblerBase, contacts, mucScreen, 
+				createMUCScreen, mucChatScreen);
 		mucController.setOnChangeScreen(screen->setScreen(screen));
+		mucController.setOnMUCListEvent(e->updateMUCList(e));
+		mucController.setOnOpenMUC(getMUCEvent->setMUC(getMUCEvent));
+			
+	
 	}
-
 
 	// Listeners
 	/**
@@ -205,8 +219,7 @@ public class App {
 			} break;
 			case MUC:
 			{
-				MUCScreenInput input = new MUCScreenInput(contacts);
-				mucScreen.load(input);
+				mucScreen.load(mucList);
 				guiBase.setScreen(mucScreen,navigationScreen);
 			} break;
 			case CREATEMUC:
@@ -221,7 +234,21 @@ public class App {
 				chatScreen.load(input);
 				guiBase.setScreen(chatScreen,navigationScreen);
 			} break;
+				case MUCCHAT:
+			{
+				chatScreen.load(mucinput);
+				guiBase.setScreen(chatScreen,navigationScreen);	
+			} break;
     	}
+    }
+    
+    public void updateMUCList(List<AppMuc> mucList) {
+    	this.mucList = mucList;		
+    }
+    
+    public void setMUC(AppMuc muc) {
+    	this.mucinput = new MUCScreenInput(muc);
+    	setScreen(ScreenEnum.MUCCHAT);
     }
 
 
