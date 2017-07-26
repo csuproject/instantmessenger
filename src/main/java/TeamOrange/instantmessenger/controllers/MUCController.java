@@ -31,12 +31,11 @@ public class MUCController {
 
 	
 	public MUCController(BabblerBase babblerBase, AppContacts contacts, MUCScreen mucScreen, 
-			CreateMUCScreen createMUCScreen, ChatScreen mucChatScreen) {
+			CreateMUCScreen createMUCScreen) {
 		
 		this.babblerBase = babblerBase;
 		this.mucScreen = mucScreen;
 		this.contacts = contacts;
-		this.mucChatScreen = mucChatScreen;
 		mucScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		mucScreen.setOnOpenMUC(getMUCEvent->enterMUC(getMUCEvent));
 		createMUCScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));

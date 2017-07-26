@@ -49,7 +49,6 @@ public class App {
 	private AccountScreen accountScreen;
 	private HomeScreen homeScreen;
 	private ChatScreen chatScreen;
-	private ChatScreen mucChatScreen;
 	private ScreenEnum currentScreen;
 	private NavigationScreen navigationScreen;
 	private MUCScreen mucScreen;
@@ -81,7 +80,6 @@ public class App {
 		navigationScreen = new NavigationScreen();
 		mucScreen = new MUCScreen();
 		createMUCScreen = new CreateMUCScreen();
-		mucChatScreen = new ChatScreen(new MUCScreenInput());
 		mucList = new ArrayList<AppMuc>();
 		mucinput = new MUCScreenInput();
 		setScreen(ScreenEnum.ACCOUNT);
@@ -131,7 +129,7 @@ public class App {
 		naviationController.setOnChangeScreen(screen->setScreen(screen));
 
 		mucController = new MUCController(babblerBase, contacts, mucScreen, 
-				createMUCScreen, mucChatScreen);
+				createMUCScreen);
 		mucController.setOnChangeScreen(screen->setScreen(screen));
 		mucController.setOnMUCListEvent(e->updateMUCList(e));
 		mucController.setOnOpenMUC(getMUCEvent->setMUC(getMUCEvent));
