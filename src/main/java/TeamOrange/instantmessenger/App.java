@@ -83,7 +83,7 @@ public class App {
 		// xmpp
 		babblerBase = new BabblerBase("teamorange.space",
 				appMessage->messageListener(appMessage),
-				appPresence->presenceListener(appPresence),
+				(fromJid, appPresenceType)->presenceListener(fromJid, appPresenceType),
 				() -> rosterListener());
 
     	babblerBase.setupConnection();
@@ -146,9 +146,8 @@ public class App {
     		}
     		else if(body.equals(App.ACCEPT_CONTACT_ADD)){
     			AppJid jid = message.getFromJid();
-    			babblerBase.addContact( jid.getBareJid() );
-    			System.out.println(jid.getBareJid());
-    			contacts.addContact( new AppUser(jid) );
+    			AppUser user = babblerBase.addContact( jid.getBareJid() );
+    			contacts.addContact( user );
     			if(currentScreen == ScreenEnum.HOME){
     				HomeScreenInput homeScreenInput = new HomeScreenInput(contacts);
     				homeScreen.loadLater(homeScreenInput);
@@ -166,8 +165,8 @@ public class App {
      * This is called by BabblerBase when there is a new presence event
      * @param appPresence the new presence
      */
-    public void presenceListener(AppPresence appPresence){
-
+    public void presenceListener(AppJid fromJid, AppPresence.Type appPresenceType){
+    	presenceController.status(fromJid, appPresenceType);
     }
 
     /**

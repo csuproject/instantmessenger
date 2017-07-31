@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 import TeamOrange.instantmessenger.models.AppJid;
+import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
@@ -55,9 +56,14 @@ public class ContactManager {
 	 * @param client
 	 * @param contact
 	 */
-	public void addContact(XmppClient client, String contact) {
-
-		client.getManager(RosterManager.class).addContact(new Contact(Jid.of(contact)), true, null);
+	public AppUser addContact(XmppClient client, String contact) {
+		Jid jid = Jid.of(contact);
+		Presence presence = client.getManager(PresenceManager.class).getPresence(jid);
+		client.getManager(RosterManager.class).addContact(new Contact(jid), true, null);
+		
+		AppJid appJid = JidUtilities.appJidFromJid(jid);
+		AppPresence appPresence = new AppPresence(presence);
+		return new AppUser(appJid, appPresence);
 	}
 
 	/**
@@ -150,10 +156,13 @@ public class ContactManager {
 		LinkedList<AppUser> contacts = new LinkedList<AppUser>();
 		Collection<Contact> list = new <Contact>LinkedList();
 		list = client.getManager(RosterManager.class).getContacts();
+		PresenceManager pm = client.getManager(PresenceManager.class); //.getPresence(arg0)
 		for (Contact c : list) {
 			Jid jid = c.getJid();
 			AppJid appJid = new AppJid(jid.getLocal(), jid.getDomain());
-		    contacts.add( new AppUser(appJid) );
+			Presence presence = pm.getPresence(jid);
+			AppPresence appPresence = new AppPresence(presence);
+		    contacts.add( new AppUser(appJid, appPresence) );
 		}
 
 		return contacts;

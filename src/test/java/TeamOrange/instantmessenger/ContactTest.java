@@ -2,8 +2,11 @@ package TeamOrange.instantmessenger;
 
 import java.util.LinkedList;
 import java.util.Scanner;
+
+import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppPresence;
+import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideXmppException;
 
@@ -48,10 +51,11 @@ public class ContactTest {
 	}
 
 	public static void printContacts(BabblerBase client){
-		LinkedList<String> contacts = client.getContacts();
+		LinkedList<AppUser> contacts = client.getContactsAsAppUsers();
 		System.out.println("----- Contacts -----");
-		for(String s : contacts)
-			System.out.println(s);
+		for(AppUser u : contacts)
+			System.out.println( u.getJid().getBareJid() + " : " + 
+					u.getPresence().sGetType() );
 		System.out.println("--------------------");
 	}
 
@@ -59,7 +63,7 @@ public class ContactTest {
 		BabblerBase client =
 				new BabblerBase("teamorange.space",
 						appMessage->messageListener(appMessage),
-						appPresence->presenceListener(appPresence),
+						(fromJid, appPresenceType)->presenceListener(fromJid, appPresenceType),
 						() -> rosterListener());
 
 		client.setupConnection();
@@ -76,8 +80,9 @@ public class ContactTest {
 		// TODO Auto-generated method stub
 	}
 
-	private static void presenceListener(AppPresence appPresence) {
+	private static Object presenceListener(AppJid fromJid, AppPresence.Type appPresenceType) {
 		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private static void messageListener(AppMessage appMessage) {

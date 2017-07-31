@@ -6,6 +6,7 @@ import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.StatusEvent;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
+import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.UserStatus;
 import TeamOrange.instantmessenger.views.AccountScreen;
@@ -26,11 +27,15 @@ public class PresenceController {
 			AppContacts contacts){
 		this.babblerBase = babblerBase;
 		this.accountScreen = accountScreen;
-		babblerBase.setOnStatusEvent(userStatus->status(userStatus));
 		this.contacts = contacts;
 	}
 
-	public void status(UserStatus userStatus) {
-		System.out.println(userStatus.getUser() + " " + userStatus.getStatus());
+	public void status(AppJid from, AppPresence.Type type) {
+//		System.out.println(from.getBareJid() + " is " + AppPresence.typeString(type));
+		AppUser contact = contacts.getContactWithUsername(from.getLocal());
+		if(contact != null){
+			contact.setPresence(type);
+		}
+		
 	}
 }
