@@ -2,6 +2,7 @@ package TeamOrange.instantmessenger.xmpp;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
@@ -76,29 +77,32 @@ public class ContactManager {
 	 */
 	public void blockUser(XmppClient client, String user) {
 		Jid contactJid = Jid.of(user);
-		PrivacyRule newRule = PrivacyRule.blockAllCommunicationWith(contactJid, 1);
 		PrivacyListManager plManager = client.getManager(PrivacyListManager.class);
+		// create new rule
+		PrivacyRule newRule = PrivacyRule.blockAllCommunicationWith(contactJid, 1);
+		
+		PrivacyList blockedList = null;
+		// retrieve existing blocked list if it exists
 		try {
-			AsyncResult<PrivacyList> arPList = plManager.getPrivacyList("blocked");
-
-			LinkedList<PrivacyRule> ruleList =  new LinkedList<PrivacyRule>();
-			ruleList.add(newRule);
-			plManager.createOrUpdateList( new PrivacyList("blocked", ruleList) );
-
-			PrivacyList currentBlockedList;
-			synchronized(arPList){
-				currentBlockedList = arPList.getResult();
-			}
-
-			Collection<PrivacyRule> rules = currentBlockedList.getPrivacyRules();
-			Collection<PrivacyRule> newRules = new LinkedList(rules);
-			newRules.add(newRule);
-			PrivacyList newBlockedList = new PrivacyList("blocked", newRules);
-			plManager.createOrUpdateList(newBlockedList);
+			blockedList = plManager.getPrivacyList("blocked").getResult();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			blockedList = null;
 		}
+		
+		// create new rule list
+		Collection<PrivacyRule> newRules =  new LinkedList<PrivacyRule>();
+		// add existing rules if they exist
+		if(blockedList != null){
+			Collection<PrivacyRule> existingRules = blockedList.getPrivacyRules();
+			newRules.addAll(existingRules);
+		}
+		// add new rule
+		newRules.add(newRule);
+
+		PrivacyList newBlockedList = new PrivacyList("blocked", newRules);
+		plManager.createOrUpdateList(newBlockedList);
+//		plManager.setActiveList("blocked");
+		plManager.setDefaultList("blocked");
 	}
 
 	public void printBlockList(XmppClient client){
