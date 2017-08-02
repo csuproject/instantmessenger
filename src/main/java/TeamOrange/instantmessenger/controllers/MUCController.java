@@ -40,7 +40,7 @@ public class MUCController {
 		this.chatScreen = chatScreen;
 		mucScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		mucScreen.setOnOpenMUC(getMUCEvent->enterMUC(getMUCEvent));
-		mucScreen.setOnAddGroupGetMUCEvent(addMUCEvent->enterMUC(addMUCEvent));
+		mucScreen.setOnAddGroupGetMUCEvent(addMUCEvent->createMUC(addMUCEvent));
 		createMUCScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		createMUCScreen.setOnCreateMUCEvent(createMUCEvent->createMUC(createMUCEvent));
 		mucList = new ArrayList<AppMuc>();
@@ -62,6 +62,18 @@ public class MUCController {
 		mucList.add(muc);
 		mucListEvent.getMUCList(mucList);
 		requestMUC(mucChat);
+	}
+	
+	public void createMUC(String roomID) {
+
+		// Create MUC
+		AppMuc muc = babblerBase.createAndOrEnterRoom(roomID, "nickname");
+		muc.setReference(muc);
+		muc.setOnNewMessage(getMUCEvent-> // Set new message notifier
+			newMessageMUC.getMUC(getMUCEvent));
+		mucList.add(muc);
+		mucListEvent.getMUCList(mucList);
+		//requestMUC(roomID);
 	}
 	
 	/**

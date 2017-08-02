@@ -61,10 +61,10 @@ import javafx.scene.layout.VBox;
 			addGroupTextField.setMinWidth(320);
 			Image imageAccept = new Image(getClass().getResource(
 					"/resources/accept-icon.png").toURI().toString(),25,25,false,false);
-			Button accpetAddGroupButton = new Button();
-			accpetAddGroupButton.setMaxWidth(30);
-			accpetAddGroupButton.setGraphic(new ImageView(imageAccept));
-			accpetAddGroupButton.setOnAction(e->addGroup());
+			Button acceptAddGroupButton = new Button();
+			acceptAddGroupButton.setMaxWidth(30);
+			acceptAddGroupButton.setGraphic(new ImageView(imageAccept));
+			acceptAddGroupButton.setOnAction(e->addGroup());
 			Image imageDecline = new Image(getClass().getResource(
 					"/resources/decline-icon.png").toURI().toString(),25,25,false,false);
 			Button declineAddGroupButton = new Button();
@@ -72,7 +72,7 @@ import javafx.scene.layout.VBox;
 			declineAddGroupButton.setGraphic(new ImageView(imageDecline));
 			declineAddGroupButton.setOnAction(e->closeAddGroupBox());
 			addGroupHBox = new HBox(
-					addGroupTextField,accpetAddGroupButton,declineAddGroupButton);
+					addGroupTextField,acceptAddGroupButton,declineAddGroupButton);
 			addGroupHBox.setAlignment(Pos.CENTER);
 			
 			// MUC List
@@ -114,8 +114,8 @@ import javafx.scene.layout.VBox;
 		private void addGroup() {
 			String groupName;
 			groupName = addGroupTextField.getText();
-			addMUCEvent.getMUCName(groupName);
 			closeAddGroupBox();
+			addMUCEvent.getMUCName(groupName);
 		}
 		
 		private void openAddGroupBox() {
