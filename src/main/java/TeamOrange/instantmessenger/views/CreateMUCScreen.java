@@ -60,6 +60,7 @@ public class CreateMUCScreen extends Screen	{
 		
 		// MCU User Input
 		mucName = new TextField();
+		mucName.setMinHeight(35);
 		mucName.setPromptText("Name this group chat");
 		
 		// Contacts List

@@ -21,7 +21,8 @@ public class OpenChatController {
 	private HomeScreen homeScreen;
 	private ChangeScreen changeScreen;
 
-	public OpenChatController(AppChats chats, AppContacts contacts, BabblerBase babblerBase, HomeScreen homeScreen){
+	public OpenChatController(AppChats chats, AppContacts contacts, 
+			BabblerBase babblerBase, HomeScreen homeScreen){
 		this.chats = chats;
 		this.contacts = contacts;
 		this.babblerBase = babblerBase;

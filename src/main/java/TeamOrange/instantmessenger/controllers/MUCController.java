@@ -26,18 +26,21 @@ public class MUCController {
 	private MUCScreen mucScreen;
 	private AppContacts contacts;
 	private MUCListEvent mucListEvent;
-	private ChatScreen mucChatScreen;
-	GetMUCEvent getMUCEvent;
+	private ChatScreen chatScreen;
+	private GetMUCEvent getMUCEvent;
+	private GetMUCEvent newMessageMUC;
 
 	
-	public MUCController(BabblerBase babblerBase, AppContacts contacts, MUCScreen mucScreen, 
-			CreateMUCScreen createMUCScreen) {
+	public MUCController(BabblerBase babblerBase, ChatScreen chatScreen, 
+			AppContacts contacts, MUCScreen mucScreen, CreateMUCScreen createMUCScreen) {
 		
 		this.babblerBase = babblerBase;
 		this.mucScreen = mucScreen;
 		this.contacts = contacts;
+		this.chatScreen = chatScreen;
 		mucScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		mucScreen.setOnOpenMUC(getMUCEvent->enterMUC(getMUCEvent));
+		mucScreen.setOnAddGroupGetMUCEvent(addMUCEvent->enterMUC(addMUCEvent));
 		createMUCScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		createMUCScreen.setOnCreateMUCEvent(createMUCEvent->createMUC(createMUCEvent));
 		mucList = new ArrayList<AppMuc>();
@@ -52,8 +55,11 @@ public class MUCController {
 	public void createMUC(MUCChat mucChat) {
 
 		// Create MUC
-		AppMuc appMUC = muc(mucChat.getName());
-		mucList.add(appMUC);
+		AppMuc muc = babblerBase.createAndOrEnterRoom(mucChat.getName(), "nickname");
+		muc.setReference(muc);
+		muc.setOnNewMessage(getMUCEvent-> // Set new message notifier
+			newMessageMUC.getMUC(getMUCEvent));
+		mucList.add(muc);
 		mucListEvent.getMUCList(mucList);
 		requestMUC(mucChat);
 	}
@@ -78,7 +84,8 @@ public class MUCController {
 	 */
 	public void enterMUC(String mucName) {
 		// Enter MUC 
-		muc(mucName);
+		mucList.add(muc(mucName));
+		mucListEvent.getMUCList(mucList);
 	}
 	
 	/**
@@ -87,9 +94,17 @@ public class MUCController {
 	 */
 	public void enterMUC(AppMuc appMUC) {
 		// Enter MUC 
-		getMUCEvent.getMUC(muc(appMUC.getRoomID()));
+		getMUCEvent.getMUC(appMUC);
 	}
 	
+	/**
+	 * Send message to focused MUC
+	 * @param message
+	 */
+	public void sendMUCMessage(AppMuc muc, String message) {
+		muc.sendMessage(message);
+	}
+		
 	public AppMuc muc(String mucName) {
 		
 		return babblerBase.createAndOrEnterRoom(
@@ -106,5 +121,9 @@ public class MUCController {
 	
 	public void setOnOpenMUC(GetMUCEvent getMUCEvent) {
 		this.getMUCEvent = getMUCEvent;
+	}
+	
+	public void setOnNewMessage(GetMUCEvent getMUCEvent) {
+		this.newMessageMUC = getMUCEvent;
 	}
 }

@@ -2,7 +2,14 @@ package TeamOrange.instantmessenger.models;
 
 import java.util.LinkedList;
 
+import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.util.Duration;
 
 /**
  * Represents a multi user chat (chat room)
@@ -14,6 +21,8 @@ public class AppMuc {
 	private BabblerBase babblerBase;
 	private LinkedList<AppMucMessage> messages;
 	private LinkedList<AppOccupant> occupants;
+	GetMUCEvent messageEvent;
+	AppMuc muc;
 
 	public AppMuc(String roomID, String nickname, BabblerBase babblerBase){
 		this.roomID = roomID;
@@ -21,6 +30,7 @@ public class AppMuc {
 		this.babblerBase = babblerBase;
 		messages = new LinkedList<AppMucMessage>();
 		occupants = new LinkedList<AppOccupant>();
+		//this.muc = this;
 	}
 
 	/**
@@ -61,6 +71,16 @@ public class AppMuc {
 	 */
 	public void inboundMessage(AppMucMessage message){
 		messages.add(message);
+		messageEvent.getMUC(this);
+	}
+	
+	/**
+	 * Get List of Messages
+	 * @return
+	 */
+	public LinkedList<AppMucMessage> getMessages() {
+		return messages;
+		
 	}
 
 	/**
@@ -102,4 +122,24 @@ public class AppMuc {
 		// TODO: consider multiple versions of the same nickname, or the same person leaving twice
 		occupants.remove(occupant);
 	}
+	
+	public void setOnNewMessage(GetMUCEvent getMUCEvent) {
+		this.messageEvent = getMUCEvent;
+	}
+	
+	
+	public void setReference(AppMuc muc) {
+		this.muc = muc;
+	}
+	
+	  @Override
+	  public boolean equals(Object otherObject) {
+	    // check for reference equality.
+	    if (this == otherObject) {
+	      return true; 
+	    } else {
+	    	  return false;
+	    }
+	  }
+	
 }

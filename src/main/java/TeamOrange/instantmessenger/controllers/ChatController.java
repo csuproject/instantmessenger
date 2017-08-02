@@ -21,7 +21,8 @@ public class ChatController {
 	private AppChats chats;
 	private AppContacts contacts;
 
-	public ChatController(BabblerBase babblerBase, ChatScreen chatScreen, AppChats chats, AppContacts contacts){
+	public ChatController(BabblerBase babblerBase, ChatScreen chatScreen, 
+			AppChats chats, AppContacts contacts){
 		this.babblerBase = babblerBase;
 		this.chatScreen = chatScreen;
 		chatScreen.setOnSendNewMessageEvent( userName->sendChatSessionMessage(userName) );

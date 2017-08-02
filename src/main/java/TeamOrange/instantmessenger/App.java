@@ -70,6 +70,7 @@ public class App {
 	AppContacts contacts;
 	AppChats chats;
 	List<AppMuc> mucList;
+	AppMuc muc;
 
 	public App(GuiBase guiBase){
 		// views
@@ -128,13 +129,12 @@ public class App {
 		naviationController = new NavigationController(navigationScreen);
 		naviationController.setOnChangeScreen(screen->setScreen(screen));
 
-		mucController = new MUCController(babblerBase, contacts, mucScreen, 
+		mucController = new MUCController(babblerBase, chatScreen, contacts, mucScreen, 
 				createMUCScreen);
 		mucController.setOnChangeScreen(screen->setScreen(screen));
-		mucController.setOnMUCListEvent(e->updateMUCList(e));
-		mucController.setOnOpenMUC(getMUCEvent->setMUC(getMUCEvent));
-			
-	
+		mucController.setOnMUCListEvent(mucList->setMUCList(mucList));
+		mucController.setOnNewMessage(getMUCEvent->loadMUCInFocus(getMUCEvent));
+		mucController.setOnOpenMUC(getMUCEvent->setMUCInFocus(getMUCEvent));
 	}
 
 	// Listeners
@@ -234,19 +234,38 @@ public class App {
 			} break;
 				case MUCCHAT:
 			{
-				chatScreen.load(mucinput);
+				chatScreen.loadLater(muc);
 				guiBase.setScreen(chatScreen,navigationScreen);	
 			} break;
     	}
     }
     
-    public void updateMUCList(List<AppMuc> mucList) {
-    	this.mucList = mucList;		
+    /**
+     * Set list of MUC
+     * @param mucList
+     */
+    public void setMUCList(List<AppMuc> mucList) {
+    	this.mucList = mucList;	
+    	mucScreen.load(this.mucList);
     }
     
-    public void setMUC(AppMuc muc) {
-    	this.mucinput = new MUCScreenInput(muc);
+    /**
+     * Set the MUC in focus
+     * @param muc
+     */
+    public void setMUCInFocus(AppMuc muc) {
+    	this.muc = muc;
     	setScreen(ScreenEnum.MUCCHAT);
+    }
+    
+    /**
+     * Update MUC of MUCCHAT in focus
+     * @param muc
+     */
+    public void loadMUCInFocus(AppMuc muc) {
+    	if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) {
+    		chatScreen.loadLater(muc);
+    	}
     }
 
 
