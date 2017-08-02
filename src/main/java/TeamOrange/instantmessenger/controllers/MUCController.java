@@ -55,7 +55,7 @@ public class MUCController {
 	public void createMUC(MUCChat mucChat) {
 
 		// Create MUC
-		AppMuc muc = babblerBase.createAndOrEnterRoom(mucChat.getName(), "nickname");
+		AppMuc muc = babblerBase.createAndOrEnterRoom(mucChat.getName(), contacts.getSelfName());
 		muc.setReference(muc);
 		muc.setOnNewMessage(getMUCEvent-> // Set new message notifier
 			newMessageMUC.getMUC(getMUCEvent));
@@ -67,7 +67,7 @@ public class MUCController {
 	public void createMUC(String roomID) {
 
 		// Create MUC
-		AppMuc muc = babblerBase.createAndOrEnterRoom(roomID, "nickname");
+		AppMuc muc = babblerBase.createAndOrEnterRoom(roomID, contacts.getSelfName());
 		muc.setReference(muc);
 		muc.setOnNewMessage(getMUCEvent-> // Set new message notifier
 			newMessageMUC.getMUC(getMUCEvent));
