@@ -26,6 +26,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 public class ChatScreen extends Screen {
@@ -42,6 +43,8 @@ public class ChatScreen extends Screen {
 	private HBox newMessage;
 	private VBox screenVBox;
 	private HBox mucHbox;
+	private HBox partnerDetails;
+	private Label partnerName;
 	GetMUCEvent sendMessage;
 	GetMUCEvent destroyMUC;
 	GetMUCEvent exitMUC;
@@ -65,8 +68,8 @@ public class ChatScreen extends Screen {
 		scrollPane = new ScrollPane();
 		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		scrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-		scrollPane.setMinHeight(550);
-		this.setMaxHeight(550);
+		scrollPane.setMinHeight(500);
+		this.setMaxHeight(500);
 	
 		//this.scrollPane.setPadding(new Insets(20, 20, 20, 20));
 
@@ -106,8 +109,16 @@ public class ChatScreen extends Screen {
 				destroyButton,chatNameLabel,exitButton);
 		mucHbox.setAlignment(Pos.CENTER);
 		
+		// partner detail
+		partnerName = new Label("partnerName");
+		partnerName.setFont(new Font(25));
+		partnerDetails = new HBox(partnerName);
+		partnerDetails.setMinHeight(50);
+		partnerDetails.setMaxHeight(50);
+		partnerDetails.setAlignment(Pos.CENTER);
+		
 		// add elements
-		screenVBox.getChildren().addAll(scrollPane, newMessage);
+		screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
 		this.getChildren().add(screenVBox);
 	}
 
@@ -131,11 +142,10 @@ public class ChatScreen extends Screen {
 		
 		setMUCMode(false);
 		screenVBox.getChildren().clear();
-		screenVBox.getChildren().addAll(scrollPane, newMessage);
+		screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
 		
-		//header.setText("Chat with " + input.getPartner());
-		// TODO: load messages
 		String partner = input.getPartner();
+		partnerName.setText(partner);
 		LinkedList<AppChatSessionMessage> messages = input.getMessages();
 		scrollPaneContent.getChildren().clear();
 		for(AppChatSessionMessage m : messages){
