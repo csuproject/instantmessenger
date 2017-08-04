@@ -1,8 +1,11 @@
 package TeamOrange.instantmessenger.controllers;
 
+import java.util.LinkedList;
+
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
+import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 

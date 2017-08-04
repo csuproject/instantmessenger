@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
+import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.views.AccountScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
@@ -46,7 +47,8 @@ public class LoginController {
 		AppJid appJid;
 		try{
 			appJid = babblerBase.login(userName, password);
-			AppUser appUser = new AppUser(appJid);
+			AppPresence presence = new AppPresence(AppPresence.Type.AVAILIBLE);
+			AppUser appUser = new AppUser(appJid, presence);
 			contacts.setSelf(appUser);
 			LinkedList<AppUser> contactsFromServer = babblerBase.getContactsAsAppUsers();
 			contacts.addAllContacts(contactsFromServer);

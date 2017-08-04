@@ -1,5 +1,6 @@
 package TeamOrange.instantmessenger;
 
+import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideXmppException;
@@ -12,7 +13,7 @@ public class ContactListTest {
 		BabblerBase client = 
 				new BabblerBase("teamorange.space", 
 						appMessage->messageListener(appMessage), 
-						appPresence->presenceListener(appPresence), 
+						(fromJid, appPresenceType)->presenceListener(fromJid, appPresenceType),
 						() -> rosterListener());
 		
 		client.setupConnection();
@@ -50,7 +51,7 @@ public class ContactListTest {
 		return null;
 	}
 
-	private static Object presenceListener(AppPresence appPresence) {
+	private static Object presenceListener(AppJid fromJid, AppPresence.Type appPresenceType) {
 		// TODO Auto-generated method stub
 		return null;
 	}

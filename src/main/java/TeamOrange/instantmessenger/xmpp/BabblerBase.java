@@ -15,6 +15,7 @@ import TeamOrange.instantmessenger.models.AppOccupant;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.UserStatus;
+import TeamOrange.instantmessenger.models.AppPresence.Type;
 import exceptions.ConfideAuthenticationException;
 import exceptions.ConfideXmppException;
 import rocks.xmpp.addr.Jid;
@@ -51,10 +52,8 @@ public class BabblerBase {
 
 	// Listeners
 	private MessageListener messageListener;
-	private StatusListener statusListener;
+	private PresenceListener presenceListener;
 	private RosterListener rosterListener;
-
-	private StatusEvent statusEvent;
 
 	// Managers
 	private MessageManager messageManager;
@@ -65,11 +64,11 @@ public class BabblerBase {
 
 
 	public BabblerBase(String hostName, MessageListener messageListener,
-			StatusListener presenceListener, RosterListener rosterListener) {
+			PresenceListener presenceListener, RosterListener rosterListener) {
 		this.hostName = hostName;
 
 		this.messageListener = messageListener;
-		this.statusListener = statusListener; // TODO: what is happening here?
+		this.presenceListener = presenceListener;
 		this.rosterListener = rosterListener;
 
 		this.messageManager = new MessageManager();
@@ -197,14 +196,14 @@ public class BabblerBase {
 	 * Add Contact to User
 	 * @param contact
 	 */
-	public void addContact(String contact) {
+	public AppUser addContact(String contact) {
 		// spin until in correct state
 		while(client.getStatus() != XmppSession.Status.AUTHENTICATED) {
 			try { Thread.sleep(50); }
 			catch (InterruptedException e) { }
 		}
 
-		contactManager.addContact(client, contact);
+		return contactManager.addContact(client, contact);
 	}
 
 	/**
@@ -213,6 +212,17 @@ public class BabblerBase {
 	 */
 	public void removeContact(String contact) {
 		contactManager.removeContact(client, contact);
+	}
+
+	/**
+	 * Blocks the user
+	 */
+	public void blockUser(String user){
+		contactManager.blockUser(client, user);
+	}
+
+	public void printBlockList(){
+		contactManager.printBlockList(client);
 	}
 
 	/**
@@ -249,10 +259,6 @@ public class BabblerBase {
 	 */
 	public LinkedList<String> getGroups() {
 		return contactManager.getContactGroups(client);
-	}
-
-	public void setOnStatusEvent(StatusEvent statusEvent){ // TODO: is this ever called?
-		this.statusEvent = statusEvent;
 	}
 
 
@@ -344,30 +350,57 @@ public class BabblerBase {
 	 * consumes the event
 	 * @param presenceEvent represents the presence event
 	 */
+//	public void newPresence(PresenceEvent presenceEvent){
+//	    Presence presence = presenceEvent.getPresence();
+//	    Contact contact = client.getManager(RosterManager.class).getContact(presence.getFrom());
+//
+//	    // Available
+//	    if (presence.getType() == null) {
+//	    	statusEvent.status(new UserStatus(
+//	    			presence.getFrom().getLocal()+"@"+presence.getFrom().getDomain(),"AVAILABLE"));
+//	    }
+//
+//	    // Unavailable
+//	    if (presence.getType() == Presence.Type.UNAVAILABLE) {
+//	    	statusEvent.status(new UserStatus(
+//	    			presence.getFrom().getLocal()+"@"+presence.getFrom().getDomain(),"UNAVAILABLE"));
+//	    }
+//
+//	    // Subscribe
+//	    if (presence.getType() == Presence.Type.SUBSCRIBE) {
+//	    	client.getManager(PresenceManager.class).approveSubscription(presence.getFrom());
+//	    }
+//
+//	    if (contact != null) {
+//	    	statusEvent.status(new UserStatus(presence.getId(),presence.getStatus()));
+//	    }
+//
+//	    presenceEvent.consume();
+//	}
+	
 	public void newPresence(PresenceEvent presenceEvent){
 	    Presence presence = presenceEvent.getPresence();
 	    Contact contact = client.getManager(RosterManager.class).getContact(presence.getFrom());
-
-	    // Available
-	    if (presence.getType() == null) {
-	    	statusEvent.status(new UserStatus(
-	    			presence.getFrom().getLocal()+"@"+presence.getFrom().getDomain(),"AVAILABLE"));
+	    
+	    AppJid fromJid = JidUtilities.appJidFromJid( presence.getFrom() );
+	    Presence.Type presenceType = presence.getType();
+	    AppPresence.Type appPresenceType = null;
+	    if(presenceType == null){
+	    	appPresenceType = AppPresence.Type.AVAILIBLE;
+	    } else if(presenceType == Presence.Type.UNAVAILABLE){
+	    	appPresenceType = AppPresence.Type.UNAVAILIVLE;
 	    }
-
-	    // Unavailable
-	    if (presence.getType() == Presence.Type.UNAVAILABLE) {
-	    	statusEvent.status(new UserStatus(
-	    			presence.getFrom().getLocal()+"@"+presence.getFrom().getDomain(),"UNAVAILABLE"));
-	    }
+	    System.out.println("BabblerBase - newPresence()");
+	    presenceListener.presence(fromJid, appPresenceType);
 
 	    // Subscribe
-	    if (presence.getType() == Presence.Type.SUBSCRIBE) {
-	    	client.getManager(PresenceManager.class).approveSubscription(presence.getFrom());
-	    }
-
-	    if (contact != null) {
-	    	statusEvent.status(new UserStatus(presence.getId(),presence.getStatus()));
-	    }
+//	    if (presence.getType() == Presence.Type.SUBSCRIBE) {
+//	    	client.getManager(PresenceManager.class).approveSubscription(presence.getFrom());
+//	    }
+//
+//	    if (contact != null) {
+//	    	statusEvent.status(new UserStatus(presence.getId(),presence.getStatus()));
+//	    }
 
 	    presenceEvent.consume();
 	}
