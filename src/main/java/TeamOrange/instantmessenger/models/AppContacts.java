@@ -17,6 +17,12 @@ public class AppContacts {
 		this.contactList = new LinkedList<AppUser>();
 		this.incomingContactRequestList = new LinkedList<AppJid>();
 	}
+	
+	public void reset(){
+		self = null;
+		contactList.clear();
+		incomingContactRequestList.clear();
+	}
 
 	public void setSelf(AppUser self){
 		this.self = self;

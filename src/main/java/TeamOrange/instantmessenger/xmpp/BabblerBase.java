@@ -77,6 +77,16 @@ public class BabblerBase {
 		this.connectionManager = new ConnectionManager();
 		this.mucManager = new MucManager();
 	}
+	
+	public void reset(){
+		try {
+			close();
+			this.client = connectionManager.setupConnection(hostName, this);
+			connect();
+		} catch (ConfideXmppException e) {
+			e.printStackTrace();
+		}
+	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	//------------------------------MessageManager------------------------------//

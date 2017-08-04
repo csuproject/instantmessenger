@@ -2,6 +2,7 @@ package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
+import TeamOrange.instantmessenger.lambda.LogoutEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -13,6 +14,7 @@ public class NavigationScreen extends Screen {
 	Button chatButton;
 	Button logoutButton;
 	ChangeScreen changeScreen;
+	LogoutEvent logoutEvent;
 	
 	public NavigationScreen(){
 		try {
@@ -33,8 +35,17 @@ public class NavigationScreen extends Screen {
 		chatButton.setOnAction(e->this.changeScreen.SetScreen(ScreenEnum.MUC));
 		logoutButton = new Button("Logout");
 		logoutButton.setMinSize(100, 10);
+		logoutButton.setOnAction( e->logout() );
 		navigationBox.getChildren().addAll(contactButton, chatButton, logoutButton);
 		this.getChildren().addAll(navigationBox);
+	}
+	
+	public void logout(){
+		logoutEvent.logout();
+	}
+	
+	public void setOnLogoutEvent(LogoutEvent logoutEvent){
+		this.logoutEvent = logoutEvent;
 	}
 	
 	public void setOnChangeScreen(ChangeScreen changeScreen){

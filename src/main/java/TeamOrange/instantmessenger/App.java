@@ -73,8 +73,9 @@ public class App {
 	AppMuc muc;
 
 	public App(GuiBase guiBase){
-		// views
 		this.guiBase = guiBase;
+		
+		// views
 		accountScreen = new AccountScreen();
 		homeScreen = new HomeScreen();
 		chatScreen = new ChatScreen();
@@ -127,7 +128,7 @@ public class App {
 
 		presenceController = new PresenceController(babblerBase, accountScreen, contacts);
 
-		naviationController = new NavigationController(navigationScreen);
+		naviationController = new NavigationController(navigationScreen, this);
 		naviationController.setOnChangeScreen(screen->setScreen(screen));
 
 		mucController = new MUCController(babblerBase, chatScreen, contacts, mucScreen, 
@@ -136,6 +137,12 @@ public class App {
 		mucController.setOnMUCListEvent(mucList->setMUCList(mucList));
 		mucController.setOnNewMessage(getMUCEvent->loadMUCInFocus(getMUCEvent));
 		mucController.setOnOpenMUC(getMUCEvent->setMUCInFocus(getMUCEvent));
+	}
+	
+	public void reset(){
+		contacts.reset();
+		chats.reset();
+		babblerBase.reset();
 	}
 
 	// Listeners
