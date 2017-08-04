@@ -1,5 +1,9 @@
 package TeamOrange.instantmessenger.models;
 
+/**
+ * A simple structure that holds only the necessary data for an AppChatSession message
+ *
+ */
 public class AppChatSessionMessage {
 	String body;
 	boolean inbound;

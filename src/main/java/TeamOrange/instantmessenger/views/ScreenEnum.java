@@ -1,5 +1,5 @@
 package TeamOrange.instantmessenger.views;
 
 public enum ScreenEnum {
-	ACCOUNT, HOME, CHAT
+	ACCOUNT, HOME, CHAT, MUC, CREATEMUC, MUCCHAT
 }
