@@ -116,6 +116,7 @@ public class App {
 
 		chatController = new ChatController(babblerBase, chatScreen, chats, contacts);
 		chatController.setOnChangeScreen( screen->setScreen(screen) );
+		chatController.setOnExitMUC(exit->mucController.exitMUC(exit));
 
 		addContactController = new AddContactController(babblerBase, homeScreen, contacts);
 		addContactController.setOnChangeScreen( screen->setScreen(screen) );

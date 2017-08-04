@@ -3,6 +3,7 @@ package TeamOrange.instantmessenger.views;
 
 import java.util.LinkedList;
 
+import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.lambda.SendNewMessageEvent;
 import TeamOrange.instantmessenger.models.AppChatSessionMessage;
@@ -33,11 +34,17 @@ public class ChatScreen extends Screen {
 	private TextField newMessageTextField;
 	private Button sendNewMessageButton;
 	private SendNewMessageEvent sendNewMessageEvent;
-
+	private ChangeScreen changeScreen;
 	private ScrollPane scrollPane;
 	private VBox scrollPaneContent;
 	private boolean MUCMODE;
+	private Label chatNameLabel;
+	private HBox newMessage;
+	private VBox screenVBox;
+	private HBox mucHbox;
 	GetMUCEvent sendMessage;
+	GetMUCEvent destroyMUC;
+	GetMUCEvent exitMUC;
 	AppMuc muc;
 
 	public ChatScreen(){
@@ -52,7 +59,7 @@ public class ChatScreen extends Screen {
 		scrollPaneContent = new VBox();
 		scrollPaneContent.setPadding(new Insets(20,20,20,20));
 		// vboc
-		VBox vbox = new VBox();
+		screenVBox = new VBox();
 
 		//scrollpane
 		scrollPane = new ScrollPane();
@@ -80,13 +87,28 @@ public class ChatScreen extends Screen {
 		sendNewMessageButton.setPrefWidth(50);
 		newMessageTextField.setPrefWidth(350-sendNewMessageButton.getWidth());
 
-		HBox newMessage = new HBox();
+		newMessage = new HBox();
 		newMessage.getChildren().addAll(newMessageTextField, sendNewMessageButton);
 
-
+		// MUC Control Hbox
+		Button destroyButton = new Button("Back");
+		destroyButton.setMinWidth(100);
+		destroyButton.setOnAction(e->changeScreen.SetScreen(ScreenEnum.MUC));
+		//destroyButton.setOnAction(e->clear());
+		Button exitButton = new Button("Exit");
+		exitButton.setMinWidth(100);
+		exitButton.setOnAction(e->exitMUC());
+		//exitButton.setOnAction(e->createMUC());
+		chatNameLabel = new Label();
+		chatNameLabel.setMinWidth(100);
+		chatNameLabel.setAlignment(Pos.CENTER);
+		mucHbox = new HBox(
+				destroyButton,chatNameLabel,exitButton);
+		mucHbox.setAlignment(Pos.CENTER);
+		
 		// add elements
-		vbox.getChildren().addAll(scrollPane, newMessage);
-		this.getChildren().add(vbox);
+		screenVBox.getChildren().addAll(scrollPane, newMessage);
+		this.getChildren().add(screenVBox);
 	}
 
 	public void loadLater(ChatScreenInput input){
@@ -108,6 +130,8 @@ public class ChatScreen extends Screen {
 	public void load(ChatScreenInput input){
 		
 		setMUCMode(false);
+		screenVBox.getChildren().clear();
+		screenVBox.getChildren().addAll(scrollPane, newMessage);
 		
 		//header.setText("Chat with " + input.getPartner());
 		// TODO: load messages
@@ -125,6 +149,10 @@ public class ChatScreen extends Screen {
 	}
 	
 	public void load(AppMuc muc) {
+		screenVBox.getChildren().clear();
+		screenVBox.getChildren().addAll(mucHbox,scrollPane, newMessage);
+		
+		chatNameLabel.setText("Group " + muc.getRoomID());
 		setMUCMode(true);
 		setMUCInFocus(muc);
 		LinkedList<AppMucMessage> messages = muc.getMessages();
@@ -143,6 +171,10 @@ public class ChatScreen extends Screen {
 	
 	private void setMUCInFocus(AppMuc muc) {
 		this.muc = muc; 
+	}
+	
+	private AppMuc getMUCInFocus() {
+		return this.muc;
 	}
 	
 	private void setMUCMode(boolean mode) {
@@ -176,23 +208,28 @@ public class ChatScreen extends Screen {
 		load(muc);
 	}
 	
-	private HBox getMUCHbox() {
-		Button destroyButton = new Button("Delete");
-		destroyButton.setMinWidth(100);
-		//destroyButton.setOnAction(e->clear());
-		Button exitButton = new Button("Exit");
-		exitButton.setMinWidth(100);
-		//exitButton.setOnAction(e->createMUC());
-		Label chatNameLabel = new Label();
-		chatNameLabel.setMinWidth(100);
-		chatNameLabel.setAlignment(Pos.CENTER);
-		HBox mucHbox = new HBox(
-				destroyButton,chatNameLabel,exitButton);
-		mucHbox.setAlignment(Pos.CENTER);
-		return mucHbox;
+	public void destroyMUC() {
+
+	}
+	
+	public void exitMUC() {
+		changeScreen.SetScreen(ScreenEnum.MUC);
+		exitMUC.getMUC(this.muc);
 	}
 
-	public void setOnSendNewMessageEvent(SendNewMessageEvent sendNewMessageEvent){
+	public void setOnSendNewMessageEvent(SendNewMessageEvent sendNewMessageEvent) {
 		this.sendNewMessageEvent = sendNewMessageEvent;
+	}
+	
+	public void setOnDestroyMUC(GetMUCEvent destroyMUC) {
+		this.destroyMUC = destroyMUC;
+	}
+	
+	public void setOnExitMUC(GetMUCEvent exitMUC) {
+		this.exitMUC = exitMUC;
+	}
+	
+	public void setOnChangeScreen(ChangeScreen changeScreen){
+		this.changeScreen = changeScreen;
 	}
 }

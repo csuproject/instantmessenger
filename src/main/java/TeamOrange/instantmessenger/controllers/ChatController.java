@@ -1,6 +1,7 @@
 package TeamOrange.instantmessenger.controllers;
 
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
+import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.views.ChatScreen;
 import TeamOrange.instantmessenger.views.ChatScreenInput;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
@@ -20,12 +21,15 @@ public class ChatController {
 	private ChangeScreen changeScreen;
 	private AppChats chats;
 	private AppContacts contacts;
+	GetMUCEvent exitMUC;
 
 	public ChatController(BabblerBase babblerBase, ChatScreen chatScreen, 
 			AppChats chats, AppContacts contacts){
 		this.babblerBase = babblerBase;
 		this.chatScreen = chatScreen;
 		chatScreen.setOnSendNewMessageEvent( userName->sendChatSessionMessage(userName) );
+		chatScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
+		chatScreen.setOnExitMUC(exit->exitMUC.getMUC(exit));
 		this.chats = chats;
 		this.contacts = contacts;
 	}
@@ -73,6 +77,10 @@ public class ChatController {
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;
+	}
+	
+	public void setOnExitMUC(GetMUCEvent exitMUC) {
+		this.exitMUC = exitMUC;
 	}
 
 }

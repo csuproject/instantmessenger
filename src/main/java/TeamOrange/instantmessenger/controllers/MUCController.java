@@ -71,9 +71,13 @@ public class MUCController {
 		muc.setReference(muc);
 		muc.setOnNewMessage(getMUCEvent-> // Set new message notifier
 			newMessageMUC.getMUC(getMUCEvent));
-		mucList.add(muc);
-		mucListEvent.getMUCList(mucList);
+		addtoMUCList(muc);
 		//requestMUC(roomID);
+	}
+	
+	public void exitMUC(AppMuc appMUC) {
+		appMUC.leave();
+		removeFromMUCList(appMUC);	
 	}
 	
 	/**
@@ -121,6 +125,16 @@ public class MUCController {
 		
 		return babblerBase.createAndOrEnterRoom(
 				mucName, contacts.getSelfName());
+	}
+	
+	private void addtoMUCList(AppMuc appMUC) {
+		mucList.add(appMUC);
+		mucListEvent.getMUCList(mucList);
+	}
+	
+	private void removeFromMUCList(AppMuc appMUC) {
+		mucList.remove(appMUC);
+		mucListEvent.getMUCList(mucList);
 	}
 	
 	public void setOnChangeScreen(ChangeScreen changeScreen){
