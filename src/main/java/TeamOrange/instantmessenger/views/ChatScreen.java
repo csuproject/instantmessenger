@@ -71,8 +71,6 @@ public class ChatScreen extends Screen {
 		scrollPane.setMinHeight(500);
 		this.setMaxHeight(500);
 	
-		//this.scrollPane.setPadding(new Insets(20, 20, 20, 20));
-
 		// Send message
 		newMessageTextField = new TextField();
 		// Send message on Enter Key
@@ -85,7 +83,8 @@ public class ChatScreen extends Screen {
 		});
 		
 		sendNewMessageButton = new Button("Send");
-		sendNewMessageButton.setOnAction( e->sendNewMessageBtnPress() );		
+		sendNewMessageButton.setOnAction( e->sendNewMessageBtnPress() );	
+		sendNewMessageButton.setFocusTraversable(false);
 		scrollPane.setContent(scrollPaneContent);
 		sendNewMessageButton.setPrefWidth(50);
 		newMessageTextField.setPrefWidth(350-sendNewMessageButton.getWidth());

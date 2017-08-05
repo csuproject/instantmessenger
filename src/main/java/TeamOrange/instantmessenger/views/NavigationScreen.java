@@ -30,12 +30,15 @@ public class NavigationScreen extends Screen {
 		contactButton = new Button("Chats");
 		contactButton.setMinSize(100, 10);
 		contactButton.setOnAction(e->this.changeScreen.SetScreen(ScreenEnum.HOME));
+		contactButton.setFocusTraversable(false);
 		chatButton = new Button("Groups");
 		chatButton.setMinSize(100, 10);
 		chatButton.setOnAction(e->this.changeScreen.SetScreen(ScreenEnum.MUC));
+		chatButton.setFocusTraversable(false);
 		logoutButton = new Button("Logout");
 		logoutButton.setMinSize(100, 10);
 		logoutButton.setOnAction( e->logout() );
+		logoutButton.setFocusTraversable(false);
 		navigationBox.getChildren().addAll(contactButton, chatButton, logoutButton);
 		this.getChildren().addAll(navigationBox);
 	}

@@ -48,9 +48,11 @@ import javafx.scene.layout.VBox;
 			Button createGroupButton = new Button("Create Group");
 			createGroupButton.setMinWidth(100);
 			createGroupButton.setOnAction(e->changeScreen.SetScreen(ScreenEnum.CREATEMUC));
+			createGroupButton.setFocusTraversable(false);
 			Button addGroupButton = new Button("Add Group");
 			addGroupButton.setMinWidth(100);
 			addGroupButton.setOnAction(e->openAddGroupBox());
+			addGroupButton.setFocusTraversable(false);
 			topHBox = new HBox(addGroupButton,createGroupButton);
 			topHBox.setAlignment(Pos.CENTER);
 			

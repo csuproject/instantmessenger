@@ -23,6 +23,7 @@ public class ContactDisplay extends HBox {
 
 		this.chatButton = new Button("Chat");
 		this.chatButton.setOnAction(e->parent.chatButtonPress(username));
+		this.chatButton.setFocusTraversable(false);
 
 		this.setStyle("-fx-padding: 5;" +
                 "-fx-border-style: solid inside;" +
@@ -30,6 +31,7 @@ public class ContactDisplay extends HBox {
                 "-fx-border-insets: 3;" +
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: green;");
+		this.setMaxWidth(350);
 		this.getChildren().addAll(usernameLabel, chatButton);
 	}
 }
