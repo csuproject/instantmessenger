@@ -52,6 +52,7 @@ public class BabblerBase {
 	private MessageListener messageListener;
 	private StatusListener statusListener;
 	private RosterListener rosterListener;
+	//private PresenceListener presenceListener;
 
 	private StatusEvent statusEvent;
 
@@ -68,7 +69,7 @@ public class BabblerBase {
 		this.hostName = hostName;
 
 		this.messageListener = messageListener;
-		this.statusListener = statusListener; // TODO: what is happening here?
+		this.statusListener = statusListener; // TODO: what is happening here? - you have "presenceListener" in the constructor (MN)
 		this.rosterListener = rosterListener;
 
 		this.messageManager = new MessageManager();
