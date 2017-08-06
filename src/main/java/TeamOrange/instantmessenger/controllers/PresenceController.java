@@ -11,6 +11,7 @@ import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.UserStatus;
 import TeamOrange.instantmessenger.views.AccountScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
+import TeamOrange.instantmessenger.views.ContactDisplay;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideAuthenticationException;
 import exceptions.ConfideNoResponseException;
@@ -36,6 +37,6 @@ public class PresenceController {
 		if(contact != null){
 			contact.setPresence(type);
 		}
-		
+
 	}
 }
