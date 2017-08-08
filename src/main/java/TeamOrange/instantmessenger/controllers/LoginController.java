@@ -47,7 +47,7 @@ public class LoginController {
 		AppJid appJid;
 		try{
 			appJid = babblerBase.login(userName, password);
-			AppPresence presence = new AppPresence(AppPresence.Type.AVAILIBLE);
+			AppPresence presence = new AppPresence(AppPresence.Type.AVAILABLE);
 			AppUser appUser = new AppUser(appJid, presence);
 			contacts.setSelf(appUser);
 			LinkedList<AppUser> contactsFromServer = babblerBase.getContactsAsAppUsers();
