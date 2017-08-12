@@ -77,7 +77,7 @@ public class BabblerBase {
 		this.connectionManager = new ConnectionManager();
 		this.mucManager = new MucManager();
 	}
-	
+
 	public void reset(){
 		try {
 			close();
@@ -151,7 +151,6 @@ public class BabblerBase {
 	 */
 	public void connect() throws ConfideXmppException{
 		connectionManager.connect(client);
-		client.addInboundPresenceListener(presenceListener->newPresence(presenceListener)); // TODO: What is happening here ??
 	}
 
 	/**
@@ -180,7 +179,7 @@ public class BabblerBase {
 		this.appJid = appJid;
 		return appJid;
 	}
-	
+
 
 //	/**
 //	 * logs out by logging in anonymously
@@ -387,11 +386,11 @@ public class BabblerBase {
 //
 //	    presenceEvent.consume();
 //	}
-	
+
 	public void newPresence(PresenceEvent presenceEvent){
 	    Presence presence = presenceEvent.getPresence();
 	    Contact contact = client.getManager(RosterManager.class).getContact(presence.getFrom());
-	    
+
 	    AppJid fromJid = JidUtilities.appJidFromJid( presence.getFrom() );
 	    Presence.Type presenceType = presence.getType();
 	    AppPresence.Type appPresenceType = null;
