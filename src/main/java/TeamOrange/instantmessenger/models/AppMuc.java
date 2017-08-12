@@ -31,13 +31,6 @@ public class AppMuc {
 		this.babblerBase = babblerBase;
 		messages = new LinkedList<AppMucMessage>();
 		occupants = new LinkedList<AppOccupant>();
-		
-		// TODO doesn't work
-		// Delay new message event
-		Timeline timeline = new Timeline(new KeyFrame(
-		        Duration.millis(10000),
-		        ae -> messageInit = true));
-		timeline.play();
 	}
 
 	/**
@@ -78,8 +71,6 @@ public class AppMuc {
 	 */
 	public void inboundMessage(AppMucMessage message){
 		messages.add(message);
-		
-		if(messageInit) // Delayed message event
 		messageEvent.getMUC(this);
 	}
 	

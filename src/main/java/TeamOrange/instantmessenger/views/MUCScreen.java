@@ -130,7 +130,6 @@ import resources.GroupList;
 		}
 		
 		private void readGroupList() {
-			
 			GroupList getGroupList = null;
 		     try {
 		         FileInputStream fileIn = new FileInputStream("./GroupList.ser");
@@ -141,12 +140,12 @@ import resources.GroupList;
 		      }catch(IOException i) {
 		         i.printStackTrace();
 		         getGroupList = new GroupList();
-		    	  writeGroupList(); 
+		    	  writeGroupList(getGroupList); 
 		         return;
 		      }catch(ClassNotFoundException c) {
 		         System.out.println("GroupList class not found");
 		         c.printStackTrace();
-		    	  writeGroupList(); 
+		    	  writeGroupList(getGroupList); 
 		         return;
 		      }
 		}
