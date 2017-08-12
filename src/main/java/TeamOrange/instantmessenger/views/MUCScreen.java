@@ -57,8 +57,6 @@ import resources.GroupList;
 		 */
 		public void create() throws Exception {
 			
-
-			
 			mucList = new ArrayList<AppMuc>();
 			displayList = new ArrayList<MUCContactDisplay>();
 			Button createGroupButton = new Button("Create Group");

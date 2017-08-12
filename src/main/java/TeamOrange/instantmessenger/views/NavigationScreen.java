@@ -56,6 +56,10 @@ public class NavigationScreen extends Screen {
 		logoutButton = new Button("Logout");
 		logoutButton.setGraphic(new ImageView(imageLogout));
 		logoutButton.setMinSize(135, 60);
+		logoutButton.setOnAction(e->{
+			setImageContactMessage();
+			setImageGroupMessage();
+		});
 		navigationBox.getChildren().addAll(contactButton, chatButton, logoutButton);
 		this.getChildren().addAll(navigationBox);
 	}

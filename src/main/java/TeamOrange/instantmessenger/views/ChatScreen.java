@@ -30,7 +30,6 @@ import javafx.util.Duration;
 
 public class ChatScreen extends Screen {
 
-//	private Label header;
 	private TextField newMessageTextField;
 	private Button sendNewMessageButton;
 	private SendNewMessageEvent sendNewMessageEvent;
@@ -42,10 +41,10 @@ public class ChatScreen extends Screen {
 	private HBox newMessage;
 	private VBox screenVBox;
 	private HBox mucHbox;
-	GetMUCEvent sendMessage;
-	GetMUCEvent destroyMUC;
-	GetMUCEvent exitMUC;
-	AppMuc muc;
+	private GetMUCEvent sendMessage;
+	private GetMUCEvent destroyMUC;
+	private GetMUCEvent exitMUC;
+	private AppMuc muc;
 
 	public ChatScreen(){
 		try {
