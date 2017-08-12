@@ -1,7 +1,6 @@
 package TeamOrange.instantmessenger.views;
 
 import java.util.LinkedList;
-
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppUser;

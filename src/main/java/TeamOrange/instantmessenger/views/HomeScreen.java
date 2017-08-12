@@ -2,9 +2,7 @@ package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.CreateChatWithUserNameEvent;
 import TeamOrange.instantmessenger.lambda.DeclineContactRequestEvent;
-
 import java.util.LinkedList;
-
 import TeamOrange.instantmessenger.lambda.AcceptContactRequestEvent;
 import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.ChatWithContactEvent;
@@ -26,6 +24,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -61,37 +60,34 @@ public class HomeScreen extends Screen {
 
 		//contacts
 		contacts = new ScrollPane();
-//		contacts.setPrefHeight(400);
-//		contacts.setPrefWidth(400);
 		contactsContent = new VBox();
 		contactsContent.setPrefHeight(400);
 		contactsContent.setPrefWidth(400);
 		contacts.setContent(contactsContent);
+		contacts.setHbarPolicy(ScrollBarPolicy.NEVER);
 
 		// add contact
-		Label addContactWithUsername = new Label("Add Contact Via Username: ");
-		addContactWithUsernameInputTextField = new TextField();
+		Label addContactWithUsername = new Label("Add Contact: ");
+		addContactWithUsername.setFont(new Font(20));
+		addContactWithUsernameInputTextField = new TextField(); 
+		addContactWithUsernameInputTextField.setOnKeyPressed(keyEvent->addContactInputKeyPressed(keyEvent));
 		addContactButton = new Button("Add");
 		addContactButton.setOnAction( e->addContactBtnPress() );
+		addContactButton.setFocusTraversable(false);
 		HBox addContactInput = new HBox();
 		addContactInput.getChildren().addAll(addContactWithUsername, addContactWithUsernameInputTextField, addContactButton);
 		addContactInput.setSpacing(10);
 
-		// add fake data
-		ContactDisplay c = new ContactDisplay(this, "tim");
-		contactsContent.getChildren().add(c);
-		c = new ContactDisplay(this, "shaun");
-		contactsContent.getChildren().add(c);
-		c = new ContactDisplay(this, "murray");
-		contactsContent.getChildren().add(c);
-		c = new ContactDisplay(this, "jim");
-		contactsContent.getChildren().add(c);
-		c = new ContactDisplay(this, "test");
-		contactsContent.getChildren().add(c);
-
-
 		vbox.getChildren().addAll(contacts, addContactInput);
+		vbox.setVgrow(contacts, javafx.scene.layout.Priority.ALWAYS);
 		this.getChildren().add(vbox);
+		this.setPrefHeight(600-50);
+	}
+	
+	public void addContactInputKeyPressed(javafx.scene.input.KeyEvent keyEvent){
+		if( keyEvent.getCode().equals(javafx.scene.input.KeyCode.ENTER) ){
+			addContactBtnPress();
+		}
 	}
 
 	public void chatButtonPress(String username) {
@@ -101,6 +97,7 @@ public class HomeScreen extends Screen {
 
 	public void addContactBtnPress(){
 		String username = addContactWithUsernameInputTextField.getText().trim();
+		addContactWithUsernameInputTextField.clear();
 		if(username.isEmpty()){
 			alert("Username field must not be empty.", "empty username field", AlertType.WARNING);
 		} else {

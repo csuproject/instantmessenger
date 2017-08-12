@@ -12,15 +12,24 @@ import rocks.xmpp.core.session.TcpConnectionConfiguration;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.core.stanza.model.IQ;
 import rocks.xmpp.core.stanza.model.Message;
+import rocks.xmpp.core.stanza.model.Presence;
 import rocks.xmpp.core.stream.StreamErrorException;
 import rocks.xmpp.core.stream.StreamNegotiationException;
 import rocks.xmpp.extensions.offline.OfflineMessageManager;
 import rocks.xmpp.im.roster.RosterManager;
+import rocks.xmpp.im.subscription.PresenceManager;
 import rocks.xmpp.util.concurrent.AsyncResult;
 
 public class ConnectionManager {
 
-	public XmppClient setupConnection(String hostName, BabblerBase babblerClient){
+	/**
+	 * Configures and creates the connection.
+	 * Adds presence, message, and roster listeners
+	 * @param hostName
+	 * @param babblerBase a reference back to BabblerBase so that the listeners can be linked back to it
+	 * @return an XmppClient object, used to communicate witht the server
+	 */
+	public XmppClient setupConnection(String hostName, BabblerBase babblerBase){
 		TcpConnectionConfiguration tcpConfiguration = TcpConnectionConfiguration.builder()
     		    .hostname(hostName)
     		    .port(5222)
@@ -29,14 +38,19 @@ public class ConnectionManager {
 
     	XmppClient client = XmppClient.create(hostName, tcpConfiguration);
 
-    	client.addInboundPresenceListener( presenceEvent->babblerClient.newPresence(presenceEvent) );
-    	client.addInboundMessageListener( messageEvent->babblerClient.newMessage(messageEvent) );
-    	client.getManager(RosterManager.class).addRosterListener( rosterEvent->babblerClient.newRoster(rosterEvent) );
+    	client.addInboundPresenceListener( presenceEvent->babblerBase.newPresence(presenceEvent) );
+    	client.addInboundMessageListener( messageEvent->babblerBase.newMessage(messageEvent) );
+    	client.getManager(RosterManager.class).addRosterListener( rosterEvent->babblerBase.newRoster(rosterEvent) );
 
     	// TODO: check if this worked
     	return client;
 	}
 
+	/**
+	 * Connects to the server
+	 * @param client
+	 * @throws ConfideXmppException
+	 */
 	public void connect(XmppClient client) throws ConfideXmppException {
 		try{
     		client.connect();
@@ -59,6 +73,11 @@ public class ConnectionManager {
 
 	}
 
+	/**
+	 * Closes the connection
+	 * @param client
+	 * @throws ConfideXmppException
+	 */
 	public void close(XmppClient client) throws ConfideXmppException {
 		try{
     		client.close();

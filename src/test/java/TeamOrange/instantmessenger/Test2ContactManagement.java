@@ -10,7 +10,7 @@ import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.views.AccountScreen;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import TeamOrange.instantmessenger.xmpp.MessageListener;
-import TeamOrange.instantmessenger.xmpp.StatusListener;
+import TeamOrange.instantmessenger.xmpp.PresenceListener;
 import TeamOrange.instantmessenger.xmpp.RosterListener;
 
 //JFX runner 
@@ -28,7 +28,7 @@ public class Test2ContactManagement {
 	//Babbler base pre-requisites
 	private String hostName = "teamorange.space";
 	private MessageListener ml;
-	private StatusListener pl;
+	private PresenceListener pl;
 	private RosterListener rl;
 	private AppContacts contacts;
 	

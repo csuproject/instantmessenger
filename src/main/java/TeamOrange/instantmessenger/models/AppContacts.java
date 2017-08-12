@@ -2,16 +2,26 @@ package TeamOrange.instantmessenger.models;
 
 import java.util.LinkedList;
 
+/**
+ * Holds a list of contacts, incoming contact-add requests
+ * And the AppUser self, representing the logged in user.
+ *
+ */
 public class AppContacts {
 
 	private AppUser self;
 	private LinkedList<AppUser> contactList;
 	private LinkedList<AppJid> incomingContactRequestList;
-	private LinkedList<AppJid> outgoingContactRequestList;
 
 	public AppContacts(){
 		this.contactList = new LinkedList<AppUser>();
 		this.incomingContactRequestList = new LinkedList<AppJid>();
+	}
+	
+	public void reset(){
+		self = null;
+		contactList.clear();
+		incomingContactRequestList.clear();
 	}
 
 	public void setSelf(AppUser self){
@@ -23,12 +33,9 @@ public class AppContacts {
 	}
 
 	public void addAllContacts(LinkedList<AppUser> list){
-		System.out.println("addAllContacts");
-		System.out.println(list);
 		if(list != null){
 			for(AppUser au : list){
 				addContact(au);
-				System.out.println(au.getJid().getBareJid());
 			}
 		}
 	}
@@ -49,6 +56,10 @@ public class AppContacts {
 
 	public AppUser getSelf(){
 		return self;
+	}
+	
+	public String getSelfName() {
+		return self.getJid().getLocal();
 	}
 
 	public LinkedList<AppUser> getContactList(){
