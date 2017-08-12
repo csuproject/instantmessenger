@@ -13,6 +13,8 @@ import java.util.function.BiFunction;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppMucMessage;
+import exceptions.ConfideFailedToConfigureChatRoomException;
+import exceptions.ConfideFailedToEnterChatRoomException;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.session.XmppClient;
@@ -90,8 +92,10 @@ public class MucManager {
 	 * @param roomJid a Jid representing the address of the room
 	 * @param nick the nickname to enter with
 	 * @return an AppMuc object representing the room
+	 * @throws ConfideFailedToEnterChatRoomException
+	 * @throws ConfideFailedToConfigureChatRoomException
 	 */
-	public AppMuc createAndOrEnterRoom(XmppClient client, BabblerBase babblerBase, Jid roomJid, String nick){
+	public AppMuc createAndOrEnterRoom(XmppClient client, BabblerBase babblerBase, Jid roomJid, String nick) throws ConfideFailedToEnterChatRoomException, ConfideFailedToConfigureChatRoomException {
 		// assuming using roomID@conference.teamorange.space
 		MultiUserChatManager manager = client.getManager(MultiUserChatManager.class);
 		ChatRoom chatRoom = manager.createChatRoom(roomJid);
@@ -128,8 +132,8 @@ public class MucManager {
 		AsyncResult<Presence> enterResult = chatRoom.enter(nick, discussionHistory);
 		try {
 			enterResult.getResult();
- 		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (XmppException e) {
+			throw new ConfideFailedToEnterChatRoomException();
 		}
 
 		// configure the room, this will only work if the room hasnt already been created by someone else, in which case the catch block will be entered.

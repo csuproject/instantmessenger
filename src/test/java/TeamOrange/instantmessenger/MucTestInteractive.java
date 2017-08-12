@@ -2,11 +2,14 @@ package TeamOrange.instantmessenger;
 
 import java.util.Scanner;
 
+import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
+import exceptions.ConfideFailedToConfigureChatRoomException;
+import exceptions.ConfideFailedToEnterChatRoomException;
 import exceptions.ConfideXmppException;
 
 public class MucTestInteractive {
@@ -44,6 +47,12 @@ public class MucTestInteractive {
 		} catch (ConfideXmppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (ConfideFailedToEnterChatRoomException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ConfideFailedToConfigureChatRoomException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -52,7 +61,8 @@ public class MucTestInteractive {
 				new BabblerBase("teamorange.space",
 						appMessage->messageListener(appMessage),
 						(fromJid, appPresenceType)->presenceListener(fromJid, appPresenceType),
-						() -> rosterListener());
+						() -> rosterListener(),
+						type->connectionEventListener(type));
 
 		client.setupConnection();
     	try {
@@ -76,4 +86,8 @@ public class MucTestInteractive {
 	private static void messageListener(AppMessage appMessage) {
 		// TODO Auto-generated method stub
 	}
+
+	public static void connectionEventListener(ConnectionEventEnum type){
+
+    }
 }

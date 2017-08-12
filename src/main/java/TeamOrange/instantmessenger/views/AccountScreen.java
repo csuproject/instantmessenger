@@ -23,7 +23,7 @@ public class AccountScreen extends Screen {
 	private TextField loginUserNameTextField;
 	private TextField loginPasswordTextField;
 	private Button login;
-	
+
 	private TextField createAccountUserNameTextField;
 	private TextField createAccountPasswordTextField;
 	private Button createAccount;
@@ -39,13 +39,19 @@ public class AccountScreen extends Screen {
 		}
 	}
 
-	public void create() throws Exception {	
+	public void create() throws Exception {
 		// Login
 		Label loginLabel = new Label("Login");
 		loginLabel.setFont(new Font(30));
 		//
 		loginUserNameTextField = new TextField();
 		loginUserNameTextField.setOnKeyPressed(keyEvent->loginKeyPressed(keyEvent));
+		// restrict input to lower case
+		loginUserNameTextField.textProperty().addListener(
+		  (observable, oldValue, newValue) -> {
+		    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
+		  }
+		);
 		Label loginUserNameLabel = new Label("Username: " );
 		loginUserNameLabel.setFont(new Font(18));
 		HBox loginUserNameInput = new HBox();
@@ -75,14 +81,20 @@ public class AccountScreen extends Screen {
                 "-fx-border-insets: 3;" +
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: purple;");
-		
-		
+
+
 		// Create an account
 		Label createAccountLabel = new Label("Create Account");
 		createAccountLabel.setFont(new Font(30));
 		//
 		createAccountUserNameTextField = new TextField();
 		createAccountUserNameTextField.setOnKeyPressed(keyEvent->createAccountKeyPressed(keyEvent));
+		// restrict input to lower case
+		createAccountUserNameTextField.textProperty().addListener(
+		  (observable, oldValue, newValue) -> {
+		    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
+		  }
+		);
 		Label createAccountserNameLabel = new Label("Username: " );
 		createAccountserNameLabel.setFont(new Font(18));
 		HBox createAccountUserNameInput = new HBox();
@@ -112,7 +124,7 @@ public class AccountScreen extends Screen {
                 "-fx-border-insets: 3;" +
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: purple;");
-		
+
 
 		//Pane
 		GridPane gridPane = new GridPane();
@@ -123,13 +135,13 @@ public class AccountScreen extends Screen {
 
 		this.getChildren().add(gridPane);
 	}
-	
+
 	public void loginKeyPressed(javafx.scene.input.KeyEvent keyEvent){
 		if( keyEvent.getCode().equals(javafx.scene.input.KeyCode.ENTER) ){
 			loginBtnPress();
 		}
 	}
-	
+
 	public void createAccountKeyPressed(javafx.scene.input.KeyEvent keyEvent){
 		if( keyEvent.getCode().equals(javafx.scene.input.KeyCode.ENTER) ){
 			createAccountBtnPress();

@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
+import exceptions.ConfideFailedToConfigureChatRoomException;
+import exceptions.ConfideFailedToEnterChatRoomException;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -52,7 +54,13 @@ public class AppMuc {
 	 * enters this group chat
 	 */
 	public void enter(){
-		babblerBase.createAndOrEnterRoom(roomID, nickname);
+		try {
+			babblerBase.createAndOrEnterRoom(roomID, nickname);
+		} catch (ConfideFailedToEnterChatRoomException e1) {
+			e1.printStackTrace();
+		} catch (ConfideFailedToConfigureChatRoomException e2){
+			e2.printStackTrace();
+		}
 	}
 
 	public String getRoomID(){

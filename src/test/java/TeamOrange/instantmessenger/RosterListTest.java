@@ -2,6 +2,7 @@ package TeamOrange.instantmessenger;
 
 import java.util.LinkedList;
 
+import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppPresence;
@@ -17,7 +18,8 @@ public class RosterListTest {
 	BabblerBase babblerBase;
 
 	RosterListTest() {
-		babblerBase = new BabblerBase("teamorange.space", appMessage->messageListener(appMessage), (fromJid, appPresenceType)->presenceListener(fromJid, appPresenceType), () -> rosterListener());
+		babblerBase = new BabblerBase("teamorange.space", appMessage->messageListener(appMessage), (fromJid, appPresenceType)->presenceListener(fromJid, appPresenceType), () -> rosterListener(),
+				type->connectionEventListener(type));
 
 		babblerBase.setupConnection();
     	try {
@@ -63,4 +65,8 @@ public class RosterListTest {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public static void connectionEventListener(ConnectionEventEnum type){
+
+    }
 }

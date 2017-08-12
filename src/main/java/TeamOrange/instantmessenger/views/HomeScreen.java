@@ -69,8 +69,14 @@ public class HomeScreen extends Screen {
 		// add contact
 		Label addContactWithUsername = new Label("Add Contact: ");
 		addContactWithUsername.setFont(new Font(20));
-		addContactWithUsernameInputTextField = new TextField(); 
+		addContactWithUsernameInputTextField = new TextField();
 		addContactWithUsernameInputTextField.setOnKeyPressed(keyEvent->addContactInputKeyPressed(keyEvent));
+		// restrict input to lower case
+		addContactWithUsernameInputTextField.textProperty().addListener(
+		  (observable, oldValue, newValue) -> {
+		    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
+		  }
+		);
 		addContactButton = new Button("Add");
 		addContactButton.setOnAction( e->addContactBtnPress() );
 		addContactButton.setFocusTraversable(false);
@@ -83,7 +89,7 @@ public class HomeScreen extends Screen {
 		this.getChildren().add(vbox);
 		this.setPrefHeight(600-50);
 	}
-	
+
 	public void addContactInputKeyPressed(javafx.scene.input.KeyEvent keyEvent){
 		if( keyEvent.getCode().equals(javafx.scene.input.KeyCode.ENTER) ){
 			addContactBtnPress();

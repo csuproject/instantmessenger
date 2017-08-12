@@ -3,6 +3,7 @@ package TeamOrange.instantmessenger;
 import java.util.Collection;
 import java.util.Scanner;
 
+import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
@@ -54,7 +55,8 @@ public class MucTest {
 				new BabblerBase("teamorange.space",
 						appMessage->messageListener(appMessage),
 						(fromJid, appPresenceType)->presenceListener(fromJid, appPresenceType),
-						() -> rosterListener());
+						() -> rosterListener(),
+						type->connectionEventListener(type));
 
 		client.setupConnection();
     	try {
@@ -78,4 +80,8 @@ public class MucTest {
 	private static void messageListener(AppMessage appMessage) {
 		// TODO Auto-generated method stub
 	}
+
+	public static void connectionEventListener(ConnectionEventEnum type){
+
+    }
 }

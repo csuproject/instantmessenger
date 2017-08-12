@@ -18,7 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 	public class MUCScreen extends Screen {
-		
+
 		private ChangeScreen changeScreen;
 		private LinkedList<MUCContactDisplay> displayList;
 		private ScrollPane mucScrollPane;
@@ -43,7 +43,7 @@ import javafx.scene.layout.VBox;
 		 * @throws Exception
 		 */
 		public void create() throws Exception {
-			
+
 			displayList = new LinkedList<MUCContactDisplay>();
 			Button createGroupButton = new Button("Create Group");
 			createGroupButton.setMinWidth(100);
@@ -55,12 +55,18 @@ import javafx.scene.layout.VBox;
 			addGroupButton.setFocusTraversable(false);
 			topHBox = new HBox(addGroupButton,createGroupButton);
 			topHBox.setAlignment(Pos.CENTER);
-			
+
 			// Add Group Chat UI
 			addGroupTextField = new TextField();
 			addGroupTextField.setPromptText("Add Group Chat");
 			addGroupTextField.setMinHeight(35);
 			addGroupTextField.setMinWidth(320);
+			// restrict input to lower case
+			addGroupTextField.textProperty().addListener(
+			  (observable, oldValue, newValue) -> {
+			    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
+			  }
+			);
 			Image imageAccept = new Image(getClass().getResource(
 					"/resources/accept-icon.png").toURI().toString(),25,25,false,false);
 			Button acceptAddGroupButton = new Button();
@@ -76,7 +82,7 @@ import javafx.scene.layout.VBox;
 			addGroupHBox = new HBox(
 					addGroupTextField,acceptAddGroupButton,declineAddGroupButton);
 			addGroupHBox.setAlignment(Pos.CENTER);
-			
+
 			// MUC List
 			mucScrollPane = new ScrollPane();
 			mucVBox = new VBox();
@@ -86,7 +92,7 @@ import javafx.scene.layout.VBox;
 			mucScrollPane.setFitToWidth(true);
 			mucScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 			displayList = new LinkedList<MUCContactDisplay>();
-		
+
 			// VBox Container holds all Objects
 			screenVBox = new VBox();
 			screenVBox.getChildren().addAll(topHBox, mucScrollPane);
@@ -104,7 +110,7 @@ import javafx.scene.layout.VBox;
 		public void load(List<AppMuc> mucList){
 			mucVBox.getChildren().clear();
 			displayList.clear();
-			
+
 			for(AppMuc appMUC : mucList){
 				MUCContactDisplay mucDisplay = new MUCContactDisplay(appMUC);
 				mucDisplay.setOnGetMUCEvent(e->getMUCEvent.getMUC(e));
@@ -112,37 +118,37 @@ import javafx.scene.layout.VBox;
 				displayList.add(mucDisplay);
 			}
 		}
-		
+
 		private void addGroup() {
 			String groupName;
 			groupName = addGroupTextField.getText();
 			closeAddGroupBox();
 			addMUCEvent.getMUCName(groupName);
 		}
-		
+
 		private void openAddGroupBox() {
 			screenVBox.getChildren().clear();
 			screenVBox.getChildren().addAll(topHBox, addGroupHBox, mucScrollPane);
 		}
-		
+
 		private void closeAddGroupBox() {
 			addGroupTextField.clear();
 			screenVBox.getChildren().clear();
 			screenVBox.getChildren().addAll(topHBox, mucScrollPane);
 		}
-		
+
 		public void setOnOpenMUC(GetMUCEvent getMUCEvent) {
 			this.getMUCEvent = getMUCEvent;
 		}
-		
+
 		public void setOnAddGroupGetMUCEvent(AddMUCEvent addMUCEvent) {
 			this.addMUCEvent = addMUCEvent;
 		}
-		
+
 		public void setOnChangeScreen(ChangeScreen changeScreen){
 			this.changeScreen = changeScreen;
 		}
-		
 
-		
+
+
 }
