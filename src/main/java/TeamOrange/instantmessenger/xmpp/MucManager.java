@@ -27,6 +27,7 @@ import rocks.xmpp.extensions.muc.ChatService;
 import rocks.xmpp.extensions.muc.MultiUserChatManager;
 import rocks.xmpp.extensions.muc.Occupant;
 import rocks.xmpp.extensions.muc.OccupantEvent.Type;
+import rocks.xmpp.extensions.muc.model.DiscussionHistory;
 import rocks.xmpp.extensions.muc.model.Item;
 import rocks.xmpp.extensions.muc.model.Role;
 import rocks.xmpp.extensions.muc.model.RoomConfiguration;
@@ -99,6 +100,7 @@ public class MucManager {
 		MultiUserChatManager manager = client.getManager(MultiUserChatManager.class);
 		ChatRoom chatRoom = manager.createChatRoom(roomJid);
 
+<<<<<<< HEAD
 		AsyncResult<Presence> enterResult = chatRoom.enter(nick);
 
 		try {
@@ -119,13 +121,13 @@ public class MucManager {
 			throw new ConfideFailedToConfigureChatRoomException();
 		}
 
+=======
+		// create AppMuc representatoin of this chat room
+>>>>>>> refs/remotes/origin/master
 		// TODO: get collection of AppMucs to do this, so it can return an existing one if one exists
 		AppMuc muc = new AppMuc(roomJid.getLocal(), nick, babblerBase);
 
-		Collection<Occupant> occupants = chatRoom.getOccupants();
-		for(Occupant o : occupants){
-			muc.occupantEntered(o.getNick());
-		}
+		// setup listeners
 		chatRoom.addInboundMessageListener( me->{
 			String body = me.getMessage().getBody();
 			String from = me.getMessage().getFrom().getResource();
@@ -147,6 +149,41 @@ public class MucManager {
 		        }
 		    }
 		});
+
+		// enter the room and request discussion history
+		DiscussionHistory discussionHistory = DiscussionHistory.forMaxMessages(1000);
+		AsyncResult<Presence> enterResult = chatRoom.enter(nick, discussionHistory);
+		try {
+			enterResult.getResult();
+ 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// configure the room, this will only work if the room hasnt already been created by someone else, in which case the catch block will be entered.
+		RoomConfiguration roomConfiguration = RoomConfiguration.builder()
+				.persistent(true)
+				.rolesThatMayDiscoverRealJids( Arrays.asList(Role.MODERATOR, Role.PARTICIPANT, Role.VISITOR) )
+				.rolesThatMayRetrieveMemberList( Arrays.asList(Role.MODERATOR, Role.PARTICIPANT, Role.VISITOR) )
+				.rolesThatMayRetrieveMemberList( Arrays.asList(Role.MODERATOR, Role.PARTICIPANT, Role.VISITOR) )
+				.rolesThatMaySendPrivateMessages( Arrays.asList(Role.MODERATOR, Role.PARTICIPANT, Role.VISITOR) )
+				.maxHistoryMessages(1000)
+				.invitesAllowed(true)
+				.membersOnly(false)
+				.publicRoom(true)
+				.loggingEnabled(true)
+				.build();
+		AsyncResult<IQ> configureResult = chatRoom.configure(roomConfiguration);
+		try {
+			IQ iq = configureResult.getResult();
+		} catch (XmppException e) {
+			// failed to configure, probably because it was already configured
+		}
+
+		// retrieve the rooms ocupants
+		Collection<Occupant> occupants = chatRoom.getOccupants();
+		for(Occupant o : occupants){
+			muc.occupantEntered(o.getNick());
+		}
 
 		return muc;
 	}

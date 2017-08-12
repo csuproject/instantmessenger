@@ -79,7 +79,10 @@ public class AppMuc {
 	 */
 	public void inboundMessage(AppMucMessage message){
 		messages.add(message);
-		messageEvent.getMUC(this);
+		// TODO: this is null sometimes, (messageEvent)
+		if(messageEvent != null){
+			messageEvent.getMUC(this);
+		}
 	}
 
 	/**
