@@ -100,30 +100,7 @@ public class MucManager {
 		MultiUserChatManager manager = client.getManager(MultiUserChatManager.class);
 		ChatRoom chatRoom = manager.createChatRoom(roomJid);
 
-<<<<<<< HEAD
-		AsyncResult<Presence> enterResult = chatRoom.enter(nick);
-
-		try {
-			enterResult.getResult();
-		} catch (XmppException e) {
-			throw new ConfideFailedToEnterChatRoomException();
-		}
-
-		RoomConfiguration roomConfiguration = RoomConfiguration.builder().persistent(true)
-				.rolesThatMayDiscoverRealJids( Arrays.asList(Role.MODERATOR, Role.PARTICIPANT, Role.VISITOR, Role.NONE) )
-				.rolesThatMayRetrieveMemberList( Arrays.asList(Role.MODERATOR, Role.PARTICIPANT, Role.VISITOR, Role.NONE) )
-				.build();
-		AsyncResult<IQ> configureResult = chatRoom.configure(roomConfiguration);
-
-		try {
-			IQ iq = configureResult.getResult();
-		} catch (XmppException e) {
-			throw new ConfideFailedToConfigureChatRoomException();
-		}
-
-=======
 		// create AppMuc representatoin of this chat room
->>>>>>> refs/remotes/origin/master
 		// TODO: get collection of AppMucs to do this, so it can return an existing one if one exists
 		AppMuc muc = new AppMuc(roomJid.getLocal(), nick, babblerBase);
 
@@ -155,8 +132,8 @@ public class MucManager {
 		AsyncResult<Presence> enterResult = chatRoom.enter(nick, discussionHistory);
 		try {
 			enterResult.getResult();
- 		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (XmppException e) {
+			throw new ConfideFailedToEnterChatRoomException();
 		}
 
 		// configure the room, this will only work if the room hasnt already been created by someone else, in which case the catch block will be entered.
