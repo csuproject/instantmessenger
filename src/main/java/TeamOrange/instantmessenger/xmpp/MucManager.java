@@ -13,6 +13,8 @@ import java.util.function.BiFunction;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppMucMessage;
+import exceptions.ConfideFailedToConfigureChatRoomException;
+import exceptions.ConfideFailedToEnterChatRoomException;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.session.XmppClient;
@@ -89,17 +91,20 @@ public class MucManager {
 	 * @param roomJid a Jid representing the address of the room
 	 * @param nick the nickname to enter with
 	 * @return an AppMuc object representing the room
+	 * @throws ConfideFailedToEnterChatRoomException
+	 * @throws ConfideFailedToConfigureChatRoomException
 	 */
-	public AppMuc createAndOrEnterRoom(XmppClient client, BabblerBase babblerBase, Jid roomJid, String nick){
+	public AppMuc createAndOrEnterRoom(XmppClient client, BabblerBase babblerBase, Jid roomJid, String nick) throws ConfideFailedToEnterChatRoomException, ConfideFailedToConfigureChatRoomException {
 		// assuming using roomID@conference.teamorange.space
 		MultiUserChatManager manager = client.getManager(MultiUserChatManager.class);
 		ChatRoom chatRoom = manager.createChatRoom(roomJid);
 
 		AsyncResult<Presence> enterResult = chatRoom.enter(nick);
+
 		try {
 			enterResult.getResult();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (XmppException e) {
+			throw new ConfideFailedToEnterChatRoomException();
 		}
 
 		RoomConfiguration roomConfiguration = RoomConfiguration.builder().persistent(true)
@@ -107,10 +112,11 @@ public class MucManager {
 				.rolesThatMayRetrieveMemberList( Arrays.asList(Role.MODERATOR, Role.PARTICIPANT, Role.VISITOR, Role.NONE) )
 				.build();
 		AsyncResult<IQ> configureResult = chatRoom.configure(roomConfiguration);
+
 		try {
 			IQ iq = configureResult.getResult();
 		} catch (XmppException e) {
-			e.printStackTrace();
+			throw new ConfideFailedToConfigureChatRoomException();
 		}
 
 		// TODO: get collection of AppMucs to do this, so it can return an existing one if one exists

@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
+import exceptions.ConfideFailedToConfigureChatRoomException;
+import exceptions.ConfideFailedToEnterChatRoomException;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -52,7 +54,13 @@ public class AppMuc {
 	 * enters this group chat
 	 */
 	public void enter(){
-		babblerBase.createAndOrEnterRoom(roomID, nickname);
+		try {
+			babblerBase.createAndOrEnterRoom(roomID, nickname);
+		} catch (ConfideFailedToEnterChatRoomException e1) {
+			e1.printStackTrace();
+		} catch (ConfideFailedToConfigureChatRoomException e2){
+			e2.printStackTrace();
+		}
 	}
 
 	public String getRoomID(){
@@ -73,14 +81,14 @@ public class AppMuc {
 		messages.add(message);
 		messageEvent.getMUC(this);
 	}
-	
+
 	/**
 	 * Get List of Messages
 	 * @return
 	 */
 	public LinkedList<AppMucMessage> getMessages() {
 		return messages;
-		
+
 	}
 
 	/**
@@ -122,24 +130,24 @@ public class AppMuc {
 		// TODO: consider multiple versions of the same nickname, or the same person leaving twice
 		occupants.remove(occupant);
 	}
-	
+
 	public void setOnNewMessage(GetMUCEvent getMUCEvent) {
 		this.messageEvent = getMUCEvent;
 	}
-	
-	
+
+
 	public void setReference(AppMuc muc) {
 		this.muc = muc;
 	}
-	
+
 	  @Override
 	  public boolean equals(Object otherObject) {
 	    // check for reference equality.
 	    if (this == otherObject) {
-	      return true; 
+	      return true;
 	    } else {
 	    	  return false;
 	    }
 	  }
-	
+
 }

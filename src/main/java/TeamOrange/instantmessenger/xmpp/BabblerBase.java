@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
 import TeamOrange.instantmessenger.lambda.LoginEvent;
 import TeamOrange.instantmessenger.lambda.StatusEvent;
 import TeamOrange.instantmessenger.models.AppChatSession;
@@ -15,12 +16,16 @@ import TeamOrange.instantmessenger.models.AppOccupant;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.UserStatus;
+import connectionEventListener.ConnectionEventListener;
 import TeamOrange.instantmessenger.models.AppPresence.Type;
 import exceptions.ConfideAuthenticationException;
+import exceptions.ConfideFailedToConfigureChatRoomException;
+import exceptions.ConfideFailedToEnterChatRoomException;
 import exceptions.ConfideXmppException;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
+import rocks.xmpp.core.session.ConnectionEvent;
 import rocks.xmpp.core.session.ConnectionException;
 import rocks.xmpp.core.session.NoResponseException;
 import rocks.xmpp.core.session.TcpConnectionConfiguration;
@@ -54,6 +59,7 @@ public class BabblerBase {
 	private MessageListener messageListener;
 	private PresenceListener presenceListener;
 	private RosterListener rosterListener;
+	private ConnectionEventListener connectionEventListener;
 
 	// Managers
 	private MessageManager messageManager;
@@ -64,28 +70,20 @@ public class BabblerBase {
 
 
 	public BabblerBase(String hostName, MessageListener messageListener,
-			PresenceListener presenceListener, RosterListener rosterListener) {
+			PresenceListener presenceListener, RosterListener rosterListener,
+			ConnectionEventListener connectionEventListener) {
 		this.hostName = hostName;
 
 		this.messageListener = messageListener;
 		this.presenceListener = presenceListener;
 		this.rosterListener = rosterListener;
+		this.connectionEventListener = connectionEventListener;
 
 		this.messageManager = new MessageManager();
 		this.accountManager = new AccountManager();
 		this.contactManager = new ContactManager();
 		this.connectionManager = new ConnectionManager();
 		this.mucManager = new MucManager();
-	}
-
-	public void reset(){
-		try {
-			close();
-			this.client = connectionManager.setupConnection(hostName, this);
-			connect();
-		} catch (ConfideXmppException e) {
-			e.printStackTrace();
-		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -149,7 +147,7 @@ public class BabblerBase {
 	 * Actually connects
 	 * @throws ConfideXmppException
 	 */
-	public void connect() throws ConfideXmppException{
+	public void connect() throws ConfideXmppException {
 		connectionManager.connect(client);
 	}
 
@@ -157,8 +155,12 @@ public class BabblerBase {
 	 * Closes the connection
 	 * @throws ConfideXmppException
 	 */
-	public void close() throws ConfideXmppException{
+	public void close() throws ConfideXmppException {
 		connectionManager.close(client);
+	}
+
+	public int getConnectionState(){
+		return connectionManager.getConnectionState(client);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -172,8 +174,7 @@ public class BabblerBase {
 	 * @return an AppJid representing the user who just logged in
 	 * @throws ConfideXmppException
 	 */
-	public AppJid login(String userName, String password)
-			throws ConfideXmppException {
+	public AppJid login(String userName, String password) throws ConfideXmppException {
 		Jid jid = accountManager.login(client, userName, password);
 		AppJid appJid = new AppJid(jid.getLocal(), jid.getDomain(), jid.getResource());
 		this.appJid = appJid;
@@ -321,8 +322,10 @@ public class BabblerBase {
 	 * @param roomID the id of the room
 	 * @param nickname the nickname to enter with
 	 * @return an AppMuc object that represents the group chat
+	 * @throws ConfideFailedToConfigureChatRoomException
+	 * @throws ConfideFailedToEnterChatRoomException
 	 */
-	public AppMuc createAndOrEnterRoom(String roomID, String nickname){
+	public AppMuc createAndOrEnterRoom(String roomID, String nickname) throws ConfideFailedToEnterChatRoomException, ConfideFailedToConfigureChatRoomException{
 		Jid roomJid = Jid.of(roomID + "@conference.teamorange.space");
 		AppMuc muc = mucManager.createAndOrEnterRoom(client, this, roomJid, nickname);
 		return muc;
@@ -435,6 +438,29 @@ public class BabblerBase {
 	 */
 	public void newRoster(RosterEvent rosterEvent){
 		rosterListener.roster();
+	}
+
+	public void newConnectionEvent(ConnectionEvent connectionEvent){
+		ConnectionEventEnum type = null;
+		switch(connectionEvent.getType()){
+			case DISCONNECTED:
+			{
+				type = ConnectionEventEnum.DISCONNECTED;
+			} break;
+			case RECONNECTION_SUCCEEDED:
+			{
+				type = ConnectionEventEnum.RECONNECTION_SUCCEEDED;
+			} break;
+			case RECONNECTION_FAILED:
+			{
+				type = ConnectionEventEnum.RECONNECTION_FAILED;
+			} break;
+			case RECONNECTION_PENDING:
+			{
+				type = ConnectionEventEnum.RECONNECTION_PENDING;
+			} break;
+		}
+		connectionEventListener.connectionEvent(type);
 	}
 
 }

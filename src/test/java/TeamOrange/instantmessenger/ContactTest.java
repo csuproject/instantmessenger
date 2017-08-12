@@ -3,6 +3,7 @@ package TeamOrange.instantmessenger;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppPresence;
@@ -54,7 +55,7 @@ public class ContactTest {
 		LinkedList<AppUser> contacts = client.getContactsAsAppUsers();
 		System.out.println("----- Contacts -----");
 		for(AppUser u : contacts)
-			System.out.println( u.getJid().getBareJid() + " : " + 
+			System.out.println( u.getJid().getBareJid() + " : " +
 					u.getPresence().sGetType() );
 		System.out.println("--------------------");
 	}
@@ -64,7 +65,8 @@ public class ContactTest {
 				new BabblerBase("teamorange.space",
 						appMessage->messageListener(appMessage),
 						(fromJid, appPresenceType)->presenceListener(fromJid, appPresenceType),
-						() -> rosterListener());
+						() -> rosterListener(),
+						type->connectionEventListener(type));
 
 		client.setupConnection();
     	try {
@@ -88,5 +90,9 @@ public class ContactTest {
 	private static void messageListener(AppMessage appMessage) {
 		// TODO Auto-generated method stub
 	}
+
+	public static void connectionEventListener(ConnectionEventEnum type){
+
+    }
 
 }

@@ -1,15 +1,19 @@
 package TeamOrange.instantmessenger.xmpp;
 
+import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 
+import TeamOrange.instantmessenger.models.AppConnection;
 import exceptions.ConfideConnectionException;
 import exceptions.ConfideNoResponseException;
 import exceptions.ConfideXmppException;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.session.ConnectionException;
 import rocks.xmpp.core.session.NoResponseException;
+import rocks.xmpp.core.session.ReconnectionStrategy;
 import rocks.xmpp.core.session.TcpConnectionConfiguration;
 import rocks.xmpp.core.session.XmppClient;
+import rocks.xmpp.core.session.XmppSessionConfiguration;
 import rocks.xmpp.core.stanza.model.IQ;
 import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stanza.model.Presence;
@@ -36,13 +40,17 @@ public class ConnectionManager {
     		    .secure(false)
     		    .build();
 
-    	XmppClient client = XmppClient.create(hostName, tcpConfiguration);
+		XmppSessionConfiguration configuration = XmppSessionConfiguration.builder()
+				.reconnectionStrategy(ReconnectionStrategy.alwaysAfter(Duration.ofSeconds(5)))
+				.build();
+
+    	XmppClient client = XmppClient.create(hostName, configuration, tcpConfiguration);
 
     	client.addInboundPresenceListener( presenceEvent->babblerBase.newPresence(presenceEvent) );
     	client.addInboundMessageListener( messageEvent->babblerBase.newMessage(messageEvent) );
     	client.getManager(RosterManager.class).addRosterListener( rosterEvent->babblerBase.newRoster(rosterEvent) );
+    	client.addConnectionListener( connectionEvent->babblerBase.newConnectionEvent(connectionEvent) );
 
-    	// TODO: check if this worked
     	return client;
 	}
 
@@ -85,6 +93,14 @@ public class ConnectionManager {
     		throw new ConfideXmppException();
     	}
 
+	}
+
+	public int getConnectionState(XmppClient client){
+		int answer = AppConnection.NOT_CONNECTED;
+		if(client.isConnected()){
+			answer = AppConnection.CONNECTED;
+		}
+		return answer;
 	}
 
 
