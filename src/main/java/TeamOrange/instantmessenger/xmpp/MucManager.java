@@ -3,6 +3,7 @@ package TeamOrange.instantmessenger.xmpp;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -16,6 +17,7 @@ import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.core.stanza.MessageEvent;
+import rocks.xmpp.core.stanza.model.IQ;
 import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stanza.model.Presence;
 import rocks.xmpp.extensions.muc.ChatRoom;
@@ -92,18 +94,25 @@ public class MucManager {
 		// assuming using roomID@conference.teamorange.space
 		MultiUserChatManager manager = client.getManager(MultiUserChatManager.class);
 		ChatRoom chatRoom = manager.createChatRoom(roomJid);
-		RoomConfiguration roomConfiguration = RoomConfiguration.builder().persistent(true)
-				.rolesThatMayDiscoverRealJids( Arrays.asList(Role.MODERATOR, Role.PARTICIPANT, Role.VISITOR, Role.NONE) )
-				.rolesThatMayRetrieveMemberList( Arrays.asList(Role.MODERATOR, Role.PARTICIPANT, Role.VISITOR, Role.NONE) )
-				.build();
-		chatRoom.configure(roomConfiguration);
+
 		AsyncResult<Presence> enterResult = chatRoom.enter(nick);
 		try {
 			enterResult.getResult();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		RoomConfiguration roomConfiguration = RoomConfiguration.builder().persistent(true)
+				.rolesThatMayDiscoverRealJids( Arrays.asList(Role.MODERATOR, Role.PARTICIPANT, Role.VISITOR, Role.NONE) )
+				.rolesThatMayRetrieveMemberList( Arrays.asList(Role.MODERATOR, Role.PARTICIPANT, Role.VISITOR, Role.NONE) )
+				.build();
+		AsyncResult<IQ> configureResult = chatRoom.configure(roomConfiguration);
+		try {
+			IQ iq = configureResult.getResult();
+		} catch (XmppException e) {
+			e.printStackTrace();
+		}
+
 		// TODO: get collection of AppMucs to do this, so it can return an existing one if one exists
 		AppMuc muc = new AppMuc(roomJid.getLocal(), nick, babblerBase);
 
