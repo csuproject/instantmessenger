@@ -1,11 +1,15 @@
 package TeamOrange.instantmessenger.views;
 
+import java.net.URISyntaxException;
+
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.lambda.SelectAppUser;
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppUser;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -18,12 +22,17 @@ public class MUCContactDisplay extends HBox {
 	private SelectAppUser selectAppUser;
 	private GetMUCEvent getMUCEvent;
 	private AppUser appUser;
-	private AppMuc appMUC;
+	public AppMuc appMUC;
+	Image imageMessage;
+	Image imageNewMessage;
  
-	public MUCContactDisplay(AppUser appUser){
+	public MUCContactDisplay(AppUser appUser) {
 		this.username = appUser.getJid().getLocal();
 		this.appUser = appUser;
 		usernameLabel = new Label(username);
+
+
+		//usernameLabel.setGraphic(new ImageView(imageMessage));
 		usernameLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
 		
 		this.setStyle("-fx-padding: 5;" +
@@ -35,8 +44,13 @@ public class MUCContactDisplay extends HBox {
 		this.setMaxWidth(380);
 		this.setOnMouseClicked(e->select());
 		this.getChildren().addAll(usernameLabel);
+		
+
 	}
 	
+	/**
+	 * Highlight selected contact
+	 */
 	public void select() {
 		if (selected) {
 			this.setStyle("-fx-padding: 5;" +
@@ -61,10 +75,13 @@ public class MUCContactDisplay extends HBox {
 		}
 	}
 	
-	public MUCContactDisplay(AppMuc appMUC){
+	public MUCContactDisplay(AppMuc appMUC, Image imageMessage, Image imageNewMessage){
+		this.imageMessage = imageMessage;
+		this.imageNewMessage = imageNewMessage;
 		this.appMUC = appMUC;
 		this.username = appMUC.getRoomID();
 		usernameLabel = new Label(username);
+		usernameLabel.setGraphic(new ImageView(imageNewMessage));
 		usernameLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
 		
 		this.setStyle("-fx-padding: 5;" +
@@ -74,8 +91,19 @@ public class MUCContactDisplay extends HBox {
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: black;");
 		this.setMaxWidth(380);
-		this.setOnMouseClicked(e->getMUCEvent.getMUC(this.appMUC));
+		this.setOnMouseClicked(e-> { 
+			getMUCEvent.getMUC(this.appMUC);
+			usernameLabel.setGraphic(new ImageView(this.imageMessage));
+			System.out.println("Clicked");});
 		this.getChildren().addAll(usernameLabel);
+	}
+	
+	public void setNewMessageImage() {
+		usernameLabel.setGraphic(new ImageView(imageNewMessage));
+	}
+	
+	public void setMessageImage() {
+		usernameLabel.setGraphic(new ImageView(imageMessage));
 	}
 	
 	public void setOnSelectAppUser(SelectAppUser selectAppUser) {

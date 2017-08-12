@@ -2,7 +2,6 @@ package TeamOrange.instantmessenger;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import TeamOrange.instantmessenger.controllers.AcceptOrDeclineContactRequestController;
 import TeamOrange.instantmessenger.controllers.AddContactController;
 import TeamOrange.instantmessenger.controllers.ChatController;
@@ -28,7 +27,6 @@ import TeamOrange.instantmessenger.views.GuiBase;
 import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.views.HomeScreenInput;
 import TeamOrange.instantmessenger.views.MUCScreen;
-import TeamOrange.instantmessenger.views.MUCScreenInput;
 import TeamOrange.instantmessenger.views.NavigationScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
@@ -64,7 +62,7 @@ public class App {
 	private PresenceController presenceController; // TODO: never used ?
 	private NavigationController naviationController;
 	private MUCController mucController;
-	private MUCScreenInput mucinput;
+
 
 	// models
 	AppContacts contacts;
@@ -82,7 +80,6 @@ public class App {
 		mucScreen = new MUCScreen();
 		createMUCScreen = new CreateMUCScreen();
 		mucList = new ArrayList<AppMuc>();
-		mucinput = new MUCScreenInput();
 		setScreen(ScreenEnum.ACCOUNT);
 
 		// models
@@ -217,7 +214,7 @@ public class App {
 			} break;
 			case MUC:
 			{
-				mucScreen.load(mucList);
+				//mucScreen.loadNew(mucList);
 				guiBase.setScreen(mucScreen,navigationScreen);
 			} break;
 			case CREATEMUC:
@@ -246,7 +243,7 @@ public class App {
      */
     public void setMUCList(List<AppMuc> mucList) {
     	this.mucList = mucList;	
-    	mucScreen.load(this.mucList);
+    	mucScreen.loadNew(this.mucList);
     }
     
     /**
@@ -263,10 +260,19 @@ public class App {
      * @param muc
      */
     public void loadMUCInFocus(AppMuc muc) {
-    	if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) {
+    	
+    	// Set new group message icon
+		if(currentScreen != ScreenEnum.MUC) {
+			if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) {
+    		}
+			else {
+			navigationScreen.setImageNewGroupMessage(); 
+			}
+		}
+		// Reload open screen
+    	if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) 
     		chatScreen.loadLater(muc);
-    	}
+    	else 
+    		mucScreen.loadNewMessage(muc);	
     }
-
-
 }

@@ -1,45 +1,28 @@
 package TeamOrange.instantmessenger.views;
 
-import TeamOrange.instantmessenger.lambda.CreateChatWithUserNameEvent;
 import TeamOrange.instantmessenger.lambda.DeclineContactRequestEvent;
 import java.util.LinkedList;
 import TeamOrange.instantmessenger.lambda.AcceptContactRequestEvent;
 import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.ChatWithContactEvent;
-import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
-import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
-import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppUser;
-import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
 import javafx.scene.layout.VBox;
 
 public class HomeScreen extends Screen {
 
 	private TextField addContactWithUsernameInputTextField;
 	private Button addContactButton;
-	//chat list
 	private ScrollPane contacts;
 	private VBox contactsContent;
-
-	//private CreateChatWithUserNameEvent chatWithUserNameEvent;
 	private ChatWithContactEvent chatWithContactEvent;
 	private AddContactEvent addContactEvent;
 	private AcceptContactRequestEvent acceptContactRequestEvent;
@@ -54,19 +37,18 @@ public class HomeScreen extends Screen {
 	}
 
 	public void create() throws Exception {
-
-		VBox vbox = new VBox();
-
-		//contacts
+		// Build contacts
 		contacts = new ScrollPane();
-//		contacts.setPrefHeight(400);
-//		contacts.setPrefWidth(400);
 		contactsContent = new VBox();
-		contactsContent.setPrefHeight(400);
-		contactsContent.setPrefWidth(400);
+		contactsContent.setPrefHeight(500);
+		contactsContent.setPrefWidth(500);
 		contacts.setContent(contactsContent);
+		contacts.setMaxHeight(500);
+		contacts.setMinHeight(500);
+		contacts.setFitToWidth(true);
+		contacts.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
-		// add contact
+		// Build add contact
 		Label addContactWithUsername = new Label("Add Contact Via Username: ");
 		addContactWithUsernameInputTextField = new TextField();
 		addContactButton = new Button("Add");
@@ -75,19 +57,8 @@ public class HomeScreen extends Screen {
 		addContactInput.getChildren().addAll(addContactWithUsername, addContactWithUsernameInputTextField, addContactButton);
 		addContactInput.setSpacing(10);
 
-		// add fake data
-		ContactDisplay c = new ContactDisplay(this, "tim");
-		contactsContent.getChildren().add(c);
-		c = new ContactDisplay(this, "shaun");
-		contactsContent.getChildren().add(c);
-		c = new ContactDisplay(this, "murray");
-		contactsContent.getChildren().add(c);
-		c = new ContactDisplay(this, "jim");
-		contactsContent.getChildren().add(c);
-		c = new ContactDisplay(this, "test");
-		contactsContent.getChildren().add(c);
-
-
+		// Build main VBox
+		VBox vbox = new VBox();
 		vbox.getChildren().addAll(contacts, addContactInput);
 		this.getChildren().add(vbox);
 	}
@@ -162,14 +133,4 @@ public class HomeScreen extends Screen {
 		alert.setContentText(message);
 		alert.showAndWait();
 	}
-
-//	public void chatWithBtnPress(){
-//		String userName = chatWithUserNameInputTextField.getText();
-//		chatWithUserNameEvent.chatWithUserName(userName);
-//	}
-//
-//	public void setOnChatWithUserNameEvent(CreateChatWithUserNameEvent chatWithUserNameEvent){
-//		this.chatWithUserNameEvent = chatWithUserNameEvent;
-//	}
-
 }

@@ -63,12 +63,10 @@ public class ChatScreen extends Screen {
 
 		//scrollpane
 		scrollPane = new ScrollPane();
-		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
-		scrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-		scrollPane.setMinHeight(550);
-		this.setMaxHeight(550);
-	
-		//this.scrollPane.setPadding(new Insets(20, 20, 20, 20));
+		scrollPane.setMaxHeight(500);
+		scrollPane.setMinHeight(500);
+		scrollPane.setFitToWidth(true);
+		scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
 		// Send message
 		newMessageTextField = new TextField();
@@ -128,7 +126,8 @@ public class ChatScreen extends Screen {
 	}
 
 	public void load(ChatScreenInput input){
-		
+		scrollPane.setMaxHeight(500);
+		scrollPane.setMinHeight(500);
 		setMUCMode(false);
 		screenVBox.getChildren().clear();
 		screenVBox.getChildren().addAll(scrollPane, newMessage);
@@ -151,7 +150,9 @@ public class ChatScreen extends Screen {
 	public void load(AppMuc muc) {
 		screenVBox.getChildren().clear();
 		screenVBox.getChildren().addAll(mucHbox,scrollPane, newMessage);
-		
+		scrollPane.setMaxHeight(500-mucHbox.heightProperty().doubleValue());
+		scrollPane.setMinHeight(500-mucHbox.heightProperty().doubleValue());
+				
 		chatNameLabel.setText("Group " + muc.getRoomID());
 		setMUCMode(true);
 		setMUCInFocus(muc);
