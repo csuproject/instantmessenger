@@ -5,6 +5,8 @@ import java.util.List;
 import TeamOrange.instantmessenger.controllers.AcceptOrDeclineContactRequestController;
 import TeamOrange.instantmessenger.controllers.AddContactController;
 import TeamOrange.instantmessenger.controllers.ChatController;
+import TeamOrange.instantmessenger.controllers.ConnectionController;
+import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
 import TeamOrange.instantmessenger.controllers.CreateAccountController;
 import TeamOrange.instantmessenger.controllers.OpenChatController;
 import TeamOrange.instantmessenger.controllers.PresenceController;
@@ -12,6 +14,7 @@ import TeamOrange.instantmessenger.controllers.LoginController;
 import TeamOrange.instantmessenger.controllers.MUCController;
 import TeamOrange.instantmessenger.controllers.NavigationController;
 import TeamOrange.instantmessenger.models.AppChats;
+import TeamOrange.instantmessenger.models.AppConnection;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
@@ -63,18 +66,22 @@ public class App {
 	private AcceptOrDeclineContactRequestController acceptOrDeclineContactRequestController;
 	private PresenceController presenceController; // TODO: never used ?
 	private NavigationController naviationController;
+	private ConnectionController connectionController;
 	private MUCController mucController;
 
 
 	// models
 	AppContacts contacts;
 	AppChats chats;
+	AppConnection connection;
 	List<AppMuc> mucList;
 	AppMuc muc;
 
+
 	public App(GuiBase guiBase){
-		// views
 		this.guiBase = guiBase;
+
+		// views
 		accountScreen = new AccountScreen();
 		homeScreen = new HomeScreen();
 		chatScreen = new ChatScreen();
@@ -87,21 +94,21 @@ public class App {
 		// models
 		contacts = new AppContacts();
 		chats = new AppChats();
+		connection = new AppConnection( AppConnection.NOT_CONNECTED );
 
 		// xmpp
-		babblerBase = new BabblerBase("teamorange.space",
+		babblerBase = new BabblerBase(
+				"teamorange.space",
 				appMessage->messageListener(appMessage),
 				(fromJid, appPresenceType)->presenceListener(fromJid, appPresenceType),
-				() -> rosterListener());
+				() -> rosterListener(),
+				type->connectionEventListener(type)
+		);
 
-    	babblerBase.setupConnection();
-    	try {
-			babblerBase.connect();
-		} catch (ConfideXmppException e) {
-			accountScreen.alert("Failed to connect", "connection error", AlertType.ERROR);
-			// TODO: fix this, try to connect again, find out if the user wants to exit or keep trying
-			System.exit(1);
-		}
+		connectionController = new ConnectionController(babblerBase, navigationScreen, connection);
+
+		connectionController.setupConnection();
+    	connectionController.connect();
 
     	// controllers
 		createAccountController = new CreateAccountController(babblerBase, accountScreen);
@@ -126,10 +133,10 @@ public class App {
 
 		presenceController = new PresenceController(babblerBase, accountScreen, contacts);
 
-		naviationController = new NavigationController(navigationScreen);
+		naviationController = new NavigationController(navigationScreen, this);
 		naviationController.setOnChangeScreen(screen->setScreen(screen));
 
-		mucController = new MUCController(babblerBase, chatScreen, contacts, mucScreen, 
+		mucController = new MUCController(babblerBase, chatScreen, contacts, mucScreen,
 				createMUCScreen);
 		mucController.setOnChangeScreen(screen->setScreen(screen));
 		mucController.setOnMUCListEvent(mucList->setMUCList(mucList));
@@ -137,6 +144,12 @@ public class App {
 		mucController.setOnOpenMUC(getMUCEvent->setMUCInFocus(getMUCEvent));
 		
 		statusDisplay = new StatusDisplay();
+	}
+
+	public void reset(){
+		contacts.reset();
+		chats.reset();
+		connectionController.reset();
 	}
 
 	// Listeners
@@ -190,6 +203,10 @@ public class App {
      */
     public void rosterListener(){
 
+    }
+
+    public void connectionEventListener(ConnectionEventEnum type){
+    	connectionController.onConnectionEvent(type);
     }
 
     // Screens
@@ -250,7 +267,7 @@ public class App {
 			} break;
     	}
     }
-    
+
     /**
      * Set list of MUC
      * @param mucList
@@ -259,7 +276,7 @@ public class App {
     	this.mucList = mucList;	
     	mucScreen.loadNew(this.mucList);
     }
-    
+
     /**
      * Set the MUC in focus
      * @param muc
@@ -268,7 +285,7 @@ public class App {
     	this.muc = muc;
     	setScreen(ScreenEnum.MUCCHAT);
     }
-    
+
     /**
      * Update MUC of MUCCHAT in focus and Notifications
      * @param muc

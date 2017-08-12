@@ -26,6 +26,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 public class ChatScreen extends Screen {
@@ -41,10 +42,12 @@ public class ChatScreen extends Screen {
 	private HBox newMessage;
 	private VBox screenVBox;
 	private HBox mucHbox;
-	private GetMUCEvent sendMessage;
-	private GetMUCEvent destroyMUC;
-	private GetMUCEvent exitMUC;
-	private AppMuc muc;
+	private HBox partnerDetails;
+	private Label partnerName;
+	GetMUCEvent sendMessage;
+	GetMUCEvent destroyMUC;
+	GetMUCEvent exitMUC;
+	AppMuc muc;
 
 	public ChatScreen(){
 		try {
@@ -66,7 +69,11 @@ public class ChatScreen extends Screen {
 		scrollPane.setMinHeight(500);
 		scrollPane.setFitToWidth(true);
 		scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-
+		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+		scrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+		scrollPane.setMinHeight(500);
+		this.setMaxHeight(500);
+	
 		// Send message
 		newMessageTextField = new TextField();
 		// Send message on Enter Key
@@ -79,7 +86,8 @@ public class ChatScreen extends Screen {
 		});
 		
 		sendNewMessageButton = new Button("Send");
-		sendNewMessageButton.setOnAction( e->sendNewMessageBtnPress() );		
+		sendNewMessageButton.setOnAction( e->sendNewMessageBtnPress() );	
+		sendNewMessageButton.setFocusTraversable(false);
 		scrollPane.setContent(scrollPaneContent);
 		sendNewMessageButton.setPrefWidth(50);
 		newMessageTextField.setPrefWidth(350-sendNewMessageButton.getWidth());
@@ -103,8 +111,16 @@ public class ChatScreen extends Screen {
 				destroyButton,chatNameLabel,exitButton);
 		mucHbox.setAlignment(Pos.CENTER);
 		
+		// partner detail
+		partnerName = new Label("partnerName");
+		partnerName.setFont(new Font(25));
+		partnerDetails = new HBox(partnerName);
+		partnerDetails.setMinHeight(50);
+		partnerDetails.setMaxHeight(50);
+		partnerDetails.setAlignment(Pos.CENTER);
+		
 		// add elements
-		screenVBox.getChildren().addAll(scrollPane, newMessage);
+		screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
 		this.getChildren().add(screenVBox);
 	}
 
@@ -129,11 +145,10 @@ public class ChatScreen extends Screen {
 		scrollPane.setMinHeight(500);
 		setMUCMode(false);
 		screenVBox.getChildren().clear();
-		screenVBox.getChildren().addAll(scrollPane, newMessage);
+		screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
 		
-		//header.setText("Chat with " + input.getPartner());
-		// TODO: load messages
 		String partner = input.getPartner();
+		partnerName.setText(partner);
 		LinkedList<AppChatSessionMessage> messages = input.getMessages();
 		scrollPaneContent.getChildren().clear();
 		for(AppChatSessionMessage m : messages){

@@ -26,7 +26,7 @@ import javafx.scene.layout.VBox;
 import resources.GroupList;
 
 	public class MUCScreen extends Screen {
-		
+
 		private ChangeScreen changeScreen;
 		private List<MUCContactDisplay> displayList;
 		private List<AppMuc> mucList;
@@ -56,23 +56,31 @@ import resources.GroupList;
 		 * @throws Exception
 		 */
 		public void create() throws Exception {
-			
+
 			mucList = new ArrayList<AppMuc>();
 			displayList = new ArrayList<MUCContactDisplay>();
 			Button createGroupButton = new Button("Create Group");
 			createGroupButton.setMinWidth(100);
 			createGroupButton.setOnAction(e->changeScreen.SetScreen(ScreenEnum.CREATEMUC));
+			createGroupButton.setFocusTraversable(false);
 			Button addGroupButton = new Button("Add Group");
 			addGroupButton.setMinWidth(100);
 			addGroupButton.setOnAction(e->openAddGroupBox());
+			addGroupButton.setFocusTraversable(false);
 			topHBox = new HBox(addGroupButton,createGroupButton);
 			topHBox.setAlignment(Pos.CENTER);
-			
+
 			// Add Group Chat UI
 			addGroupTextField = new TextField();
 			addGroupTextField.setPromptText("Add Group Chat");
 			addGroupTextField.setMinHeight(35);
 			addGroupTextField.setMinWidth(320);
+			// restrict input to lower case
+			addGroupTextField.textProperty().addListener(
+			  (observable, oldValue, newValue) -> {
+			    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
+			  }
+			);
 			Image imageAccept = new Image(getClass().getResource(
 					"/resources/accept-icon.png").toURI().toString(),25,25,false,false);
 			Button acceptAddGroupButton = new Button();
@@ -88,7 +96,7 @@ import resources.GroupList;
 			addGroupHBox = new HBox(
 					addGroupTextField,acceptAddGroupButton,declineAddGroupButton);
 			addGroupHBox.setAlignment(Pos.CENTER);
-			
+
 			// MUC List
 			mucScrollPane = new ScrollPane();
 			mucVBox = new VBox();
@@ -180,10 +188,8 @@ import resources.GroupList;
 				}
 			}
 		}
-		
-		/**
-		 * Add new MUC Group
-		 */
+
+
 		private void addGroup() {
 			String groupName;
 			groupName = addGroupTextField.getText();
@@ -207,19 +213,19 @@ import resources.GroupList;
 			screenVBox.getChildren().clear();
 			screenVBox.getChildren().addAll(topHBox, mucScrollPane);
 		}
-		
+
 		public void setOnOpenMUC(GetMUCEvent getMUCEvent) {
 			this.getMUCEvent = getMUCEvent;
 		}
-		
+
 		public void setOnAddGroupGetMUCEvent(AddMUCEvent addMUCEvent) {
 			this.addMUCEvent = addMUCEvent;
 		}
-		
+
 		public void setOnChangeScreen(ChangeScreen changeScreen){
 			this.changeScreen = changeScreen;
 		}
-		
 
-		
+
+
 }

@@ -13,9 +13,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 public class HomeScreen extends Screen {
 
@@ -47,12 +49,22 @@ public class HomeScreen extends Screen {
 		contacts.setMinHeight(500);
 		contacts.setFitToWidth(true);
 		contacts.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		contacts.setHbarPolicy(ScrollBarPolicy.NEVER);
 
-		// Build add contact
-		Label addContactWithUsername = new Label("Add Contact Via Username: ");
+		// add contact
+		Label addContactWithUsername = new Label("Add Contact: ");
+		addContactWithUsername.setFont(new Font(20));
 		addContactWithUsernameInputTextField = new TextField();
+		addContactWithUsernameInputTextField.setOnKeyPressed(keyEvent->addContactInputKeyPressed(keyEvent));
+		// restrict input to lower case
+		addContactWithUsernameInputTextField.textProperty().addListener(
+		  (observable, oldValue, newValue) -> {
+		    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
+		  }
+		);
 		addContactButton = new Button("Add");
 		addContactButton.setOnAction( e->addContactBtnPress() );
+		addContactButton.setFocusTraversable(false);
 		HBox addContactInput = new HBox();
 		addContactInput.getChildren().addAll(addContactWithUsername, addContactWithUsernameInputTextField, addContactButton);
 		addContactInput.setSpacing(10);
@@ -60,7 +72,15 @@ public class HomeScreen extends Screen {
 		// Build main VBox
 		VBox vbox = new VBox();
 		vbox.getChildren().addAll(contacts, addContactInput);
+		vbox.setVgrow(contacts, javafx.scene.layout.Priority.ALWAYS);
 		this.getChildren().add(vbox);
+		this.setPrefHeight(600-50);
+	}
+
+	public void addContactInputKeyPressed(javafx.scene.input.KeyEvent keyEvent){
+		if( keyEvent.getCode().equals(javafx.scene.input.KeyCode.ENTER) ){
+			addContactBtnPress();
+		}
 	}
 
 	public void chatButtonPress(String username) {
@@ -70,6 +90,7 @@ public class HomeScreen extends Screen {
 
 	public void addContactBtnPress(){
 		String username = addContactWithUsernameInputTextField.getText().trim();
+		addContactWithUsernameInputTextField.clear();
 		if(username.isEmpty()){
 			alert("Username field must not be empty.", "empty username field", AlertType.WARNING);
 		} else {

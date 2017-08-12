@@ -16,6 +16,11 @@ public class AppChats {
 	public AppChats(){
 		chats = new LinkedList<AppChatSession>();
 	}
+	
+	public void reset(){
+		chats.clear();
+		activeChat = null;
+	}
 
 	/**
 	 * Adds the given chat to the list of chats

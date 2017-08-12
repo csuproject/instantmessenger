@@ -1,14 +1,13 @@
 package TeamOrange.instantmessenger.views;
 
-import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import javafx.application.Platform;
+import TeamOrange.instantmessenger.lambda.LogoutEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.TextAlignment;
 
 public class NavigationScreen extends Screen {
 
@@ -19,6 +18,7 @@ public class NavigationScreen extends Screen {
 	ChangeScreen changeScreen;
 	Image imageMessage;
 	Image imageNewMessage;
+	LogoutEvent logoutEvent;
 	
 	public NavigationScreen(){
 		try {
@@ -30,7 +30,6 @@ public class NavigationScreen extends Screen {
 	
 	public void create() throws Exception {
 		
-
 		navigationBox = new HBox();
 		navigationBox.setAlignment(Pos.CENTER);
 		imageMessage = new Image(getClass().getResource(
@@ -40,6 +39,7 @@ public class NavigationScreen extends Screen {
 		Image imageLogout = new Image(getClass().getResource(
 				"/resources/logout-icon.png").toURI().toString(),25,25,false,false);
 		contactButton = new Button("Chats");
+
 		contactButton.setGraphic(new ImageView(imageMessage));
 		contactButton.setMinSize(135, 60);
 		contactButton.setOnAction(e-> {
@@ -60,10 +60,12 @@ public class NavigationScreen extends Screen {
 			setImageContactMessage();
 			setImageGroupMessage();
 		});
+
 		navigationBox.getChildren().addAll(contactButton, chatButton, logoutButton);
 		this.getChildren().addAll(navigationBox);
 	}
 	
+
 	public void setImageNewContactMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
@@ -86,6 +88,14 @@ public class NavigationScreen extends Screen {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
 				chatButton.setGraphic(new ImageView(imageMessage));}});
+	}
+
+	public void logout(){
+		logoutEvent.logout();
+	}
+	
+	public void setOnLogoutEvent(LogoutEvent logoutEvent){
+		this.logoutEvent = logoutEvent;
 	}
 	
 	public void setOnChangeScreen(ChangeScreen changeScreen){
