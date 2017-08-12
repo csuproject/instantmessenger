@@ -71,16 +71,19 @@ public class AppMuc {
 	 */
 	public void inboundMessage(AppMucMessage message){
 		messages.add(message);
-		messageEvent.getMUC(this);
+		// TODO: this is null sometimes, (messageEvent)
+		if(messageEvent != null){
+			messageEvent.getMUC(this);
+		}
 	}
-	
+
 	/**
 	 * Get List of Messages
 	 * @return
 	 */
 	public LinkedList<AppMucMessage> getMessages() {
 		return messages;
-		
+
 	}
 
 	/**
@@ -122,24 +125,24 @@ public class AppMuc {
 		// TODO: consider multiple versions of the same nickname, or the same person leaving twice
 		occupants.remove(occupant);
 	}
-	
+
 	public void setOnNewMessage(GetMUCEvent getMUCEvent) {
 		this.messageEvent = getMUCEvent;
 	}
-	
-	
+
+
 	public void setReference(AppMuc muc) {
 		this.muc = muc;
 	}
-	
+
 	  @Override
 	  public boolean equals(Object otherObject) {
 	    // check for reference equality.
 	    if (this == otherObject) {
-	      return true; 
+	      return true;
 	    } else {
 	    	  return false;
 	    }
 	  }
-	
+
 }
