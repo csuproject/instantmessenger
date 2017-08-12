@@ -30,7 +30,8 @@ public class CreateMUCScreen extends Screen	{
 
 
 
-	public CreateMUCScreen(){
+	public CreateMUCScreen(GuiBase guiBase){
+		super(guiBase);
 		try {
 			create();
 		} catch (Exception e) {
@@ -43,7 +44,7 @@ public class CreateMUCScreen extends Screen	{
 	 * @throws Exception
 	 */
 	public void create() throws Exception {
-		
+
 		// MCU create control Top HBox
 		Button cancelButton = new Button("Cancel");
 		cancelButton.setMinWidth(100);
@@ -57,12 +58,12 @@ public class CreateMUCScreen extends Screen	{
 		HBox topHbox = new HBox(
 				cancelButton,screenNameLabel,createButton);
 		topHbox.setAlignment(Pos.CENTER);
-		
+
 		// MCU User Input
 		mucName = new TextField();
 		mucName.setMinHeight(35);
 		mucName.setPromptText("Name this group chat");
-		
+
 		// Contacts List
 		contacts = new ScrollPane();
 		contactsContent = new VBox();
@@ -73,7 +74,7 @@ public class CreateMUCScreen extends Screen	{
 		contacts.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		contactDisplayList = new LinkedList<MUCContactDisplay>();
 		mucList = new ArrayList<AppUser>();
-		
+
 		// VBox Container holds all Objects
 		VBox vbox = new VBox();
 		vbox.getChildren().addAll(topHbox, mucName, contacts);
@@ -97,7 +98,7 @@ public class CreateMUCScreen extends Screen	{
 		contactsContent.getChildren().clear();
 		contactDisplayList.clear();
 		mucList.clear();
-		
+
 		for(AppUser appUser : contacts){
 			MUCContactDisplay contact = new MUCContactDisplay(appUser);
 			contact.setOnSelectAppUser(selectAppUser->selectContact(selectAppUser));
@@ -105,7 +106,7 @@ public class CreateMUCScreen extends Screen	{
 			contactDisplayList.add(contact);
 		}
 	}
-	
+
 	/**
 	 * Clears create MUC
 	 */
@@ -113,7 +114,7 @@ public class CreateMUCScreen extends Screen	{
 		mucName.clear();
 		changeScreen.SetScreen(ScreenEnum.MUC);
 	}
-	
+
 	/**
 	 * Add or remove selected contacts to MUC List
 	 * @param selectAppUser
@@ -128,9 +129,9 @@ public class CreateMUCScreen extends Screen	{
 		}
 		System.out.println(selectAppUser.getJid());
 	}
-	
+
 	/**
-	 * Create MUC 
+	 * Create MUC
 	 */
 	public void createMUC() {
 		if (!mucList.isEmpty() && !mucName.getText().isEmpty()) {
@@ -139,11 +140,11 @@ public class CreateMUCScreen extends Screen	{
 			clear();
 		}
 	}
-	
+
 	public void setOnCreateMUCEvent(CreateMUCEvent createMUCEvent) {
 		this.createMUCEvent = createMUCEvent;
 	}
-	
+
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;
 	}

@@ -15,15 +15,16 @@ public class NavigationScreen extends Screen {
 	Button logoutButton;
 	ChangeScreen changeScreen;
 	LogoutEvent logoutEvent;
-	
-	public NavigationScreen(){
+
+	public NavigationScreen(GuiBase guiBase){
+		super(guiBase);
 		try {
 			create();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void create() throws Exception {
 		navigationBox = new HBox();
 		navigationBox.setAlignment(Pos.CENTER);
@@ -42,18 +43,23 @@ public class NavigationScreen extends Screen {
 		navigationBox.getChildren().addAll(contactButton, chatButton, logoutButton);
 		this.getChildren().addAll(navigationBox);
 	}
-	
+
+	@Override
+	public void load(ScreenInput input){
+
+	}
+
 	public void logout(){
 		logoutEvent.logout();
 	}
-	
+
 	public void setOnLogoutEvent(LogoutEvent logoutEvent){
 		this.logoutEvent = logoutEvent;
 	}
-	
+
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;
 	}
 
-	
+
 }

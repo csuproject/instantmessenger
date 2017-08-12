@@ -6,6 +6,7 @@ import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
 import TeamOrange.instantmessenger.lambda.LoginEvent;
 import exceptions.CreateUserInvalidFormatException;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -31,7 +32,8 @@ public class AccountScreen extends Screen {
 	private CreateAccountEvent createAccountEvent;
 	private LoginEvent loginEvent;
 
-	public AccountScreen(){
+	public AccountScreen(GuiBase guiBase){
+		super(guiBase);
 		try {
 			create();
 		} catch (Exception e) {
@@ -165,7 +167,7 @@ public class AccountScreen extends Screen {
 
 		if(isValidCreateAccountFormat(username, password)){
 			createAccountEvent.createAccount(username, password);
-			alert("User( \""+username+"\" ) successfully created", "user created", AlertType.CONFIRMATION);
+//			alert("User( \""+username+"\" ) successfully created", "user created", AlertType.CONFIRMATION);
 			loginUserNameTextField.setText(username);
 			loginPasswordTextField.setText(password);
 			loginUserNameTextField.requestFocus();
@@ -187,14 +189,6 @@ public class AccountScreen extends Screen {
 
 	public void setOnLoginEvent(LoginEvent loginEvent){
 		this.loginEvent = loginEvent;
-	}
-
-	public void alert(String message, String title, AlertType type){
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(message);
-		alert.showAndWait();
 	}
 
 }

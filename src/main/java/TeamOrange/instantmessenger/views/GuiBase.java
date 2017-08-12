@@ -2,6 +2,7 @@ package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.App;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -35,10 +36,34 @@ public class GuiBase extends Application {
 		stage.show();
 	}
 
+	public void setScreenLater(Screen screen){
+		Platform.runLater(new Runnable(){
+			@Override public void run(){
+				setScreen(screen);
+			}
+		});
+	}
+
 	public void setScreen(Screen screen){
 		scene.setRoot(screen);
 		stage.setScene(scene);
 		stage.show();
+	}
+
+	public void setScreenLater(Screen screen, Screen navigationScreen){
+		Platform.runLater(new Runnable(){
+			@Override public void run(){
+				setScreen(screen, navigationScreen);
+			}
+		});
+	}
+
+	public double getCenterX(){
+		return stage.getX() + stage.getWidth()/2;
+	}
+
+	public double getCenterY(){
+		return stage.getY() + stage.getHeight()/2;
 	}
 
 	/**

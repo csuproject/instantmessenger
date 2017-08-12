@@ -30,7 +30,8 @@ import javafx.scene.layout.VBox;
 		private HBox topHBox;
 		private TextField addGroupTextField;
 
-		public MUCScreen(){
+		public MUCScreen(GuiBase guiBase){
+			super(guiBase);
 			try {
 				create();
 			} catch (Exception e) {

@@ -6,9 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
+import TeamOrange.instantmessenger.lambda.ConnectionEventListener;
 import TeamOrange.instantmessenger.lambda.LoginEvent;
+import TeamOrange.instantmessenger.lambda.RequestContactAddSentListener;
 import TeamOrange.instantmessenger.lambda.StatusEvent;
 import TeamOrange.instantmessenger.models.AppChatSession;
+import TeamOrange.instantmessenger.models.AppConnection;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
@@ -16,7 +19,6 @@ import TeamOrange.instantmessenger.models.AppOccupant;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.UserStatus;
-import connectionEventListener.ConnectionEventListener;
 import TeamOrange.instantmessenger.models.AppPresence.Type;
 import exceptions.ConfideAuthenticationException;
 import exceptions.ConfideFailedToConfigureChatRoomException;
@@ -60,6 +62,7 @@ public class BabblerBase {
 	private PresenceListener presenceListener;
 	private RosterListener rosterListener;
 	private ConnectionEventListener connectionEventListener;
+	private RequestContactAddSentListener requestContactAddSentListener;
 
 	// Managers
 	private MessageManager messageManager;
@@ -79,11 +82,15 @@ public class BabblerBase {
 		this.rosterListener = rosterListener;
 		this.connectionEventListener = connectionEventListener;
 
-		this.messageManager = new MessageManager();
+		this.messageManager = new MessageManager(this);
 		this.accountManager = new AccountManager();
 		this.contactManager = new ContactManager();
 		this.connectionManager = new ConnectionManager();
 		this.mucManager = new MucManager();
+	}
+
+	public void setOnRequestContactAddSent(RequestContactAddSentListener requestContactAddSentListener){
+		this.requestContactAddSentListener = requestContactAddSentListener;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -151,6 +158,11 @@ public class BabblerBase {
 		connectionManager.connect(client);
 	}
 
+	public boolean isConnected(){
+//		return client.getActiveConnection() != null;
+		return connectionManager.getConnectionState(client) == AppConnection.CONNECTED;
+	}
+
 	/**
 	 * Closes the connection
 	 * @throws ConfideXmppException
@@ -194,8 +206,9 @@ public class BabblerBase {
 	 * Create User on Server
 	 * @param userName
 	 * @param password
+	 * @throws XmppException
 	 */
-	public void createUser(String userName, String password){
+	public void createUser(String userName, String password) throws XmppException{
 		accountManager.createUser(client, userName, password);
 	}
 
@@ -461,6 +474,11 @@ public class BabblerBase {
 			} break;
 		}
 		connectionEventListener.connectionEvent(type);
+	}
+
+	public void onRequestContactAddSent(Message message){
+		AppJid to = JidUtilities.appJidFromJid(message.getTo());
+		requestContactAddSentListener.contactAddRequestSent(to);
 	}
 
 }

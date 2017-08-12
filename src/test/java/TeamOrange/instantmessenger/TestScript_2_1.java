@@ -3,13 +3,14 @@ package TeamOrange.instantmessenger;
 import java.util.LinkedList;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideXmppException;
+import rocks.xmpp.core.XmppException;
 
 
 public class TestScript_2_1 {
-	
+
 	BabblerBase babblerBase;
-		
-	TestScript_2_1() {
+
+	TestScript_2_1() throws XmppException {
 
 		 babblerBase.createUser("usera", "usera");
 		 System.out.println("Created usera");
@@ -21,7 +22,7 @@ public class TestScript_2_1 {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 
+
 		 babblerBase.addContact("userb@teamorange.space");
 	}
 }

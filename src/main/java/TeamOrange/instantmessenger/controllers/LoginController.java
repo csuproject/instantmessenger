@@ -25,12 +25,14 @@ public class LoginController {
 	private BabblerBase babblerBase;
 	private AppContacts contacts;
 	private ChangeScreen changeScreen;
+	private ConnectionController connectionController;
 
-	public LoginController(BabblerBase babblerBase, AccountScreen accountScreen, AppContacts contacts){
+	public LoginController(BabblerBase babblerBase, AccountScreen accountScreen, AppContacts contacts, ConnectionController connectionController){
 		this.babblerBase = babblerBase;
 		this.accountScreen = accountScreen;
 		accountScreen.setOnLoginEvent( (userName, password)->login(userName, password) );
 		this.contacts = contacts;
+		this.connectionController = connectionController;
 	}
 
 	/**
@@ -46,6 +48,11 @@ public class LoginController {
 	public void login(String userName, String password){
 		AppJid appJid;
 		try{
+			if(!babblerBase.isConnected()){
+				connectionController.addLoginTask(this, userName, password);
+				connectionController.connect();
+				return;
+			}
 			appJid = babblerBase.login(userName, password);
 			AppPresence presence = new AppPresence(AppPresence.Type.AVAILIBLE);
 			AppUser appUser = new AppUser(appJid, presence);
@@ -54,12 +61,15 @@ public class LoginController {
 			contacts.addAllContacts(contactsFromServer);
 			changeScreen.SetScreen(ScreenEnum.HOME);
 		} catch(ConfideAuthenticationException e){
-			accountScreen.alert("The username or password that you entered was incorrect. Please try again, or create a new account if you dont already have one.", "login error", AlertType.WARNING);
+			accountScreen.alertLater("The username or password that you entered was incorrect. Please try again, or create a new account if you dont already have one.", "login error", AlertType.WARNING);
 			return;
 		} catch(ConfideNoResponseException e){
-			accountScreen.alert("No response was recieved from the server.", "login error", AlertType.WARNING);
+//			accountScreen.alert("No response was recieved from the server.", "login error", AlertType.WARNING);
+			connectionController.connect();
+			login(userName, password);
+			return;
 		} catch(ConfideXmppException e){
-			accountScreen.alert("Something went wrong.", "login error", AlertType.WARNING);
+			accountScreen.alertLater("Something went wrong.", "login error", AlertType.WARNING);
 		}
 	}
 

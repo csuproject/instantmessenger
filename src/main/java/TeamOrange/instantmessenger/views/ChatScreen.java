@@ -50,7 +50,8 @@ public class ChatScreen extends Screen {
 	GetMUCEvent exitMUC;
 	AppMuc muc;
 
-	public ChatScreen(){
+	public ChatScreen(GuiBase guiBase){
+		super(guiBase);
 		try {
 			create();
 		} catch (Exception e) {
@@ -70,7 +71,7 @@ public class ChatScreen extends Screen {
 		scrollPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
 		scrollPane.setMinHeight(500);
 		this.setMaxHeight(500);
-	
+
 		// Send message
 		newMessageTextField = new TextField();
 		// Send message on Enter Key
@@ -81,9 +82,9 @@ public class ChatScreen extends Screen {
 			      }
 			});
 		});
-		
+
 		sendNewMessageButton = new Button("Send");
-		sendNewMessageButton.setOnAction( e->sendNewMessageBtnPress() );	
+		sendNewMessageButton.setOnAction( e->sendNewMessageBtnPress() );
 		sendNewMessageButton.setFocusTraversable(false);
 		scrollPane.setContent(scrollPaneContent);
 		sendNewMessageButton.setPrefWidth(50);
@@ -107,7 +108,7 @@ public class ChatScreen extends Screen {
 		mucHbox = new HBox(
 				destroyButton,chatNameLabel,exitButton);
 		mucHbox.setAlignment(Pos.CENTER);
-		
+
 		// partner detail
 		partnerName = new Label("partnerName");
 		partnerName.setFont(new Font(25));
@@ -115,81 +116,92 @@ public class ChatScreen extends Screen {
 		partnerDetails.setMinHeight(50);
 		partnerDetails.setMaxHeight(50);
 		partnerDetails.setAlignment(Pos.CENTER);
-		
+
 		// add elements
 		screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
 		this.getChildren().add(screenVBox);
 	}
 
-	public void loadLater(ChatScreenInput input){
-		Platform.runLater(new Runnable(){
-			@Override public void run(){
-				load(input);
-			}
-		});
-	}
-	
-	public void loadLater(AppMuc muc){
-		Platform.runLater(new Runnable(){
-			@Override public void run(){
-				load(muc);
-			}
-		});
-	}
+//	public void loadLater(AppMuc muc){
+//		Platform.runLater(new Runnable(){
+//			@Override public void run(){
+//				load(muc);
+//			}
+//		});
+//	}
 
-	public void load(ChatScreenInput input){
-		
-		setMUCMode(false);
-		screenVBox.getChildren().clear();
-		screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
-		
-		String partner = input.getPartner();
-		partnerName.setText(partner);
-		LinkedList<AppChatSessionMessage> messages = input.getMessages();
-		scrollPaneContent.getChildren().clear();
-		for(AppChatSessionMessage m : messages){
-			String username = m.isInbound() ? partner : "Self";
-			MessageDisplay md = new MessageDisplay(username, m.getBody());
-			scrollPaneContent.getChildren().add(md);
+	@Override
+	public void load(ScreenInput input){
+		ChatScreenInput chatScreenInput = (ChatScreenInput)input;
+		if(chatScreenInput.isForMuc()){
+			screenVBox.getChildren().clear();
+			screenVBox.getChildren().addAll(mucHbox,scrollPane, newMessage);
+
+			chatNameLabel.setText("Group " + muc.getRoomID());
+			setMUCMode(true);
+			setMUCInFocus(muc);
+			LinkedList<AppMucMessage> messages = muc.getMessages();
+			scrollPaneContent.getChildren().clear();
+			for(AppMucMessage m : messages){
+				String username = m.getFromNick();
+				MessageDisplay md = new MessageDisplay(username, m.getBody());
+				scrollPaneContent.getChildren().add(md);
+			}
+			scrollChat();
 		}
-		scrollChat();
+		else if(chatScreenInput.isForChatSession()){
+			setMUCMode(false);
+			screenVBox.getChildren().clear();
+			screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
+
+			String partner = chatScreenInput.getPartner();
+			partnerName.setText(partner);
+			LinkedList<AppChatSessionMessage> messages = chatScreenInput.getMessages();
+			scrollPaneContent.getChildren().clear();
+			for(AppChatSessionMessage m : messages){
+				String username = m.isInbound() ? partner : "Self";
+				MessageDisplay md = new MessageDisplay(username, m.getBody());
+				scrollPaneContent.getChildren().add(md);
+			}
+			scrollChat();
+		}
 
 		// TODO: make a method to simply append a single message
 	}
-	
-	public void load(AppMuc muc) {
-		screenVBox.getChildren().clear();
-		screenVBox.getChildren().addAll(mucHbox,scrollPane, newMessage);
-		
-		chatNameLabel.setText("Group " + muc.getRoomID());
-		setMUCMode(true);
-		setMUCInFocus(muc);
-		LinkedList<AppMucMessage> messages = muc.getMessages();
-		scrollPaneContent.getChildren().clear();
-		for(AppMucMessage m : messages){
-			String username = m.getFromNick();
-			MessageDisplay md = new MessageDisplay(username, m.getBody());
-			scrollPaneContent.getChildren().add(md);
-		}
-		scrollChat();
-	}
-	
+
+//	public void load(AppMuc muc) {
+//		screenVBox.getChildren().clear();
+//		screenVBox.getChildren().addAll(mucHbox,scrollPane, newMessage);
+//
+//		chatNameLabel.setText("Group " + muc.getRoomID());
+//		setMUCMode(true);
+//		setMUCInFocus(muc);
+//		LinkedList<AppMucMessage> messages = muc.getMessages();
+//		scrollPaneContent.getChildren().clear();
+//		for(AppMucMessage m : messages){
+//			String username = m.getFromNick();
+//			MessageDisplay md = new MessageDisplay(username, m.getBody());
+//			scrollPaneContent.getChildren().add(md);
+//		}
+//		scrollChat();
+//	}
+
 	public void loadMessages() {
-		
+
 	}
-	
+
 	private void setMUCInFocus(AppMuc muc) {
-		this.muc = muc; 
+		this.muc = muc;
 	}
-	
+
 	private AppMuc getMUCInFocus() {
 		return this.muc;
 	}
-	
+
 	private void setMUCMode(boolean mode) {
 		MUCMODE = mode;
 	}
-	
+
 	/**
 	 * Scroll chat pane to bottom.
 	 */
@@ -198,29 +210,29 @@ public class ChatScreen extends Screen {
 		        new KeyFrame(Duration.seconds(2),
 		            new KeyValue(scrollPane.vvalueProperty(), 1)));
 		    animation.play();
-		
+
 		scrollPane.setVvalue(1);
 	}
 
 	public void sendNewMessageBtnPress(){
 		String message = newMessageTextField.getText();
-		if (!newMessageTextField.getText().isEmpty()) { 
-			if (!MUCMODE) 
-			{ sendNewMessageEvent.send(message);} 
+		if (!newMessageTextField.getText().isEmpty()) {
+			if (!MUCMODE)
+			{ sendNewMessageEvent.send(message);}
 			else 	{ sendMUCMessage(message); }
 		}
 		newMessageTextField.clear();
 	}
-	
+
 	public void sendMUCMessage(String message) {
 		muc.sendMessage(message);
-		load(muc);
+		load(new ChatScreenInput(muc)); // TODO: load should be called from muc, not here
 	}
-	
+
 	public void destroyMUC() {
 
 	}
-	
+
 	public void exitMUC() {
 		changeScreen.SetScreen(ScreenEnum.MUC);
 		exitMUC.getMUC(this.muc);
@@ -229,15 +241,15 @@ public class ChatScreen extends Screen {
 	public void setOnSendNewMessageEvent(SendNewMessageEvent sendNewMessageEvent) {
 		this.sendNewMessageEvent = sendNewMessageEvent;
 	}
-	
+
 	public void setOnDestroyMUC(GetMUCEvent destroyMUC) {
 		this.destroyMUC = destroyMUC;
 	}
-	
+
 	public void setOnExitMUC(GetMUCEvent exitMUC) {
 		this.exitMUC = exitMUC;
 	}
-	
+
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;
 	}

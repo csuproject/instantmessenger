@@ -10,6 +10,7 @@ import rocks.xmpp.core.session.NoResponseException;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.extensions.register.RegistrationManager;
 import rocks.xmpp.extensions.register.model.Registration;
+import rocks.xmpp.util.concurrent.AsyncResult;
 
 
 public class AccountManager {
@@ -75,8 +76,9 @@ public class AccountManager {
 	 * @param client
 	 * @param userName the username
 	 * @param password the password
+	 * @throws XmppException
 	 */
-	public void createUser(XmppClient client, String userName, String password) {
+	public void createUser(XmppClient client, String userName, String password) throws XmppException {
 		// TODO: how to tell if this failed?
 		Registration registration = Registration.builder()
     			.username(userName)
@@ -84,7 +86,8 @@ public class AccountManager {
     			.build();
 
 		RegistrationManager registrationManager = client.getManager(RegistrationManager.class);
-    	registrationManager.register(registration);
+    	AsyncResult<Void> result = registrationManager.register(registration);
+    	result.getResult();
 	}
 
 }

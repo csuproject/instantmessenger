@@ -8,6 +8,7 @@ import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
+import javafx.scene.control.Alert.AlertType;
 
 /**
  * controls the flow when the user sends a contact-add request
@@ -22,6 +23,7 @@ public class AddContactController {
 
 	public AddContactController(BabblerBase babblerBase, HomeScreen homeScreen, AppContacts contacts){
 		this.babblerBase = babblerBase;
+		babblerBase.setOnRequestContactAddSent(to->contactAddRequestSent(to));
 		this.homeScreen = homeScreen;
 		homeScreen.setOnAddContactEvent(username->addContact(username));
 		this.contacts = contacts;
@@ -37,6 +39,10 @@ public class AddContactController {
 		babblerBase.requestContactAdd(jid);
 		//babblerBase.requestSubsription(jid.getBareJid(), "Hello, I would like to to chat!?");
 	}
+
+	public void contactAddRequestSent(AppJid to){
+    	homeScreen.alertLater("Contact add request sent to "+to.getBareJid(), "Contact Add Request Sent", AlertType.CONFIRMATION);
+    }
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;

@@ -82,14 +82,15 @@ public class App {
 		this.guiBase = guiBase;
 
 		// views
-		accountScreen = new AccountScreen();
-		homeScreen = new HomeScreen();
-		chatScreen = new ChatScreen();
-		navigationScreen = new NavigationScreen();
-		mucScreen = new MUCScreen();
-		createMUCScreen = new CreateMUCScreen();
+		accountScreen = new AccountScreen(guiBase);
+		homeScreen = new HomeScreen(guiBase);
+		chatScreen = new ChatScreen(guiBase);
+		navigationScreen = new NavigationScreen(guiBase);
+		mucScreen = new MUCScreen(guiBase);
+		createMUCScreen = new CreateMUCScreen(guiBase);
 		mucList = new ArrayList<AppMuc>();
 		mucinput = new MUCScreenInput();
+		guiBase.setScreen(accountScreen);
 		setScreen(ScreenEnum.ACCOUNT);
 
 		// models
@@ -112,10 +113,10 @@ public class App {
     	connectionController.connect();
 
     	// controllers
-		createAccountController = new CreateAccountController(babblerBase, accountScreen);
+		createAccountController = new CreateAccountController(babblerBase, accountScreen, connectionController);
 		createAccountController.setOnChangeScreen( screen->setScreen(screen) );
 
-		loginController = new LoginController(babblerBase, accountScreen, contacts);
+		loginController = new LoginController(babblerBase, accountScreen, contacts, connectionController);
 		loginController.setOnChangeScreen( screen->setScreen(screen) );
 
 		openChatController = new OpenChatController(chats, contacts, babblerBase, homeScreen);
@@ -224,35 +225,35 @@ public class App {
     	switch(currentScreen){
 			case ACCOUNT:
 			{
-				guiBase.setScreen(accountScreen);
+				guiBase.setScreenLater(accountScreen);
 			} break;
 			case HOME:
 			{
 				HomeScreenInput input = new HomeScreenInput(contacts);
 				homeScreen.load(input);
-				guiBase.setScreen(homeScreen,navigationScreen);
+				guiBase.setScreenLater(homeScreen,navigationScreen);
 			} break;
 			case MUC:
 			{
 				mucScreen.load(mucList);
-				guiBase.setScreen(mucScreen,navigationScreen);
+				guiBase.setScreenLater(mucScreen,navigationScreen);
 			} break;
 			case CREATEMUC:
 			{
 				HomeScreenInput input = new HomeScreenInput(contacts);
 				createMUCScreen.load(input.getContactList());
-				guiBase.setScreen(createMUCScreen,navigationScreen);
+				guiBase.setScreenLater(createMUCScreen,navigationScreen);
 			} break;
 			case CHAT:
 			{
 				ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
 				chatScreen.load(input);
-				guiBase.setScreen(chatScreen,navigationScreen);
+				guiBase.setScreenLater(chatScreen,navigationScreen);
 			} break;
 				case MUCCHAT:
 			{
-				chatScreen.loadLater(muc);
-				guiBase.setScreen(chatScreen,navigationScreen);
+				chatScreen.loadLater(new ChatScreenInput(muc));
+				guiBase.setScreenLater(chatScreen,navigationScreen);
 			} break;
     	}
     }
@@ -281,7 +282,7 @@ public class App {
      */
     public void loadMUCInFocus(AppMuc muc) {
     	if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) {
-    		chatScreen.loadLater(muc);
+    		chatScreen.loadLater(new ChatScreenInput(muc));
     	}
     }
 

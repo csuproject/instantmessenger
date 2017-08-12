@@ -7,6 +7,7 @@ import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMessageType;
 import rocks.xmpp.addr.Jid;
+import rocks.xmpp.core.session.SendTask;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.core.stanza.MessageEvent;
 import rocks.xmpp.core.stanza.model.Message;
@@ -15,8 +16,10 @@ import rocks.xmpp.im.chat.ChatSession;
 
 public class MessageManager {
 
-	public MessageManager(){
+	private BabblerBase babblerBase;
 
+	public MessageManager(BabblerBase babblerBase){
+		this.babblerBase = babblerBase;
 	}
 
 	public void requestContactAdd(XmppClient client, AppJid to){
@@ -25,8 +28,16 @@ public class MessageManager {
 		message.setBody(App.REQUEST_CONTACT_ADD);
 		Jid toJid = JidUtilities.jidFromAppJid(to);
 		message.setTo(toJid);
-		client.sendMessage(message);
+		SendTask<Message> result = client.sendMessage(message);
+		result.onSent(m->babblerBase.onRequestContactAddSent(m));
+//		result.onAcknowledge(m->onRequestContactAddAcknowledge(m));// Consumer<Message>
 	}
+
+//	// TODO: messages never seem to be acknowledged
+//	public void onRequestContactAddAcknowledge(Message message){
+//		// contact add requested to message.getTo()
+//		System.out.println("(acknowledged) contact add request sent to: " +message.getTo() );
+//	}
 
 	public void alertUserOfContactRequestResponse(XmppClient client, AppJid to, boolean accepted){
 		Message message = new Message();

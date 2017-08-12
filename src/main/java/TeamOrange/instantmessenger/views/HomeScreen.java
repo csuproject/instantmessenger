@@ -46,7 +46,8 @@ public class HomeScreen extends Screen {
 	private AcceptContactRequestEvent acceptContactRequestEvent;
 	private DeclineContactRequestEvent declineContactRequestEvent;
 
-	public HomeScreen(){
+	public HomeScreen(GuiBase guiBase){
+		super(guiBase);
 		try {
 			create();
 		} catch (Exception e) {
@@ -108,7 +109,6 @@ public class HomeScreen extends Screen {
 			alert("Username field must not be empty.", "empty username field", AlertType.WARNING);
 		} else {
 			this.addContactEvent.add(username);
-			alert("Contact-add request sent to user( \""+username+"\")", "request sent", AlertType.CONFIRMATION);
 		}
 	}
 
@@ -120,24 +120,18 @@ public class HomeScreen extends Screen {
 		declineContactRequestEvent.decline(username);
 	}
 
-	public void loadLater(HomeScreenInput input){
-		Platform.runLater(new Runnable(){
-			@Override public void run(){
-				load(input);
-			}
-		});
-	}
-
-	public void load(HomeScreenInput input){
+	@Override
+	public void load(ScreenInput input){
+		HomeScreenInput homeScreenInput = (HomeScreenInput)input;
 		contactsContent.getChildren().clear();
 
-		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
+		LinkedList<AppJid> contactRequestList = homeScreenInput.getContactRequestList();
 		for(AppJid jid : contactRequestList){
 			ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
 			contactsContent.getChildren().add(request);
 		}
 
-		LinkedList<AppUser> contactList = input.getContactList();
+		LinkedList<AppUser> contactList = homeScreenInput.getContactList();
 		for(AppUser user : contactList){
 			ContactDisplay contact = new ContactDisplay(this, user.getJid().getLocal());
 			contactsContent.getChildren().add(contact);
@@ -158,14 +152,6 @@ public class HomeScreen extends Screen {
 
 	public void setOnDeclineContactRequestEvent(DeclineContactRequestEvent declineContactRequestEvent){
 		this.declineContactRequestEvent = declineContactRequestEvent;
-	}
-
-	public void alert(String message, String title, AlertType type){
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(message);
-		alert.showAndWait();
 	}
 
 //	public void chatWithBtnPress(){
