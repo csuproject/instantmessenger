@@ -44,6 +44,7 @@ public class HomeScreen extends Screen {
 	private List<AppUser> appUserList;
 	private Image imageMessage;
 	private Image imageNewMessage;
+	private String contactInFocus;
 
 	public HomeScreen(){
 		try {
@@ -195,8 +196,10 @@ public class HomeScreen extends Screen {
 			if(!this.appUserList.contains(appUser)) {
 				MUCContactDisplay contactDisplay = 
 						new MUCContactDisplay(appUser,imageMessage, imageNewMessage);
-				contactDisplay.setOnSelectAppUser(
-						e->chatWithContactEvent.openChat(e.getJid().getLocal()));
+				contactDisplay.setOnSelectAppUser(e-> {
+						chatWithContactEvent.openChat(e.getJid().getLocal());
+						setContactInFocus(appUser.getName());
+				});
 				this.appUserList.add(appUser);
 				displayList.add(contactDisplay);
 				contactsContent.getChildren().add(contactDisplay);
@@ -218,6 +221,22 @@ public class HomeScreen extends Screen {
 						display.setNewMessageImage();}});					 
 			}
 		}
+	}
+	
+	/**
+	 * Set contact in display focus
+	 * @param contactInFocus
+	 */
+	private void setContactInFocus(String contactInFocus) {
+		this.contactInFocus = contactInFocus;
+	}
+	
+	/**
+	 * Get contact in display focus
+	 * @return
+	 */
+	public String getContactInFocus() {
+		return contactInFocus;
 	}
 
 	public void setOnChatWithContactEvent(ChatWithContactEvent chatWithContactEvent){
