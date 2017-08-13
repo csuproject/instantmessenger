@@ -232,6 +232,7 @@ public class App {
 			} break;
 			case HOME:
 			{
+		    	statusDisplay.setScreenView(currentScreen);
 				statusDisplay.setUserName(contacts.getSelfName());
 				statusDisplay.setConnectionStatus(true);
 				HomeScreenInput input = new HomeScreenInput(contacts);
@@ -240,12 +241,14 @@ public class App {
 			} break;
 			case MUC:
 			{
+				statusDisplay.setScreenView(currentScreen);
 				statusDisplay.setUserName(contacts.getSelfName());
 				statusDisplay.setConnectionStatus(true);
 				guiBase.setScreen(statusDisplay,mucScreen,navigationScreen);
 			} break;
 			case CREATEMUC:
 			{
+				statusDisplay.setScreenView(currentScreen);
 				statusDisplay.setUserName(contacts.getSelfName());
 				statusDisplay.setConnectionStatus(true);
 				HomeScreenInput input = new HomeScreenInput(contacts);
@@ -254,6 +257,7 @@ public class App {
 			} break;
 			case CHAT:
 			{
+				statusDisplay.setScreenView(currentScreen);
 				statusDisplay.setUserName(contacts.getSelfName());
 				statusDisplay.setConnectionStatus(true);
 				ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
@@ -262,6 +266,7 @@ public class App {
 			} break;
 				case MUCCHAT:
 			{
+				statusDisplay.setScreenView(currentScreen);
 				statusDisplay.setUserName(contacts.getSelfName());
 				statusDisplay.setConnectionStatus(true);
 				chatScreen.loadLater(muc);
