@@ -419,10 +419,10 @@ public class BabblerBase {
 	    presenceListener.presence(fromJid, appPresenceType);
 
 	    // Subscribe
-//	    if (presence.getType() == Presence.Type.SUBSCRIBE) {
-//	    	client.getManager(PresenceManager.class).approveSubscription(presence.getFrom());
-//	    }
-//
+	    if (presence.getType() == Presence.Type.SUBSCRIBE) {
+	    	client.getManager(PresenceManager.class).approveSubscription(presence.getFrom());
+	    }
+
 //	    if (contact != null) {
 //	    	statusEvent.status(new UserStatus(presence.getId(),presence.getStatus()));
 //	    }
