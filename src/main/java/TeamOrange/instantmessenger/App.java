@@ -185,6 +185,7 @@ public class App {
     		}
     	} else if(message.getType() == AppMessageType.CHAT){
     		chatController.incomingChatMessage(message, currentScreen==ScreenEnum.CHAT);
+    		homeScreen.loadNewMessage(message.getFromJid().getLocal());
     		if(currentScreen!=ScreenEnum.CHAT)
     			navigationScreen.setImageNewContactMessage();
     	}
@@ -233,7 +234,7 @@ public class App {
 				statusDisplay.setUserName(contacts.getSelfName());
 				statusDisplay.setConnectionStatus(true);
 				HomeScreenInput input = new HomeScreenInput(contacts);
-				homeScreen.load(input);
+				homeScreen.loadNew(input);
 				guiBase.setScreen(statusDisplay,homeScreen,navigationScreen);
 			} break;
 			case MUC:

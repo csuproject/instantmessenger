@@ -21,11 +21,15 @@ public class MUCContactDisplay extends HBox {
 	private boolean selected;
 	private SelectAppUser selectAppUser;
 	private GetMUCEvent getMUCEvent;
-	private AppUser appUser;
+	public AppUser appUser;
 	public AppMuc appMUC;
 	Image imageMessage;
 	Image imageNewMessage;
- 
+		
+	/**
+	 * Basic Contact Display of AppUser
+	 * @param appUser
+	 */
 	public MUCContactDisplay(AppUser appUser) {
 		this.username = appUser.getJid().getLocal();
 		this.appUser = appUser;
@@ -44,8 +48,35 @@ public class MUCContactDisplay extends HBox {
 		this.setMaxWidth(380);
 		this.setOnMouseClicked(e->select());
 		this.getChildren().addAll(usernameLabel);
+	}
+	
+	/**
+	 * Contact Display with message notification
+	 * @param appUser
+	 * @param imageMessage
+	 * @param imageNewMessage
+	 */
+	public MUCContactDisplay(AppUser appUser, Image imageMessage, Image imageNewMessage){
+		this.imageMessage = imageMessage;
+		this.imageNewMessage = imageNewMessage;
+		this.appUser = appUser;
+		this.username = appUser.getJid().getLocal();
+		usernameLabel = new Label(username);
+		usernameLabel.setGraphic(new ImageView(imageNewMessage));
+		usernameLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
 		
-
+		this.setStyle("-fx-padding: 5;" +
+                "-fx-border-style: solid inside;" +
+                "-fx-border-width: 2;" +
+                "-fx-border-insets: 3;" +
+                "-fx-border-radius: 5;" +
+                "-fx-border-color: black;");
+		this.setMaxWidth(380);
+		this.setOnMouseClicked(e-> { 
+			selectAppUser.getAppUser(appUser);
+			usernameLabel.setGraphic(new ImageView(this.imageMessage));
+			System.out.println("Clicked");});
+		this.getChildren().addAll(usernameLabel);
 	}
 	
 	/**
@@ -92,9 +123,9 @@ public class MUCContactDisplay extends HBox {
                 "-fx-border-color: black;");
 		this.setMaxWidth(380);
 		this.setOnMouseClicked(e-> { 
-			getMUCEvent.getMUC(this.appMUC);
 			usernameLabel.setGraphic(new ImageView(this.imageMessage));
-			System.out.println("Clicked");});
+			getMUCEvent.getMUC(this.appMUC);});
+		
 		this.getChildren().addAll(usernameLabel);
 	}
 	

@@ -1,11 +1,16 @@
 package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.DeclineContactRequestEvent;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+
 import TeamOrange.instantmessenger.lambda.AcceptContactRequestEvent;
 import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.ChatWithContactEvent;
 import TeamOrange.instantmessenger.models.AppJid;
+import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppUser;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -14,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.image.Image;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -25,10 +31,19 @@ public class HomeScreen extends Screen {
 	private Button addContactButton;
 	private ScrollPane contacts;
 	private VBox contactsContent;
+	private ScrollPane contactRequest;
+	private VBox contactRequestContent;
+	private VBox mainVbox;
+	private HBox addContactInput;
 	private ChatWithContactEvent chatWithContactEvent;
 	private AddContactEvent addContactEvent;
 	private AcceptContactRequestEvent acceptContactRequestEvent;
 	private DeclineContactRequestEvent declineContactRequestEvent;
+	
+	private List<MUCContactDisplay> displayList;
+	private List<AppUser> appUserList;
+	private Image imageMessage;
+	private Image imageNewMessage;
 
 	public HomeScreen(){
 		try {
@@ -39,7 +54,17 @@ public class HomeScreen extends Screen {
 	}
 
 	public void create() throws Exception {
-		// Build contacts
+		
+		appUserList = new ArrayList<AppUser>();
+		displayList = new ArrayList<MUCContactDisplay>();
+		
+		// Chat status images
+		imageMessage = new Image(getClass().getResource(
+				"/resources/message.png").toURI().toString(),50,50,false,false);
+		imageNewMessage = new Image(getClass().getResource(
+				"/resources/message-new.png").toURI().toString(),50,50,false,false);
+		
+		// Build contacts display
 		contacts = new ScrollPane();
 		contactsContent = new VBox();
 		contactsContent.setPrefHeight(500);
@@ -50,6 +75,18 @@ public class HomeScreen extends Screen {
 		contacts.setFitToWidth(true);
 		contacts.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		contacts.setHbarPolicy(ScrollBarPolicy.NEVER);
+		
+		// Build contact request
+		contactRequest = new ScrollPane();
+		contactRequestContent = new VBox();
+		contactRequestContent.setPrefHeight(500);
+		contactRequestContent.setPrefWidth(500);
+		contactRequest.setContent(contactRequestContent);
+		contactRequest.setMaxHeight(200);
+		//contactRequest.setMinHeight(500);
+		contactRequest.setFitToWidth(true);
+		contactRequest.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		contactRequest.setHbarPolicy(ScrollBarPolicy.NEVER);
 
 		// add contact
 		Label addContactWithUsername = new Label("Add Contact: ");
@@ -65,15 +102,15 @@ public class HomeScreen extends Screen {
 		addContactButton = new Button("Add");
 		addContactButton.setOnAction( e->addContactBtnPress() );
 		addContactButton.setFocusTraversable(false);
-		HBox addContactInput = new HBox();
+		addContactInput = new HBox();
 		addContactInput.getChildren().addAll(addContactWithUsername, addContactWithUsernameInputTextField, addContactButton);
 		addContactInput.setSpacing(10);
 
 		// Build main VBox
-		VBox vbox = new VBox();
-		vbox.getChildren().addAll(contacts, addContactInput);
-		vbox.setVgrow(contacts, javafx.scene.layout.Priority.ALWAYS);
-		this.getChildren().add(vbox);
+		mainVbox = new VBox();
+		mainVbox.getChildren().addAll(contacts, addContactInput);
+		mainVbox.setVgrow(contacts, javafx.scene.layout.Priority.ALWAYS);
+		this.getChildren().add(mainVbox);
 		this.setPrefHeight(600-50);
 	}
 
@@ -110,7 +147,7 @@ public class HomeScreen extends Screen {
 	public void loadLater(HomeScreenInput input){
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
-				load(input);
+				loadNew(input);
 			}
 		});
 	}
@@ -128,6 +165,58 @@ public class HomeScreen extends Screen {
 		for(AppUser user : contactList){
 			ContactDisplay contact = new ContactDisplay(this, user.getJid().getLocal());
 			contactsContent.getChildren().add(contact);
+		}
+	}
+	
+	/**
+	 * Load new contacts
+	 * @param mucList
+	 */
+	public void loadNew(HomeScreenInput input) {
+		
+		// Pass contact requests
+		contactRequestContent.getChildren().clear();
+		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
+		if(!contactRequestList.isEmpty()) {
+			mainVbox.getChildren().clear();
+			mainVbox.getChildren().addAll(contactRequest, contacts, addContactInput);
+			for(AppJid jid : contactRequestList){
+				ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
+				contactRequestContent.getChildren().add(request);
+			}
+		} else {
+			mainVbox.getChildren().clear();
+			mainVbox.getChildren().addAll(contacts, addContactInput);
+		}
+
+		// Pass new AppUsers
+		LinkedList<AppUser> contactList = input.getContactList();
+		for(AppUser appUser : contactList){
+			if(!this.appUserList.contains(appUser)) {
+				MUCContactDisplay contactDisplay = 
+						new MUCContactDisplay(appUser,imageMessage, imageNewMessage);
+				contactDisplay.setOnSelectAppUser(
+						e->chatWithContactEvent.openChat(e.getJid().getLocal()));
+				this.appUserList.add(appUser);
+				displayList.add(contactDisplay);
+				contactsContent.getChildren().add(contactDisplay);
+			}
+		}
+	}
+
+	/**
+	 * Load new message notifications
+	 * @param mucList
+	 */
+	public void loadNewMessage(String appUser) {
+
+		// Find MUC index
+		for(MUCContactDisplay display : displayList) {
+			if(display.appUser.getName().equals(appUser)) {
+				Platform.runLater(new Runnable(){
+					@Override public void run(){
+						display.setNewMessageImage();}});					 
+			}
 		}
 	}
 

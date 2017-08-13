@@ -13,6 +13,10 @@ public class AppUser {
 		return jid;
 	}
 	
+	public String getName() {
+		return jid.getLocal();
+	}
+	
 	public AppPresence getPresence(){
 		return presence;
 	}

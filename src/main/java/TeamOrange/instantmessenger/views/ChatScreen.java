@@ -65,7 +65,7 @@ public class ChatScreen extends Screen {
 
 		//scrollpane
 		scrollPane = new ScrollPane();
-		scrollPane.setMaxHeight(500);
+		//scrollPane.setMaxHeight(500);
 		scrollPane.setMinHeight(500);
 		scrollPane.setFitToWidth(true);
 		scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
