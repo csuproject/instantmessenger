@@ -26,7 +26,7 @@ public class AccountManager {
 	public Jid login(XmppClient client, String userName, String password)
 			throws ConfideXmppException {
 		try{
-    		client.login(userName, password, null);
+    		client.login(userName, password, "user");
     	} catch(AuthenticationException e){
     		throw new ConfideAuthenticationException();
     	} catch(NoResponseException e){

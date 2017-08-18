@@ -104,7 +104,8 @@ public class App {
 				appMessage->messageListener(appMessage),
 				(fromJid, appPresenceType)->presenceListener(fromJid, appPresenceType),
 				() -> rosterListener(),
-				type->connectionEventListener(type)
+				type->connectionEventListener(type),
+				contacts
 		);
 
 		connectionController = new ConnectionController(babblerBase, navigationScreen, connection);
@@ -122,15 +123,15 @@ public class App {
 		openChatController = new OpenChatController(chats, contacts, babblerBase, homeScreen);
 		openChatController.setOnChangeScreen( screen->setScreen(screen) );
 
-		chatController = new ChatController(babblerBase, chatScreen, chats, contacts);
+		chatController = new ChatController(babblerBase, chatScreen, chats, contacts, connectionController);
 		chatController.setOnChangeScreen( screen->setScreen(screen) );
 		chatController.setOnExitMUC(exit->mucController.exitMUC(exit));
 
-		addContactController = new AddContactController(babblerBase, homeScreen, contacts);
+		addContactController = new AddContactController(babblerBase, homeScreen, contacts, connectionController);
 		addContactController.setOnChangeScreen( screen->setScreen(screen) );
 
 		acceptOrDeclineContactRequestController =
-				new AcceptOrDeclineContactRequestController(babblerBase, homeScreen, contacts);
+				new AcceptOrDeclineContactRequestController(babblerBase, homeScreen, contacts, connectionController);
 		acceptOrDeclineContactRequestController.setOnChangeScreen( screen->setScreen(screen) );
 
 		presenceController = new PresenceController(babblerBase, accountScreen, contacts);
@@ -139,7 +140,7 @@ public class App {
 		naviationController.setOnChangeScreen(screen->setScreen(screen));
 
 		mucController = new MUCController(babblerBase, chatScreen, contacts, mucScreen,
-				createMUCScreen);
+				createMUCScreen, connectionController);
 		mucController.setOnChangeScreen(screen->setScreen(screen));
 		mucController.setOnMUCListEvent(mucList->setMUCList(mucList));
 		mucController.setOnNewMessage(getMUCEvent->loadMUCInFocus(getMUCEvent));
@@ -282,8 +283,13 @@ public class App {
      * @param mucList
      */
     public void setMUCList(List<AppMuc> mucList) {
+<<<<<<< HEAD
     	this.mucList = mucList;	
     	mucScreen.loadNew(this.mucList);
+=======
+    	this.mucList = mucList;
+    	mucScreen.loadLater(this.mucList);
+>>>>>>> refs/remotes/origin/C3-feature-connection-integrity
     }
 
     /**

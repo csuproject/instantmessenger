@@ -123,7 +123,6 @@ public class HomeScreen extends Screen {
 	}
 
 	public void chatButtonPress(String username) {
-		System.out.println("Chat with " + username);
 		chatWithContactEvent.openChat(username);
 	}
 

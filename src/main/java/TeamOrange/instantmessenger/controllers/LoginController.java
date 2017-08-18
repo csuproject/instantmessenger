@@ -45,14 +45,9 @@ public class LoginController {
 	 * @param userName
 	 * @param password
 	 */
-	public void login(String userName, String password){
+	public void actuallyLogin(String userName, String password){
 		AppJid appJid;
 		try{
-			if(!babblerBase.isConnected()){
-				connectionController.addLoginTask(this, userName, password);
-				connectionController.connect();
-				return;
-			}
 			appJid = babblerBase.login(userName, password);
 			AppPresence presence = new AppPresence(AppPresence.Type.AVAILIBLE);
 			AppUser appUser = new AppUser(appJid, presence);
@@ -65,12 +60,17 @@ public class LoginController {
 			return;
 		} catch(ConfideNoResponseException e){
 //			accountScreen.alert("No response was recieved from the server.", "login error", AlertType.WARNING);
-			connectionController.connect();
+			// didnt work, try again
 			login(userName, password);
 			return;
 		} catch(ConfideXmppException e){
 			accountScreen.alertLater("Something went wrong.", "login error", AlertType.WARNING);
 		}
+	}
+
+	public void login(String userName, String password){
+		connectionController.addLoginTask(this, userName, password);
+		connectionController.completeTasks();
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){

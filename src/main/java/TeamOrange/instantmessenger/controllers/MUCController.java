@@ -12,6 +12,7 @@ import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.MUCChat;
 import TeamOrange.instantmessenger.views.ChatScreen;
+import TeamOrange.instantmessenger.views.ChatScreenInput;
 import TeamOrange.instantmessenger.views.CreateMUCScreen;
 import TeamOrange.instantmessenger.views.MUCContactDisplay;
 import TeamOrange.instantmessenger.views.MUCScreen;
@@ -31,10 +32,11 @@ public class MUCController {
 	private ChatScreen chatScreen;
 	private GetMUCEvent getMUCEvent;
 	private GetMUCEvent newMessageMUC;
+	private ConnectionController connectionController;
 
 
 	public MUCController(BabblerBase babblerBase, ChatScreen chatScreen,
-			AppContacts contacts, MUCScreen mucScreen, CreateMUCScreen createMUCScreen) {
+			AppContacts contacts, MUCScreen mucScreen, CreateMUCScreen createMUCScreen, ConnectionController connectionController) {
 
 		this.babblerBase = babblerBase;
 		this.mucScreen = mucScreen;
@@ -45,7 +47,9 @@ public class MUCController {
 		mucScreen.setOnAddGroupGetMUCEvent(addMUCEvent->createMUC(addMUCEvent));
 		createMUCScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		createMUCScreen.setOnCreateMUCEvent(createMUCEvent->createMUC(createMUCEvent));
+		chatScreen.setOnSendMucMessageEvent((muc, message)->sendMUCMessage(muc, message));
 		mucList = new ArrayList<AppMuc>();
+		this.connectionController = connectionController;
 	}
 
 
@@ -54,7 +58,7 @@ public class MUCController {
 	 * Create MUC
 	 * @param muc
 	 */
-	public void createMUC(MUCChat mucChat) {
+	public void actuallyCreateMUC(MUCChat mucChat) {
 
 		// Create MUC
 		AppMuc muc;
@@ -75,7 +79,12 @@ public class MUCController {
 		}
 	}
 
-	public void createMUC(String roomID) {
+	public void createMUC(MUCChat mucChat){
+		connectionController.addCreateMucWithMucChatTask(this, mucChat);
+		connectionController.completeTasks();
+	}
+
+	public void actuallyCreateMUC(String roomID) {
 
 		// Create MUC
 		AppMuc muc;
@@ -94,6 +103,11 @@ public class MUCController {
 		}
 	}
 
+	public void createMUC(String roomID){
+		connectionController.addCreateMucWithRoomIDTask(this, roomID);
+		connectionController.completeTasks();
+	}
+
 	public void exitMUC(AppMuc appMUC) {
 		appMUC.leave();
 		removeFromMUCList(appMUC);
@@ -106,11 +120,7 @@ public class MUCController {
 	public void requestMUC(MUCChat mucChat) {
 
 		List<AppUser> list = mucChat.getUsers();
-		System.out.println("Group Name " + mucChat.getName());
 
-		for(AppUser appUser : list){
-			System.out.println(appUser.getJid());
-		}
 	}
 
 	/**
@@ -136,8 +146,17 @@ public class MUCController {
 	 * Send message to focused MUC
 	 * @param message
 	 */
-	public void sendMUCMessage(AppMuc muc, String message) {
+	public void actuallySendMUCMessage(AppMuc muc, String message) {
 		muc.sendMessage(message);
+	}
+
+	public void sendMUCMessage(AppMuc muc, String message){
+		muc.addUnsentMessage(message, contacts.getSelf().getJid().getLocal());
+		ChatScreenInput input = new ChatScreenInput(muc);
+		chatScreen.loadLater(input);
+
+		connectionController.addSendMucMessageTask(this, muc, message);
+		connectionController.completeTasks();
 	}
 
 	public AppMuc muc(String mucName) {

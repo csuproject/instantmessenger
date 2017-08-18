@@ -31,7 +31,6 @@ public class PresenceController {
 	}
 
 	public void status(AppJid from, AppPresence.Type type) {
-//		System.out.println(from.getBareJid() + " is " + AppPresence.typeString(type));
 		AppUser contact = contacts.getContactWithUsername(from.getLocal());
 		if(contact != null){
 			contact.setPresence(type);
