@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -27,6 +28,8 @@ public class CreateMUCScreen extends Screen	{
 	private List<AppUser> mucList;
 	MUCChat mucChat;
 	CreateMUCEvent createMUCEvent;
+	Image imageMessage;
+	Image imageNewMessage;
 
 
 
@@ -72,8 +75,17 @@ public class CreateMUCScreen extends Screen	{
 		contacts.setContent(contactsContent);
 		contacts.setFitToWidth(true);
 		contacts.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		contacts.setMaxHeight(450);
+		contacts.setMinHeight(450);
 		contactDisplayList = new LinkedList<MUCContactDisplay>();
 		mucList = new ArrayList<AppUser>();
+		this.setMinHeight(450);
+		this.setMaxHeight(450);
+		
+		imageMessage = new Image(getClass().getResource(
+				"/resources/message.png").toURI().toString(),50,50,false,false);
+		imageNewMessage = new Image(getClass().getResource(
+				"/resources/message-new.png").toURI().toString(),50,50,false,false);
 
 		// VBox Container holds all Objects
 		VBox vbox = new VBox();

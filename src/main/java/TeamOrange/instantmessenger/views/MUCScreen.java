@@ -2,6 +2,13 @@ package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.models.AppMuc;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,11 +23,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import resources.GroupList;
 
 	public class MUCScreen extends Screen {
 
 		private ChangeScreen changeScreen;
-		private LinkedList<MUCContactDisplay> displayList;
+		private List<MUCContactDisplay> displayList;
+		private List<AppMuc> mucList;
 		private ScrollPane mucScrollPane;
 		private VBox mucVBox;
 		private GetMUCEvent getMUCEvent;
@@ -29,6 +38,10 @@ import javafx.scene.layout.VBox;
 		private HBox addGroupHBox;
 		private HBox topHBox;
 		private TextField addGroupTextField;
+		private LinkedList<String> groupList;
+		private Image imageMessage;
+		private Image imageNewMessage;
+		
 
 		public MUCScreen(GuiBase guiBase){
 			super(guiBase);
@@ -45,7 +58,8 @@ import javafx.scene.layout.VBox;
 		 */
 		public void create() throws Exception {
 
-			displayList = new LinkedList<MUCContactDisplay>();
+			mucList = new ArrayList<AppMuc>();
+			displayList = new ArrayList<MUCContactDisplay>();
 			Button createGroupButton = new Button("Create Group");
 			createGroupButton.setMinWidth(100);
 			createGroupButton.setOnAction(e->changeScreen.SetScreen(ScreenEnum.CREATEMUC));
@@ -87,38 +101,95 @@ import javafx.scene.layout.VBox;
 			// MUC List
 			mucScrollPane = new ScrollPane();
 			mucVBox = new VBox();
-			mucVBox.setPrefHeight(400);
-			mucVBox.setPrefWidth(400);
+			mucVBox.setPrefHeight(500);
+			mucVBox.setPrefWidth(500);
 			mucScrollPane.setContent(mucVBox);
 			mucScrollPane.setFitToWidth(true);
 			mucScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 			displayList = new LinkedList<MUCContactDisplay>();
-
+		
+			// Chat status images
+			imageMessage = new Image(getClass().getResource(
+					"/resources/message.png").toURI().toString(),50,50,false,false);
+			imageNewMessage = new Image(getClass().getResource(
+					"/resources/message-new.png").toURI().toString(),50,50,false,false);
+			
 			// VBox Container holds all Objects
 			screenVBox = new VBox();
 			screenVBox.getChildren().addAll(topHBox, mucScrollPane);
+			this.setMinHeight(500);
+			this.setMaxHeight(500);
 			this.getChildren().add(screenVBox);
 		}
-
-		public void loadLater(List<AppMuc> mucList){
-			Platform.runLater(new Runnable(){
-				@Override public void run(){
-					load(mucList);
-				}
-			});
+		
+		private void writeGroupList(GroupList getGroupList) {
+		      try {
+		          FileOutputStream fileOut =
+		          new FileOutputStream("./GroupList.ser");
+		          ObjectOutputStream out = new ObjectOutputStream(fileOut);
+		          out.writeObject(getGroupList);
+		          out.close();
+		          fileOut.close();
+		          System.out.printf("Serialized data is saved in GroupList.ser");
+		       }catch(IOException i) {
+		          i.printStackTrace();
+		       }
+		}
+		
+		private void readGroupList() {
+			GroupList getGroupList = null;
+		     try {
+		         FileInputStream fileIn = new FileInputStream("./GroupList.ser");
+		         ObjectInputStream in = new ObjectInputStream(fileIn);
+		         getGroupList = (GroupList) in.readObject();
+		         in.close();
+		         fileIn.close();
+		      }catch(IOException i) {
+		         i.printStackTrace();
+		         getGroupList = new GroupList();
+		    	  writeGroupList(getGroupList); 
+		         return;
+		      }catch(ClassNotFoundException c) {
+		         System.out.println("GroupList class not found");
+		         c.printStackTrace();
+		    	  writeGroupList(getGroupList); 
+		         return;
+		      }
 		}
 
-		public void load(List<AppMuc> mucList){
-			mucVBox.getChildren().clear();
-			displayList.clear();
-
+		/**
+		 * Load new MUC
+		 * @param mucList
+		 */
+		public void loadNew(List<AppMuc> mucList) {
 			for(AppMuc appMUC : mucList){
-				MUCContactDisplay mucDisplay = new MUCContactDisplay(appMUC);
-				mucDisplay.setOnGetMUCEvent(e->getMUCEvent.getMUC(e));
-				mucVBox.getChildren().add(mucDisplay);
-				displayList.add(mucDisplay);
+				if(!this.mucList.contains(appMUC)) {
+					MUCContactDisplay mucDisplay = 
+							new MUCContactDisplay(appMUC,imageMessage, imageNewMessage);
+					mucDisplay.setOnGetMUCEvent(e->getMUCEvent.getMUC(e));
+					this.mucList.add(appMUC);
+					displayList.add(mucDisplay);
+					mucVBox.getChildren().add(mucDisplay);
+				}
 			}
 		}
+
+		/**
+		 * Load Screen
+		 * @param mucList
+		 */
+		public void loadNewMessage(AppMuc muc) {
+
+			// Find MUC index
+			for(MUCContactDisplay display : displayList) {
+				if(display.appMUC == muc) {
+					Platform.runLater(new Runnable(){
+						@Override public void run(){
+							display.setNewMessageImage();}});					 
+				}
+			}
+		}
+
 
 		private void addGroup() {
 			String groupName;
@@ -126,12 +197,18 @@ import javafx.scene.layout.VBox;
 			closeAddGroupBox();
 			addMUCEvent.getMUCName(groupName);
 		}
-
+		
+		/**
+		 * Open add group box
+		 */
 		private void openAddGroupBox() {
 			screenVBox.getChildren().clear();
 			screenVBox.getChildren().addAll(topHBox, addGroupHBox, mucScrollPane);
 		}
-
+		
+		/**
+		 * Close add group box
+		 */
 		private void closeAddGroupBox() {
 			addGroupTextField.clear();
 			screenVBox.getChildren().clear();

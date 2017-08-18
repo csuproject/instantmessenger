@@ -71,8 +71,22 @@ public class GuiBase extends Application {
 	 * @param screen
 	 * @param navigationScreen
 	 */
-	public void setScreen(Screen screen, Screen navigationScreen){
-		borderpane.setTop(screen);
+	public void setScreen(Screen screenTop, Screen navigationScreen){
+		borderpane.setTop(screenTop);
+		borderpane.setBottom(navigationScreen);
+		scene.setRoot(borderpane);
+		stage.setScene(scene);
+		stage.show();
+	}
+	
+	/**
+	 * Set view with stacked Screens
+	 * @param screen
+	 * @param navigationScreen
+	 */
+	public void setScreen(Screen screenTop, Screen screenCentre, Screen navigationScreen){
+		borderpane.setTop(screenTop);
+		borderpane.setCenter(screenCentre);
 		borderpane.setBottom(navigationScreen);
 		scene.setRoot(borderpane);
 		stage.setScene(scene);

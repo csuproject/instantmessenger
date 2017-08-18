@@ -25,6 +25,7 @@ public class AppMuc {
 	private LinkedList<AppOccupant> occupants;
 	GetMUCEvent messageEvent;
 	AppMuc muc;
+	boolean messageInit;
 
 	public AppMuc(String roomID, String nickname, BabblerBase babblerBase){
 		this.roomID = roomID;
@@ -32,7 +33,6 @@ public class AppMuc {
 		this.babblerBase = babblerBase;
 		messages = new LinkedList<AppMucMessage>();
 		occupants = new LinkedList<AppOccupant>();
-		//this.muc = this;
 	}
 
 	/**

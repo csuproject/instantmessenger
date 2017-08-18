@@ -2,7 +2,6 @@ package TeamOrange.instantmessenger;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import TeamOrange.instantmessenger.controllers.AcceptOrDeclineContactRequestController;
 import TeamOrange.instantmessenger.controllers.AddContactController;
 import TeamOrange.instantmessenger.controllers.ChatController;
@@ -31,9 +30,9 @@ import TeamOrange.instantmessenger.views.GuiBase;
 import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.views.HomeScreenInput;
 import TeamOrange.instantmessenger.views.MUCScreen;
-import TeamOrange.instantmessenger.views.MUCScreenInput;
 import TeamOrange.instantmessenger.views.NavigationScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
+import TeamOrange.instantmessenger.views.StatusDisplay;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideXmppException;
 import javafx.scene.control.Alert.AlertType;
@@ -56,6 +55,7 @@ public class App {
 	private NavigationScreen navigationScreen;
 	private MUCScreen mucScreen;
 	private CreateMUCScreen createMUCScreen;
+	private StatusDisplay statusDisplay; 
 
 	// Controllers
 	private CreateAccountController createAccountController;
@@ -68,7 +68,7 @@ public class App {
 	private NavigationController naviationController;
 	private ConnectionController connectionController;
 	private MUCController mucController;
-	private MUCScreenInput mucinput;
+
 
 	// models
 	AppContacts contacts;
@@ -89,7 +89,7 @@ public class App {
 		mucScreen = new MUCScreen(guiBase);
 		createMUCScreen = new CreateMUCScreen(guiBase);
 		mucList = new ArrayList<AppMuc>();
-		mucinput = new MUCScreenInput();
+		//mucinput = new MUCScreenInput();
 		guiBase.setScreen(accountScreen);
 		setScreen(ScreenEnum.ACCOUNT);
 
@@ -144,6 +144,8 @@ public class App {
 		mucController.setOnMUCListEvent(mucList->setMUCList(mucList));
 		mucController.setOnNewMessage(getMUCEvent->loadMUCInFocus(getMUCEvent));
 		mucController.setOnOpenMUC(getMUCEvent->setMUCInFocus(getMUCEvent));
+		
+		statusDisplay = new StatusDisplay(guiBase);
 	}
 
 	public void reset(){
@@ -184,7 +186,11 @@ public class App {
 
     		}
     	} else if(message.getType() == AppMessageType.CHAT){
+
+    		// Update chats
     		chatController.incomingChatMessage(message, currentScreen==ScreenEnum.CHAT);
+    		
+    		loadContactNotifications(message);
     	}
     }
 
@@ -220,7 +226,6 @@ public class App {
      * @param screen
      */
     public void setScreen(ScreenEnum screen){
-
     	this.currentScreen = screen;
     	switch(currentScreen){
 			case ACCOUNT:
@@ -229,31 +234,45 @@ public class App {
 			} break;
 			case HOME:
 			{
+		    	statusDisplay.setScreenView(currentScreen);
+				statusDisplay.setUserName(contacts.getSelfName());
+				statusDisplay.setConnectionStatus(true);
 				HomeScreenInput input = new HomeScreenInput(contacts);
-				homeScreen.load(input);
-				guiBase.setScreenLater(homeScreen,navigationScreen);
+				homeScreen.loadNew(input);
+				guiBase.setScreen(statusDisplay,homeScreen,navigationScreen);
 			} break;
 			case MUC:
 			{
-				mucScreen.load(mucList);
-				guiBase.setScreenLater(mucScreen,navigationScreen);
+				statusDisplay.setScreenView(currentScreen);
+				statusDisplay.setUserName(contacts.getSelfName());
+				statusDisplay.setConnectionStatus(true);
+				guiBase.setScreen(statusDisplay,mucScreen,navigationScreen);
 			} break;
 			case CREATEMUC:
 			{
+				statusDisplay.setScreenView(currentScreen);
+				statusDisplay.setUserName(contacts.getSelfName());
+				statusDisplay.setConnectionStatus(true);
 				HomeScreenInput input = new HomeScreenInput(contacts);
 				createMUCScreen.load(input.getContactList());
-				guiBase.setScreenLater(createMUCScreen,navigationScreen);
+				guiBase.setScreen(statusDisplay,createMUCScreen,navigationScreen);
 			} break;
 			case CHAT:
 			{
+				statusDisplay.setScreenView(currentScreen);
+				statusDisplay.setUserName(contacts.getSelfName());
+				statusDisplay.setConnectionStatus(true);
 				ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
 				chatScreen.load(input);
-				guiBase.setScreenLater(chatScreen,navigationScreen);
+				guiBase.setScreen(statusDisplay,chatScreen,navigationScreen);
 			} break;
 				case MUCCHAT:
 			{
-				chatScreen.loadLater(new ChatScreenInput(muc));
-				guiBase.setScreenLater(chatScreen,navigationScreen);
+				statusDisplay.setScreenView(currentScreen);
+				statusDisplay.setUserName(contacts.getSelfName());
+				statusDisplay.setConnectionStatus(true);
+				chatScreen.loadLater(muc);
+				guiBase.setScreen(statusDisplay, chatScreen,navigationScreen);	
 			} break;
     	}
     }
@@ -263,8 +282,8 @@ public class App {
      * @param mucList
      */
     public void setMUCList(List<AppMuc> mucList) {
-    	this.mucList = mucList;
-    	mucScreen.load(this.mucList);
+    	this.mucList = mucList;	
+    	mucScreen.loadNew(this.mucList);
     }
 
     /**
@@ -277,14 +296,48 @@ public class App {
     }
 
     /**
-     * Update MUC of MUCCHAT in focus
+     * Update MUC of MUCCHAT in focus and Notifications
      * @param muc
      */
     public void loadMUCInFocus(AppMuc muc) {
-    	if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) {
-    		chatScreen.loadLater(new ChatScreenInput(muc));
+    	
+    	// Set new group message icon
+		if(currentScreen != ScreenEnum.MUC) {
+			if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) {
+    		}
+			else {
+			navigationScreen.setImageNewGroupMessage(); 
+			}
+		}
+		// Reload open screen
+    	if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) 
+    		chatScreen.loadLater(muc);
+    	else 
+    		mucScreen.loadNewMessage(muc);	
+    }
+    
+    /**
+     * Set notification for contacts
+     * @param message
+     */
+    public void loadContactNotifications(AppMessage message) {
+		String contact = message.getFromJid().getLocal();
+		
+    	// Set navigation screen new contact message icon
+		if(currentScreen != ScreenEnum.HOME) {
+			if (currentScreen == ScreenEnum.CHAT && 
+					homeScreen.getContactInFocus().equals(contact)) {
+    		}
+			else {
+				navigationScreen.setImageNewContactMessage();
+			}
+		}
+		// Set new message on contact displays
+    	if (currentScreen == ScreenEnum.CHAT && 
+    			homeScreen.getContactInFocus().equals(contact)) {	
+    	} else {
+    		homeScreen.loadNewMessage(contact);
     	}
     }
-
-
+    
 }
