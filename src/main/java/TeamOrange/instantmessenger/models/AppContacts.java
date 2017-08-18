@@ -41,6 +41,17 @@ public class AppContacts {
 	}
 
 	public void addContactRequest(AppJid jid){
+		for(AppUser u : contactList){
+			if(u.getJid().getBareJid().equals(jid.getBareJid())){
+				return;
+			}
+		}
+
+		for(AppJid j : incomingContactRequestList){
+			if(j.getBareJid().equals(j.getBareJid())){
+				return;
+			}
+		}
 		incomingContactRequestList.add(jid);
 	}
 

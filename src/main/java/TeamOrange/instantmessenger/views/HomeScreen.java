@@ -68,8 +68,11 @@ public class HomeScreen extends Screen {
 
 		// Build contacts display
 		contacts = new ScrollPane();
+		contacts.setFocusTraversable(false);
+		contacts.setOnMouseClicked((e)->addContactWithUsernameInputTextField.requestFocus());
+		contacts.setStyle("-fx-focus-color: transparent;");
 		contactsContent = new VBox();
-		contactsContent.setPrefHeight(500);
+		contactsContent.setMaxHeight(500);
 		contactsContent.setPrefWidth(500);
 		contacts.setContent(contactsContent);
 		contacts.setMaxHeight(500);

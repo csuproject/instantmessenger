@@ -27,19 +27,22 @@ public class GuiBase extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		borderpane = new BorderPane();
-		scene = new Scene( new StackPane(), 400, 600);
 		this.stage = primaryStage;
 		stage.setTitle("Confide");
+		stage.setWidth(416);
+		stage.setHeight(680);
+		stage.setResizable(false);
+		scene = new Scene( new StackPane(), 416, 680);
 		button = new Button();
 		app = new App(this);
 
 		stage.show();
 	}
 
-	public void setScreenLater(Screen screen){
+	public void setScreenLater(Screen statusDisplay, Screen screen){
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
-				setScreen(screen);
+				setScreen(statusDisplay, screen);
 			}
 		});
 	}
@@ -73,7 +76,8 @@ public class GuiBase extends Application {
 	 */
 	public void setScreen(Screen screenTop, Screen navigationScreen){
 		borderpane.setTop(screenTop);
-		borderpane.setBottom(navigationScreen);
+		borderpane.setBottom(null);
+		borderpane.setCenter(navigationScreen);
 		scene.setRoot(borderpane);
 		stage.setScene(scene);
 		stage.show();

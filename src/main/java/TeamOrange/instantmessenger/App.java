@@ -88,6 +88,7 @@ public class App {
 		navigationScreen = new NavigationScreen(guiBase);
 		mucScreen = new MUCScreen(guiBase);
 		createMUCScreen = new CreateMUCScreen(guiBase);
+		statusDisplay = new StatusDisplay(guiBase);
 		mucList = new ArrayList<AppMuc>();
 		//mucinput = new MUCScreenInput();
 		guiBase.setScreen(accountScreen);
@@ -108,7 +109,7 @@ public class App {
 				contacts
 		);
 
-		connectionController = new ConnectionController(babblerBase, navigationScreen, connection);
+		connectionController = new ConnectionController(babblerBase, statusDisplay, connection);
 
 		connectionController.setupConnection();
     	connectionController.connect();
@@ -145,8 +146,6 @@ public class App {
 		mucController.setOnMUCListEvent(mucList->setMUCList(mucList));
 		mucController.setOnNewMessage(getMUCEvent->loadMUCInFocus(getMUCEvent));
 		mucController.setOnOpenMUC(getMUCEvent->setMUCInFocus(getMUCEvent));
-
-		statusDisplay = new StatusDisplay(guiBase);
 	}
 
 	public void reset(){
@@ -231,47 +230,44 @@ public class App {
     	switch(currentScreen){
 			case ACCOUNT:
 			{
-				guiBase.setScreenLater(accountScreen);
+				statusDisplay.setUserNameLater("");
+				statusDisplay.setScreenViewLater(ScreenEnum.ACCOUNT);
+				guiBase.setScreenLater(statusDisplay, accountScreen);
 			} break;
 			case HOME:
 			{
-		    	statusDisplay.setScreenView(currentScreen);
-				statusDisplay.setUserName(contacts.getSelfName());
-				statusDisplay.setConnectionStatus(true);
+		    	statusDisplay.setScreenViewLater(currentScreen);
+				statusDisplay.setUserNameLater(contacts.getSelfName());
 				HomeScreenInput input = new HomeScreenInput(contacts);
 				homeScreen.loadNewLater(input);
 				guiBase.setScreenLater(statusDisplay,homeScreen,navigationScreen);
 			} break;
 			case MUC:
 			{
-				statusDisplay.setScreenView(currentScreen);
-				statusDisplay.setUserName(contacts.getSelfName());
-				statusDisplay.setConnectionStatus(true);
+				statusDisplay.setScreenViewLater(currentScreen);
+				statusDisplay.setUserNameLater(contacts.getSelfName());
 				guiBase.setScreen(statusDisplay,mucScreen,navigationScreen);
 			} break;
 			case CREATEMUC:
 			{
-				statusDisplay.setScreenView(currentScreen);
-				statusDisplay.setUserName(contacts.getSelfName());
-				statusDisplay.setConnectionStatus(true);
+				statusDisplay.setScreenViewLater(currentScreen);
+				statusDisplay.setUserNameLater(contacts.getSelfName());
 				HomeScreenInput input = new HomeScreenInput(contacts);
 				createMUCScreen.load(input.getContactList());
 				guiBase.setScreenLater(statusDisplay,createMUCScreen,navigationScreen);
 			} break;
 			case CHAT:
 			{
-				statusDisplay.setScreenView(currentScreen);
-				statusDisplay.setUserName(contacts.getSelfName());
-				statusDisplay.setConnectionStatus(true);
+				statusDisplay.setScreenViewLater(currentScreen);
+				statusDisplay.setUserNameLater(contacts.getSelfName());
 				ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
 				chatScreen.load(input);
 				guiBase.setScreenLater(statusDisplay,chatScreen,navigationScreen);
 			} break;
 				case MUCCHAT:
 			{
-				statusDisplay.setScreenView(currentScreen);
-				statusDisplay.setUserName(contacts.getSelfName());
-				statusDisplay.setConnectionStatus(true);
+				statusDisplay.setScreenViewLater(currentScreen);
+				statusDisplay.setUserNameLater(contacts.getSelfName());
 				chatScreen.loadLater(new ChatScreenInput(muc));
 				guiBase.setScreenLater(statusDisplay, chatScreen,navigationScreen);
 			} break;

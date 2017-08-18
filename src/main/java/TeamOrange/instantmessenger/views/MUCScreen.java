@@ -21,6 +21,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import resources.GroupList;
@@ -82,29 +83,42 @@ import resources.GroupList;
 			    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
 			  }
 			);
+			addGroupTextField.setOnKeyPressed(ke->{
+				if(ke.getCode() == KeyCode.ENTER){
+					addGroup();
+				} else if(ke.getCode() == KeyCode.ESCAPE){
+					closeAddGroupBox();
+				}
+			});
 			Image imageAccept = new Image(getClass().getResource(
 					"/resources/accept-icon.png").toURI().toString(),25,25,false,false);
 			Button acceptAddGroupButton = new Button();
 			acceptAddGroupButton.setMaxWidth(30);
 			acceptAddGroupButton.setGraphic(new ImageView(imageAccept));
 			acceptAddGroupButton.setOnAction(e->addGroup());
+			acceptAddGroupButton.setFocusTraversable(false);
 			Image imageDecline = new Image(getClass().getResource(
 					"/resources/decline-icon.png").toURI().toString(),25,25,false,false);
 			Button declineAddGroupButton = new Button();
 			declineAddGroupButton.setMaxWidth(20);
 			declineAddGroupButton.setGraphic(new ImageView(imageDecline));
 			declineAddGroupButton.setOnAction(e->closeAddGroupBox());
+			declineAddGroupButton.setFocusTraversable(false);
 			addGroupHBox = new HBox(
 					addGroupTextField,acceptAddGroupButton,declineAddGroupButton);
 			addGroupHBox.setAlignment(Pos.CENTER);
 
 			// MUC List
 			mucScrollPane = new ScrollPane();
+			mucScrollPane.setFocusTraversable(false);
+			mucScrollPane.setOnMouseClicked((e)->addGroupTextField.requestFocus());
+			mucScrollPane.setStyle("-fx-focus-color: transparent;");
 			mucVBox = new VBox();
 			mucVBox.setPrefHeight(500);
 			mucVBox.setPrefWidth(500);
 			mucScrollPane.setContent(mucVBox);
 			mucScrollPane.setFitToWidth(true);
+			mucScrollPane.setFitToHeight(true);
 			mucScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 			displayList = new LinkedList<MUCContactDisplay>();
 
@@ -212,6 +226,7 @@ import resources.GroupList;
 		private void openAddGroupBox() {
 			screenVBox.getChildren().clear();
 			screenVBox.getChildren().addAll(topHBox, addGroupHBox, mucScrollPane);
+			addGroupTextField.requestFocus();
 		}
 
 		/**

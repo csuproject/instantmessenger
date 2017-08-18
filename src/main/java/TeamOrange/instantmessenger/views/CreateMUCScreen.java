@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -52,9 +53,11 @@ public class CreateMUCScreen extends Screen	{
 		Button cancelButton = new Button("Cancel");
 		cancelButton.setMinWidth(100);
 		cancelButton.setOnAction(e->clear());
+		cancelButton.setFocusTraversable(false);
 		Button createButton = new Button("Create");
 		createButton.setMinWidth(100);
 		createButton.setOnAction(e->createMUC());
+		createButton.setFocusTraversable(false);
 		Label screenNameLabel = new Label("New Group");
 		screenNameLabel.setMinWidth(100);
 		screenNameLabel.setAlignment(Pos.CENTER);
@@ -66,9 +69,18 @@ public class CreateMUCScreen extends Screen	{
 		mucName = new TextField();
 		mucName.setMinHeight(35);
 		mucName.setPromptText("Name this group chat");
+		mucName.requestFocus();
+		mucName.setOnKeyPressed(e->{
+			if(e.getCode() == KeyCode.ENTER){
+				createMUC();
+			} else if(e.getCode() == KeyCode.ESCAPE){
+				clear();
+			}
+		});
 
 		// Contacts List
 		contacts = new ScrollPane();
+		contacts.setOnMouseClicked(e->mucName.requestFocus());
 		contactsContent = new VBox();
 		contactsContent.setPrefHeight(400);
 		contactsContent.setPrefWidth(400);
@@ -81,7 +93,7 @@ public class CreateMUCScreen extends Screen	{
 		mucList = new ArrayList<AppUser>();
 		this.setMinHeight(450);
 		this.setMaxHeight(450);
-		
+
 		imageMessage = new Image(getClass().getResource(
 				"/resources/message.png").toURI().toString(),50,50,false,false);
 		imageNewMessage = new Image(getClass().getResource(

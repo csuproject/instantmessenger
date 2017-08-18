@@ -130,7 +130,7 @@ public class AccountScreen extends Screen {
 
 		//Pane
 		GridPane gridPane = new GridPane();
-		gridPane.setVgap(50);
+		gridPane.setVgap(40);
 		gridPane.add(loginSection, 0, 0);
 		gridPane.add(createAccountSection, 0, 1);
 		gridPane.setAlignment(Pos.CENTER);

@@ -19,21 +19,23 @@ import TeamOrange.instantmessenger.models.AppTask;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.MUCChat;
 import TeamOrange.instantmessenger.views.NavigationScreen;
+import TeamOrange.instantmessenger.views.StatusDisplay;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideConnectionException;
 import exceptions.ConfideNoResponseException;
 import exceptions.ConfideXmppException;
 
 public class ConnectionController {
-	private NavigationScreen navigationScreen;
+	private StatusDisplay statusDisplay;
 	private BabblerBase babblerBase;
 	private AppConnection connection;
 	private Queue<AppTask> tasks;
 	private TaskThread taskThread;
 
-	public ConnectionController(BabblerBase babblerBase, NavigationScreen navigationScreen, AppConnection connection){
+	public ConnectionController(BabblerBase babblerBase, StatusDisplay statusDisplay, AppConnection connection){
 		this.babblerBase = babblerBase;
-		this.navigationScreen = navigationScreen;
+		this.statusDisplay = statusDisplay;
+		statusDisplay.setOnCheckConnectionEvent(()->checkConnection());
 		this.connection = connection;
 		this.tasks = new LinkedList<AppTask>();
 		this.taskThread = new TaskThread();
@@ -75,6 +77,10 @@ public class ConnectionController {
 		return connection.getStatus() == AppConnection.CONNECTED;
 	}
 
+	public void checkConnection(){
+		connect();
+	}
+
 	public void reset(){
 		disconnect();
 		setupConnection();
@@ -102,16 +108,26 @@ public class ConnectionController {
 		}
 	}
 
+	public void onDisconnected(){
+		connection.setStatusToNotConnected();
+		statusDisplay.setConnectionStatusLater(false);
+	}
+
+	public void onConnected(){
+		connection.setStatusToConnected();
+		statusDisplay.setConnectionStatusLater(true);
+	}
+
 	public void onConnectionEvent(ConnectionEventEnum type){
 		switch(type){
 			case DISCONNECTED:
 			{
-				connection.setStatusToNotConnected();
+				onDisconnected();
 				connect();
 			} break;
 			case RECONNECTION_SUCCEEDED:
 			{
-				connection.setStatusToConnected();
+				onConnected();
 			} break;
 			case RECONNECTION_FAILED:
 			{
@@ -125,12 +141,14 @@ public class ConnectionController {
 	public class ConnectThread implements Runnable {
 
 	    public void run() {
-	    	connection.setStatusToNotConnected();
 	    	boolean connected = false;
 			while(!connected){
 				try {
-					babblerBase.connect();
 					connected = babblerBase.isConnected();
+					if(!connected){
+						onDisconnected();
+					}
+					babblerBase.connect();
 				} catch (ConfideXmppException e) {
 					try {
 						Thread.sleep(5000);
@@ -139,10 +157,7 @@ public class ConnectionController {
 					}
 				}
 			}
-			connection.setStatusToConnected();
-//			if(!babblerBase.isLoggedIn()){
-//				babblerBase.loginAnonymously();
-//			}
+			onConnected();
 
 			while(tasks.peek() != null){
 				tasks.poll().complete();
@@ -157,7 +172,7 @@ public class ConnectionController {
 
 	    public void run() {
 	    	if(!babblerBase.isConnected()){
-	    		connection.setStatusToNotConnected();
+	    		onDisconnected();
 		    	boolean connected = false;
 				while(!connected){
 					try {
@@ -171,7 +186,7 @@ public class ConnectionController {
 						}
 					}
 				}
-				connection.setStatusToConnected();
+				onConnected();
 	    	}
 
 			while(tasks.peek() != null){

@@ -47,6 +47,7 @@ public class NavigationScreen extends Screen {
 			this.changeScreen.SetScreen(ScreenEnum.HOME);
 			setImageContactMessage();
 		});
+		contactButton.setFocusTraversable(false);
 		chatButton = new Button("Groups");
 		chatButton.setMinSize(135, 60);
 		chatButton.setGraphic(new ImageView(imageMessage));
@@ -54,6 +55,7 @@ public class NavigationScreen extends Screen {
 			this.changeScreen.SetScreen(ScreenEnum.MUC);
 			setImageGroupMessage();
 		});
+		chatButton.setFocusTraversable(false);
 		logoutButton = new Button("Logout");
 		logoutButton.setGraphic(new ImageView(imageLogout));
 		logoutButton.setMinSize(135, 60);
@@ -62,6 +64,7 @@ public class NavigationScreen extends Screen {
 			setImageGroupMessage();
 			logoutEvent.logout();
 		});
+		logoutButton.setFocusTraversable(false);
 
 		navigationBox.getChildren().addAll(contactButton, chatButton, logoutButton);
 		this.getChildren().addAll(navigationBox);
