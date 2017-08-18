@@ -14,11 +14,13 @@ import rocks.xmpp.core.session.ReconnectionStrategy;
 import rocks.xmpp.core.session.TcpConnectionConfiguration;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.core.session.XmppSessionConfiguration;
+import rocks.xmpp.core.stanza.MessageEvent;
 import rocks.xmpp.core.stanza.model.IQ;
 import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stanza.model.Presence;
 import rocks.xmpp.core.stream.StreamErrorException;
 import rocks.xmpp.core.stream.StreamNegotiationException;
+import rocks.xmpp.core.stream.model.StreamElement;
 import rocks.xmpp.extensions.offline.OfflineMessageManager;
 import rocks.xmpp.im.roster.RosterManager;
 import rocks.xmpp.im.subscription.PresenceManager;
@@ -41,7 +43,8 @@ public class ConnectionManager {
     		    .build();
 
 		XmppSessionConfiguration configuration = XmppSessionConfiguration.builder()
-				.reconnectionStrategy(ReconnectionStrategy.alwaysAfter(Duration.ofSeconds(5)))
+//				.reconnectionStrategy(ReconnectionStrategy.alwaysAfter(Duration.ofSeconds(5)))
+				.reconnectionStrategy(ReconnectionStrategy.none())
 				.build();
 
     	XmppClient client = XmppClient.create(hostName, configuration, tcpConfiguration);

@@ -31,18 +31,18 @@ public class CreateAccountController {
 	 * @param userName
 	 * @param password
 	 */
-	public void createAccount(String userName, String password) {
-		if(!babblerBase.isConnected()){
-			connectionController.addCreateAccountTask(this, userName, password);
-			connectionController.connect();
-			return;
-		}
+	public void actuallyCreateAccount(String userName, String password) {
 		try {
 			babblerBase.createUser(userName, password);
 			accountScreen.alertLater("User( \""+userName+"\" ) successfully created", "user created", AlertType.CONFIRMATION);
 		} catch (XmppException e) {
 			accountScreen.alertLater("User( \""+userName+"\" ) already exists", "user already exists", AlertType.WARNING);
 		}
+	}
+
+	public void createAccount(String userName, String password){
+		connectionController.addCreateAccountTask(this, userName, password);
+		connectionController.completeTasks();
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){

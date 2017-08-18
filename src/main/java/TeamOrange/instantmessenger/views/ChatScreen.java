@@ -5,10 +5,12 @@ import java.util.LinkedList;
 
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
+import TeamOrange.instantmessenger.lambda.SendMucMessageEvent;
 import TeamOrange.instantmessenger.lambda.SendNewMessageEvent;
 import TeamOrange.instantmessenger.models.AppChatSessionMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppMucMessage;
+import TeamOrange.instantmessenger.models.MUCChat;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -49,6 +51,8 @@ public class ChatScreen extends Screen {
 	GetMUCEvent destroyMUC;
 	GetMUCEvent exitMUC;
 	AppMuc muc;
+	private String userName;
+	private SendMucMessageEvent sendMucMessageEvent;
 
 	public ChatScreen(GuiBase guiBase){
 		super(guiBase);
@@ -134,6 +138,7 @@ public class ChatScreen extends Screen {
 	public void load(ScreenInput input){
 		ChatScreenInput chatScreenInput = (ChatScreenInput)input;
 		if(chatScreenInput.isForMuc()){
+			AppMuc muc = chatScreenInput.getMuc();
 			screenVBox.getChildren().clear();
 			screenVBox.getChildren().addAll(mucHbox,scrollPane, newMessage);
 
@@ -144,7 +149,7 @@ public class ChatScreen extends Screen {
 			scrollPaneContent.getChildren().clear();
 			for(AppMucMessage m : messages){
 				String username = m.getFromNick();
-				MessageDisplay md = new MessageDisplay(username, m.getBody());
+				MessageDisplay md = new MessageDisplay(username, m.getBody(), m.getSent(), m.getSentFromSelf());
 				scrollPaneContent.getChildren().add(md);
 			}
 			scrollChat();
@@ -154,13 +159,13 @@ public class ChatScreen extends Screen {
 			screenVBox.getChildren().clear();
 			screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
 
-			String partner = chatScreenInput.getPartner();
-			partnerName.setText(partner);
+			userName = chatScreenInput.getPartner();
+			partnerName.setText(userName);
 			LinkedList<AppChatSessionMessage> messages = chatScreenInput.getMessages();
 			scrollPaneContent.getChildren().clear();
 			for(AppChatSessionMessage m : messages){
-				String username = m.isInbound() ? partner : "Self";
-				MessageDisplay md = new MessageDisplay(username, m.getBody());
+				String username = m.isInbound() ? userName : "Self";
+				MessageDisplay md = new MessageDisplay(username, m.getBody(), m.sent(), username.equals("Self"));
 				scrollPaneContent.getChildren().add(md);
 			}
 			scrollChat();
@@ -217,16 +222,19 @@ public class ChatScreen extends Screen {
 	public void sendNewMessageBtnPress(){
 		String message = newMessageTextField.getText();
 		if (!newMessageTextField.getText().isEmpty()) {
-			if (!MUCMODE)
-			{ sendNewMessageEvent.send(message);}
+			if (!MUCMODE){
+				sendNewMessageEvent.send(message, userName);
+			}
 			else 	{ sendMUCMessage(message); }
 		}
 		newMessageTextField.clear();
 	}
 
 	public void sendMUCMessage(String message) {
-		muc.sendMessage(message);
-		load(new ChatScreenInput(muc)); // TODO: load should be called from muc, not here
+		sendMucMessageEvent.send(muc, message);
+
+//		muc.sendMessage(message);
+//		load(new ChatScreenInput(muc)); // TODO: load should be called from muc, not here
 	}
 
 	public void destroyMUC() {
@@ -252,5 +260,9 @@ public class ChatScreen extends Screen {
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;
+	}
+
+	public void setOnSendMucMessageEvent(SendMucMessageEvent sendMucMessageEvent){
+		this.sendMucMessageEvent = sendMucMessageEvent;
 	}
 }

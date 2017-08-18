@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
+import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppMucMessage;
@@ -36,8 +37,10 @@ import rocks.xmpp.util.concurrent.AsyncResult;
 
 public class MucManager {
 	MultiUserChatManager manager;
+	private AppContacts contacts;
 
-	public MucManager(){
+	public MucManager(AppContacts contacts){
+		this.contacts = contacts;
 	}
 
 //	public void setupInvitationListener(XmppClient client){
@@ -108,7 +111,14 @@ public class MucManager {
 		chatRoom.addInboundMessageListener( me->{
 			String body = me.getMessage().getBody();
 			String from = me.getMessage().getFrom().getResource();
-			AppMucMessage message = new AppMucMessage(body, from);
+			AppMucMessage message = null;
+			String self = contacts.getSelf().getJid().getLocal();
+			if(from.equals(self)){
+				message = AppMucMessage.createOutbound(body, from);
+				message.setSent(true);
+			} else{
+				message = AppMucMessage.createInbound(body, from);
+			}
 			muc.inboundMessage(message);
 		});
 		chatRoom.addOccupantListener( oe->{

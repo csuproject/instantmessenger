@@ -50,6 +50,11 @@ public class AppMuc {
 		babblerBase.leaveRoom(roomID);
 	}
 
+	public void addUnsentMessage(String message, String from){
+		AppMucMessage appMessage = AppMucMessage.createOutbound(message, from);
+		messages.add(appMessage);
+	}
+
 	/**
 	 * enters this group chat
 	 */
@@ -78,11 +83,33 @@ public class AppMuc {
 	 * @param message
 	 */
 	public void inboundMessage(AppMucMessage message){
-		messages.add(message);
+		if(message.getSentFromSelf()){
+			AppMucMessage outboundMessage = getOutboundMessage(message);
+			if(outboundMessage != null){
+				outboundMessage.setSent(true);
+			} else{
+				messages.add(message);
+			}
+		} else{
+			messages.add(message);
+		}
 		// TODO: this is null sometimes, (messageEvent)
 		if(messageEvent != null){
 			messageEvent.getMUC(this);
 		}
+	}
+
+	public AppMucMessage getOutboundMessage(AppMucMessage message){
+		String body = message.getBody();
+		AppMucMessage answer = null;
+		for(AppMucMessage m : messages){
+			if(m.getSentFromSelf() && m.getSent() == false){
+				if(m.getBody().equals(body)){
+					answer = m;
+				}
+			}
+		}
+		return answer;
 	}
 
 	/**
@@ -102,11 +129,6 @@ public class AppMuc {
 		AppOccupant occupant = new AppOccupant(nick);
 		// TODO: consider multiple versions of the same nickname, or the same person entering twice
 		occupants.add(occupant);
-		System.out.println("--------------------");
-		for(AppOccupant o : occupants){
-			System.out.println("occupant: " + o.getNickname());
-		}
-		System.out.println("--------------------");
 	}
 
 	/**
@@ -117,11 +139,6 @@ public class AppMuc {
 		AppOccupant occupant = new AppOccupant(nick);
 		// TODO: consider multiple versions of the same nickname, or the same person leaving twice
 		occupants.remove(occupant);
-		System.out.println("--------------------");
-		for(AppOccupant o : occupants){
-			System.out.println("occupant: " + o.getNickname());
-		}
-		System.out.println("--------------------");
 	}
 
 	/**

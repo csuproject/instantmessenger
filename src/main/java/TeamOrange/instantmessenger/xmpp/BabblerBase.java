@@ -12,6 +12,7 @@ import TeamOrange.instantmessenger.lambda.RequestContactAddSentListener;
 import TeamOrange.instantmessenger.lambda.StatusEvent;
 import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppConnection;
+import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
@@ -42,6 +43,7 @@ import rocks.xmpp.core.stream.StreamErrorException;
 import rocks.xmpp.core.stream.StreamNegotiationException;
 import rocks.xmpp.extensions.disco.model.items.Item;
 import rocks.xmpp.extensions.muc.Occupant;
+import rocks.xmpp.extensions.ping.PingManager;
 import rocks.xmpp.extensions.register.RegistrationManager;
 import rocks.xmpp.extensions.register.model.Registration;
 import rocks.xmpp.im.chat.ChatSession;
@@ -49,6 +51,7 @@ import rocks.xmpp.im.roster.RosterEvent;
 import rocks.xmpp.im.roster.RosterManager;
 import rocks.xmpp.im.roster.model.Contact;
 import rocks.xmpp.im.subscription.PresenceManager;
+import rocks.xmpp.util.concurrent.AsyncResult;
 
 
 public class BabblerBase {
@@ -74,7 +77,7 @@ public class BabblerBase {
 
 	public BabblerBase(String hostName, MessageListener messageListener,
 			PresenceListener presenceListener, RosterListener rosterListener,
-			ConnectionEventListener connectionEventListener) {
+			ConnectionEventListener connectionEventListener, AppContacts contacts) {
 		this.hostName = hostName;
 
 		this.messageListener = messageListener;
@@ -86,7 +89,7 @@ public class BabblerBase {
 		this.accountManager = new AccountManager();
 		this.contactManager = new ContactManager();
 		this.connectionManager = new ConnectionManager();
-		this.mucManager = new MucManager();
+		this.mucManager = new MucManager(contacts);
 	}
 
 	public void setOnRequestContactAddSent(RequestContactAddSentListener requestContactAddSentListener){
@@ -150,6 +153,10 @@ public class BabblerBase {
 		client = connectionManager.setupConnection(hostName, this);
 	}
 
+	public boolean isLoggedIn(){
+		return client.isAuthenticated();
+	}
+
 	/**
 	 * Actually connects
 	 * @throws ConfideXmppException
@@ -158,9 +165,24 @@ public class BabblerBase {
 		connectionManager.connect(client);
 	}
 
+//	public boolean isConnected(){
+//		return client.getActiveConnection() != null && connectionManager.getConnectionState(client) == AppConnection.CONNECTED;
+//	}
+
 	public boolean isConnected(){
-//		return client.getActiveConnection() != null;
-		return connectionManager.getConnectionState(client) == AppConnection.CONNECTED;
+		if(isLoggedIn()){
+			PingManager pingManager = client.getManager(PingManager.class);
+			AsyncResult<Boolean> result = pingManager.pingServer();
+			try {
+				Boolean r = result.getResult();
+				if(r == Boolean.FALSE){
+					return false;
+				}
+			} catch (XmppException e) {
+				return false;
+			}
+		}
+		return client.getActiveConnection() != null && connectionManager.getConnectionState(client) == AppConnection.CONNECTED;
 	}
 
 	/**
@@ -194,13 +216,17 @@ public class BabblerBase {
 	}
 
 
-//	/**
-//	 * logs out by logging in anonymously
-//	 * @throws ConfideXmppException
-//	 */
-//	public void logout() throws ConfideXmppException {
-//		accountManager.logout(client);
-//	}
+	/**
+	 * logs in anonymously
+	 * @throws ConfideXmppException
+	 */
+	public void loginAnonymously() {
+		try {
+			client.loginAnonymously();
+		} catch (XmppException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Create User on Server
@@ -295,11 +321,9 @@ public class BabblerBase {
 
 	/*public void getEnteredRooms(AppJid appJid){
 		Jid jid = JidUtilities.jidFromAppJid(appJid);
-		System.out.println(jid);
 		List<Item> enteredRooms = mucManager.getEnteredRooms(client, jid);
 		if(enteredRooms != null){
 		for(Item i : enteredRooms){
-			System.out.println("entered room( id: " + i.getId() + "  name: " + i.getName() + " )\n" );
 		}
 		}
 	}*/
@@ -415,7 +439,6 @@ public class BabblerBase {
 	    } else if(presenceType == Presence.Type.UNAVAILABLE){
 	    	appPresenceType = AppPresence.Type.UNAVAILIVLE;
 	    }
-	    System.out.println("BabblerBase - newPresence()");
 	    presenceListener.presence(fromJid, appPresenceType);
 
 	    // Subscribe

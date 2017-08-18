@@ -6,6 +6,7 @@ import TeamOrange.instantmessenger.views.ChatScreen;
 import TeamOrange.instantmessenger.views.ChatScreenInput;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import TeamOrange.instantmessenger.models.AppChatSession;
+import TeamOrange.instantmessenger.models.AppChatSessionMessage;
 import TeamOrange.instantmessenger.models.AppChats;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppMessage;
@@ -22,16 +23,18 @@ public class ChatController {
 	private AppChats chats;
 	private AppContacts contacts;
 	GetMUCEvent exitMUC;
+	private ConnectionController connectionController;
 
-	public ChatController(BabblerBase babblerBase, ChatScreen chatScreen, 
-			AppChats chats, AppContacts contacts){
+	public ChatController(BabblerBase babblerBase, ChatScreen chatScreen,
+			AppChats chats, AppContacts contacts, ConnectionController connectionController){
 		this.babblerBase = babblerBase;
 		this.chatScreen = chatScreen;
-		chatScreen.setOnSendNewMessageEvent( userName->sendChatSessionMessage(userName) );
+		chatScreen.setOnSendNewMessageEvent( (message, userName)->sendChatSessionMessage(message, userName) );
 		chatScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		chatScreen.setOnExitMUC(exit->exitMUC.getMUC(exit));
 		this.chats = chats;
 		this.contacts = contacts;
+		this.connectionController = connectionController;
 	}
 
 	/**
@@ -39,10 +42,28 @@ public class ChatController {
 	 * Sends the message to the active chat, and reloads the chat screen
 	 * @param message
 	 */
-	public void sendChatSessionMessage(String message){
-		chats.getActiveChat().sendChatMessage(message);
+	public void sendChatSessionMessage(String message, String userName){
+		// add unsent messge to messages and update screen
+		AppChatSessionMessage appMessage = chats.getChatWithContact(userName).addUnsentMessage(message);
 		ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
-		chatScreen.load(input);
+		chatScreen.loadLater(input);
+		// send message when  connected
+		connectionController.addSendChatSessionMessageTask(this, appMessage, userName);
+		connectionController.completeTasks();
+
+	}
+
+	public void actuallySendChatSessionMessage(AppChatSessionMessage message, String userName){
+		chats.getChatWithContact(userName).sendChatMessage(this, message);
+//		reload to see the sent message
+		ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
+		chatScreen.loadLater(input);
+	}
+
+	public void messageSent(AppChatSessionMessage message){
+		message.hasSent();
+		ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
+		chatScreen.loadLater(input);
 	}
 
 	/**
@@ -78,7 +99,7 @@ public class ChatController {
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;
 	}
-	
+
 	public void setOnExitMUC(GetMUCEvent exitMUC) {
 		this.exitMUC = exitMUC;
 	}
