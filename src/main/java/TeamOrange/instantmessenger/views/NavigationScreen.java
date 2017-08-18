@@ -30,7 +30,7 @@ public class NavigationScreen extends Screen {
 	}
 
 	public void create() throws Exception {
-		
+
 		navigationBox = new HBox();
 		navigationBox.setAlignment(Pos.CENTER);
 		imageMessage = new Image(getClass().getResource(
@@ -60,6 +60,7 @@ public class NavigationScreen extends Screen {
 		logoutButton.setOnAction(e->{
 			setImageContactMessage();
 			setImageGroupMessage();
+			logoutEvent.logout();
 		});
 
 		navigationBox.getChildren().addAll(contactButton, chatButton, logoutButton);
@@ -69,21 +70,21 @@ public class NavigationScreen extends Screen {
 	public void setImageNewContactMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
-				contactButton.setGraphic(new ImageView(imageNewMessage));}});	
+				contactButton.setGraphic(new ImageView(imageNewMessage));}});
 	}
-	
+
 	public void setImageNewGroupMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
 				chatButton.setGraphic(new ImageView(imageNewMessage));}});
 	}
-	
+
 	public void setImageContactMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
 				contactButton.setGraphic(new ImageView(imageMessage));}});
 	}
-	
+
 	public void setImageGroupMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){

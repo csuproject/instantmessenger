@@ -50,10 +50,10 @@ public class GuiBase extends Application {
 		stage.show();
 	}
 
-	public void setScreenLater(Screen screen, Screen navigationScreen){
+	public void setScreenLater(Screen statusDisplay, Screen screen, Screen navigationScreen){
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
-				setScreen(screen, navigationScreen);
+				setScreen(statusDisplay, screen, navigationScreen);
 			}
 		});
 	}
@@ -78,7 +78,7 @@ public class GuiBase extends Application {
 		stage.setScene(scene);
 		stage.show();
 	}
-	
+
 	/**
 	 * Set view with stacked Screens
 	 * @param screen

@@ -129,13 +129,13 @@ public class ChatScreen extends Screen {
 		this.getChildren().add(screenVBox);
 	}
 
-	public void loadLater(AppMuc muc){
-		Platform.runLater(new Runnable(){
-			@Override public void run(){
-				load(muc);
-			}
-		});
-	}
+//	public void loadLater(AppMuc muc){
+//		Platform.runLater(new Runnable(){
+//			@Override public void run(){
+//				load(muc);
+//			}
+//		});
+//	}
 
 	@Override
 	public void load(ScreenInput input){
@@ -161,27 +161,7 @@ public class ChatScreen extends Screen {
 			setMUCMode(false);
 			screenVBox.getChildren().clear();
 			screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
-		}
-	}
-
-<<<<<<< HEAD
-
-	public void load(ChatScreenInput input){
-		scrollPane.setMaxHeight(500);
-		scrollPane.setMinHeight(500);
-		setMUCMode(false);
-		screenVBox.getChildren().clear();
-		screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
-		
-		String partner = input.getPartner();
-		partnerName.setText(partner);
-		LinkedList<AppChatSessionMessage> messages = input.getMessages();
-		scrollPaneContent.getChildren().clear();
-		for(AppChatSessionMessage m : messages){
-			String username = m.isInbound() ? partner : "Self";
-			MessageDisplay md = new MessageDisplay(username, m.getBody());
-			scrollPaneContent.getChildren().add(md);
-=======
+			//
 			userName = chatScreenInput.getPartner();
 			partnerName.setText(userName);
 			LinkedList<AppChatSessionMessage> messages = chatScreenInput.getMessages();
@@ -192,30 +172,48 @@ public class ChatScreen extends Screen {
 				scrollPaneContent.getChildren().add(md);
 			}
 			scrollChat();
->>>>>>> refs/remotes/origin/C3-feature-connection-integrity
 		}
+	}
 
-		// TODO: make a method to simply append a single message
-	}
-	
-	public void load(AppMuc muc) {
-		screenVBox.getChildren().clear();
-		screenVBox.getChildren().addAll(mucHbox,scrollPane, newMessage);
-		scrollPane.setMaxHeight(500-mucHbox.heightProperty().doubleValue());
-		scrollPane.setMinHeight(500-mucHbox.heightProperty().doubleValue());
-				
-		chatNameLabel.setText("Group " + muc.getRoomID());
-		setMUCMode(true);
-		setMUCInFocus(muc);
-		LinkedList<AppMucMessage> messages = muc.getMessages();
-		scrollPaneContent.getChildren().clear();
-		for(AppMucMessage m : messages){
-			String username = m.getFromNick();
-			MessageDisplay md = new MessageDisplay(username, m.getBody());
-			scrollPaneContent.getChildren().add(md);
-		}
-		scrollChat();
-	}
+
+//	public void load(ChatScreenInput input){
+//		scrollPane.setMaxHeight(500);
+//		scrollPane.setMinHeight(500);
+//		setMUCMode(false);
+//		screenVBox.getChildren().clear();
+//		screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
+//
+//		userName = input.getPartner();
+//		partnerName.setText(userName);
+//		LinkedList<AppChatSessionMessage> messages = input.getMessages();
+//		scrollPaneContent.getChildren().clear();
+//		for(AppChatSessionMessage m : messages){
+//			String username = m.isInbound() ? userName : "Self";
+//			MessageDisplay md = new MessageDisplay(username, m.getBody(), m.sent(), username.equals("Self"));
+//			scrollPaneContent.getChildren().add(md);
+//		}
+//		scrollChat();
+//		// TODO: make a method to simply append a single message
+//	}
+
+//	public void load(AppMuc muc) {
+//		screenVBox.getChildren().clear();
+//		screenVBox.getChildren().addAll(mucHbox,scrollPane, newMessage);
+//		scrollPane.setMaxHeight(500-mucHbox.heightProperty().doubleValue());
+//		scrollPane.setMinHeight(500-mucHbox.heightProperty().doubleValue());
+//
+//		chatNameLabel.setText("Group " + muc.getRoomID());
+//		setMUCMode(true);
+//		setMUCInFocus(muc);
+//		LinkedList<AppMucMessage> messages = muc.getMessages();
+//		scrollPaneContent.getChildren().clear();
+//		for(AppMucMessage m : messages){
+//			String username = m.getFromNick();
+//			MessageDisplay md = new MessageDisplay(username, m.getBody(), true, false);
+//			scrollPaneContent.getChildren().add(md);
+//		}
+//		scrollChat();
+//	}
 
 	public void loadMessages() {
 
@@ -257,15 +255,9 @@ public class ChatScreen extends Screen {
 	}
 
 	public void sendMUCMessage(String message) {
-<<<<<<< HEAD
-		muc.sendMessage(message);
-		load(muc); // TODO: load should be called from muc, not here
-=======
 		sendMucMessageEvent.send(muc, message);
-
 //		muc.sendMessage(message);
 //		load(new ChatScreenInput(muc)); // TODO: load should be called from muc, not here
->>>>>>> refs/remotes/origin/C3-feature-connection-integrity
 	}
 
 
