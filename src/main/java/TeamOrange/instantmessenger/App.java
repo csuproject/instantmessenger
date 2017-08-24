@@ -200,6 +200,13 @@ public class App {
      */
     public void presenceListener(AppJid fromJid, AppPresence.Type appPresenceType){
     	presenceController.status(fromJid, appPresenceType);
+    	String appUser = fromJid.getLocal();
+    	if (appPresenceType == AppPresence.Type.AVAILIBLE) {
+    		homeScreen.loadUserOnline(appUser);
+    	}
+    	if (appPresenceType == AppPresence.Type.UNAVAILIVLE) {
+    		homeScreen.loadUserOffline(appUser);
+    	}
     }
 
     /**

@@ -44,6 +44,8 @@ public class HomeScreen extends Screen {
 	private List<AppUser> appUserList;
 	private Image imageMessage;
 	private Image imageNewMessage;
+	private Image imageOnline;
+	private Image imageOffline;
 	private String contactInFocus;
 
 	public HomeScreen(GuiBase guiBase){
@@ -65,6 +67,11 @@ public class HomeScreen extends Screen {
 				"/resources/message.png").toURI().toString(),50,50,false,false);
 		imageNewMessage = new Image(getClass().getResource(
 				"/resources/message-new.png").toURI().toString(),50,50,false,false);
+		// Presence status images
+		imageOnline = new Image(getClass().getResource(
+				"/resources/accept-icon.png").toURI().toString(),25,25,false,false);
+		imageOffline = new Image(getClass().getResource(
+				"/resources/decline-icon.png").toURI().toString(),25,25,false,false);
 		
 		// Build contacts display
 		contacts = new ScrollPane();
@@ -195,7 +202,8 @@ public class HomeScreen extends Screen {
 		for(AppUser appUser : contactList){
 			if(!this.appUserList.contains(appUser)) {
 				MUCContactDisplay contactDisplay = 
-						new MUCContactDisplay(appUser,imageMessage, imageNewMessage);
+						new MUCContactDisplay(appUser,imageMessage, imageNewMessage,
+								imageOnline, imageOffline);
 				contactDisplay.setOnSelectAppUser(e-> {
 						chatWithContactEvent.openChat(e.getJid().getLocal());
 						setContactInFocus(appUser.getName());
@@ -222,7 +230,38 @@ public class HomeScreen extends Screen {
 			}
 		}
 	}
-	
+
+	/**
+	 * Load online status
+	 * @param mucList
+	 */
+	public void loadUserOnline(String appUser) {
+
+		// Find MUC index
+		for(MUCContactDisplay display : displayList) {
+			if(display.appUser.getName().equals(appUser)) {
+				Platform.runLater(new Runnable(){
+					@Override public void run(){
+						display.setOnline();}});					 
+			}
+		}
+	}
+
+	/**
+	 * Load offline status
+	 * @param mucList
+	 */
+	public void loadUserOffline(String appUser) {
+
+		// Find MUC index
+		for(MUCContactDisplay display : displayList) {
+			if(display.appUser.getName().equals(appUser)) {
+				Platform.runLater(new Runnable(){
+					@Override public void run(){
+						display.setOffline();}});					 
+			}
+		}
+	}
 	/**
 	 * Set contact in display focus
 	 * @param contactInFocus
