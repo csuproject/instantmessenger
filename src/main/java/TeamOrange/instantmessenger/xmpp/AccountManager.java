@@ -28,8 +28,10 @@ public class AccountManager {
 		try{
     		client.login(userName, password, null);
     	} catch(AuthenticationException e){
+    		System.out.println("AuthenticationException");
     		throw new ConfideAuthenticationException();
     	} catch(NoResponseException e){
+    		System.out.println("NoResponseException");
     		throw new ConfideNoResponseException();
     	}
 //		catch(StreamErrorException e){
@@ -40,6 +42,7 @@ public class AccountManager {
 //
 //    	}
 		catch(XmppException e){
+			System.out.println("xmppException");
 			throw new ConfideXmppException();
     	}
 		return Jid.of(userName, "teamorange.space", null);

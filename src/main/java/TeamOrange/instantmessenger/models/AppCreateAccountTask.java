@@ -15,7 +15,7 @@ public class AppCreateAccountTask implements AppTask {
 
 	@Override
 	public void complete() {
-		createAccountController.createAccount(userName, password);
+		createAccountController.actuallyCreateAccount(userName, password);
 	}
 
 }

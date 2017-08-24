@@ -39,7 +39,7 @@ public class HomeScreen extends Screen {
 	private AddContactEvent addContactEvent;
 	private AcceptContactRequestEvent acceptContactRequestEvent;
 	private DeclineContactRequestEvent declineContactRequestEvent;
-	
+
 	private List<MUCContactDisplay> displayList;
 	private List<AppUser> appUserList;
 	private Image imageMessage;
@@ -58,15 +58,16 @@ public class HomeScreen extends Screen {
 	}
 
 	public void create() throws Exception {
-		
+
 		appUserList = new ArrayList<AppUser>();
 		displayList = new ArrayList<MUCContactDisplay>();
-		
+
 		// Chat status images
 		imageMessage = new Image(getClass().getResource(
 				"/resources/message.png").toURI().toString(),50,50,false,false);
 		imageNewMessage = new Image(getClass().getResource(
 				"/resources/message-new.png").toURI().toString(),50,50,false,false);
+
 		// Presence status images
 		imageOnline = new Image(getClass().getResource(
 				"/resources/accept-icon.png").toURI().toString(),25,25,false,false);
@@ -75,8 +76,11 @@ public class HomeScreen extends Screen {
 		
 		// Build contacts display
 		contacts = new ScrollPane();
+		contacts.setFocusTraversable(false);
+		contacts.setOnMouseClicked((e)->addContactWithUsernameInputTextField.requestFocus());
+		contacts.setStyle("-fx-focus-color: transparent;");
 		contactsContent = new VBox();
-		contactsContent.setPrefHeight(500);
+		contactsContent.setMaxHeight(500);
 		contactsContent.setPrefWidth(500);
 		contacts.setContent(contactsContent);
 		contacts.setMaxHeight(500);
@@ -84,15 +88,15 @@ public class HomeScreen extends Screen {
 		contacts.setFitToWidth(true);
 		contacts.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		contacts.setHbarPolicy(ScrollBarPolicy.NEVER);
-		
+
 		// Build contact request
 		contactRequest = new ScrollPane();
 		contactRequestContent = new VBox();
-		contactRequestContent.setPrefHeight(500);
-		contactRequestContent.setPrefWidth(500);
+		contactRequestContent.setPrefHeight(400);
+		contactRequestContent.setPrefWidth(400);
 		contactRequest.setContent(contactRequestContent);
 		contactRequest.setMaxHeight(200);
-		//contactRequest.setMinHeight(500);
+		contactRequest.setMinHeight(200);
 		contactRequest.setFitToWidth(true);
 		contactRequest.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		contactRequest.setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -130,7 +134,6 @@ public class HomeScreen extends Screen {
 	}
 
 	public void chatButtonPress(String username) {
-		System.out.println("Chat with " + username);
 		chatWithContactEvent.openChat(username);
 	}
 
@@ -175,31 +178,29 @@ public class HomeScreen extends Screen {
 			contactsContent.getChildren().add(contact);
 		}
 	}
-	
+
 	/**
 	 * Load new contacts
 	 * @param mucList
 	 */
 	public void loadNew(HomeScreenInput input) {
-		
+
 		// Pass contact requests
-		contactRequestContent.getChildren().clear();
+		contactsContent.getChildren().clear();
+		mainVbox.getChildren().clear();
+		mainVbox.getChildren().addAll(contacts, addContactInput);
 		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
-		if(!contactRequestList.isEmpty()) {
-			mainVbox.getChildren().clear();
-			mainVbox.getChildren().addAll(contactRequest, contacts, addContactInput);
-			for(AppJid jid : contactRequestList){
-				ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
-				contactRequestContent.getChildren().add(request);
-			}
-		} else {
-			mainVbox.getChildren().clear();
-			mainVbox.getChildren().addAll(contacts, addContactInput);
+		for(AppJid jid : contactRequestList){
+			ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
+			contactsContent.getChildren().add(request);
 		}
 
-		// Pass new AppUsers
+
 		LinkedList<AppUser> contactList = input.getContactList();
+		this.appUserList.clear();
+		displayList.clear();
 		for(AppUser appUser : contactList){
+
 			if(!this.appUserList.contains(appUser)) {
 				MUCContactDisplay contactDisplay = 
 						new MUCContactDisplay(appUser,imageMessage, imageNewMessage,
@@ -215,6 +216,14 @@ public class HomeScreen extends Screen {
 		}
 	}
 
+	public void loadNewLater(HomeScreenInput input){
+		Platform.runLater(new Runnable(){
+			@Override public void run(){
+				loadNew(input);
+			}
+		});
+	}
+
 	/**
 	 * Load new message notifications
 	 * @param mucList
@@ -226,10 +235,11 @@ public class HomeScreen extends Screen {
 			if(display.appUser.getName().equals(appUser)) {
 				Platform.runLater(new Runnable(){
 					@Override public void run(){
-						display.setNewMessageImage();}});					 
+						display.setNewMessageImage();}});
 			}
 		}
 	}
+
 
 	/**
 	 * Load online status
@@ -262,6 +272,7 @@ public class HomeScreen extends Screen {
 			}
 		}
 	}
+
 	/**
 	 * Set contact in display focus
 	 * @param contactInFocus
@@ -269,7 +280,7 @@ public class HomeScreen extends Screen {
 	private void setContactInFocus(String contactInFocus) {
 		this.contactInFocus = contactInFocus;
 	}
-	
+
 	/**
 	 * Get contact in display focus
 	 * @return
@@ -301,4 +312,5 @@ public class HomeScreen extends Screen {
 		alert.setContentText(message);
 		alert.showAndWait();
 	}
+
 }

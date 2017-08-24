@@ -2,6 +2,8 @@ package TeamOrange.instantmessenger.views;
 
 import java.net.URISyntaxException;
 
+import TeamOrange.instantmessenger.lambda.CheckConnectionEvent;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -13,6 +15,7 @@ public class StatusDisplay extends Screen {
 	private Label labelUserName;
 	private Label labelStatus;
 	private Label screenView;
+	private CheckConnectionEvent checkConnectionEvent;
 	Image imageOnline;
 	Image imageOffline;
 	ImageView viewStatusImage;
@@ -28,7 +31,7 @@ public class StatusDisplay extends Screen {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		viewStatusImage = new ImageView(imageOffline);
 		labelStatus = new Label("Offline");
 		labelStatus.setStyle("-fx-font: 15 arial;");
@@ -37,6 +40,9 @@ public class StatusDisplay extends Screen {
 		HBox hboxUserName = new HBox(labelUserName);
 		HBox hboxConn = new HBox(labelStatus, viewStatusImage);
 		hboxConn.setSpacing(10);
+		hboxConn.setOnMouseClicked(e->{
+			checkConnectionEvent.checkConnection();
+		});
 		HBox hboxStatus = new HBox(hboxUserName, hboxConn);
 		hboxStatus.setSpacing(100);
 		screenView = new Label();
@@ -46,15 +52,15 @@ public class StatusDisplay extends Screen {
 		HBox hboxTop = new HBox(hboxUserName,hboxScreen,hboxStatus);
 		hboxTop.setAlignment(Pos.CENTER);
 		hboxTop.setSpacing(50);
-		hboxTop.setStyle("-fx-padding: 10;" + 
-                "-fx-border-style: solid inside;" + 
+		hboxTop.setStyle("-fx-padding: 10;" +
+                "-fx-border-style: solid inside;" +
                 "-fx-border-width: 2;" +
-                "-fx-border-insets: 5;" + 
-                "-fx-border-radius: 0;" + 
+                "-fx-border-insets: 5;" +
+                "-fx-border-radius: 0;" +
                 "-fx-border-color: black;");
 		this.getChildren().add(hboxTop);
 	}
-	
+
 	/**
 	 * Set the connection status of display
 	 * @param connectionStatus
@@ -69,7 +75,15 @@ public class StatusDisplay extends Screen {
 			labelStatus.setText("Offline");
 		}
 	}
-	
+
+	public void setConnectionStatusLater(boolean connectionStatus){
+		Platform.runLater(new Runnable(){
+			@Override public void run(){
+				setConnectionStatus(connectionStatus);
+			}
+		});
+	}
+
 	/**
 	 * Set the user name of display
 	 * @param userName
@@ -77,7 +91,15 @@ public class StatusDisplay extends Screen {
 	public void setUserName(String userName) {
 		labelUserName.setText(userName);
 	}
-	
+
+	public void setUserNameLater(String userName){
+		Platform.runLater(new Runnable(){
+			@Override public void run(){
+				setUserName(userName);
+			}
+		});
+	}
+
 	/**
 	 * Set screen view text
 	 * @param screen
@@ -94,6 +116,20 @@ public class StatusDisplay extends Screen {
 				{screenView.setText("Chat");} break;
 				case MUCCHAT:
 				{screenView.setText("Chat");} break;
+				case ACCOUNT:
+				{screenView.setText("Account");}break;
 	   	}
+	}
+
+	public void setScreenViewLater(ScreenEnum screen){
+		Platform.runLater(new Runnable(){
+			@Override public void run(){
+				setScreenView(screen);
+			}
+		});
+	}
+
+	public void setOnCheckConnectionEvent(CheckConnectionEvent checkConnectionEvent){
+		this.checkConnectionEvent = checkConnectionEvent;
 	}
 }

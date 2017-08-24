@@ -30,7 +30,7 @@ public class NavigationScreen extends Screen {
 	}
 
 	public void create() throws Exception {
-		
+
 		navigationBox = new HBox();
 		navigationBox.setAlignment(Pos.CENTER);
 		imageMessage = new Image(getClass().getResource(
@@ -47,6 +47,7 @@ public class NavigationScreen extends Screen {
 			this.changeScreen.SetScreen(ScreenEnum.HOME);
 			setImageContactMessage();
 		});
+		contactButton.setFocusTraversable(false);
 		chatButton = new Button("Groups");
 		chatButton.setMinSize(135, 60);
 		chatButton.setGraphic(new ImageView(imageMessage));
@@ -54,13 +55,16 @@ public class NavigationScreen extends Screen {
 			this.changeScreen.SetScreen(ScreenEnum.MUC);
 			setImageGroupMessage();
 		});
+		chatButton.setFocusTraversable(false);
 		logoutButton = new Button("Logout");
 		logoutButton.setGraphic(new ImageView(imageLogout));
 		logoutButton.setMinSize(135, 60);
 		logoutButton.setOnAction(e->{
 			setImageContactMessage();
 			setImageGroupMessage();
+			logoutEvent.logout();
 		});
+		logoutButton.setFocusTraversable(false);
 
 		navigationBox.getChildren().addAll(contactButton, chatButton, logoutButton);
 		this.getChildren().addAll(navigationBox);
@@ -69,21 +73,21 @@ public class NavigationScreen extends Screen {
 	public void setImageNewContactMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
-				contactButton.setGraphic(new ImageView(imageNewMessage));}});	
+				contactButton.setGraphic(new ImageView(imageNewMessage));}});
 	}
-	
+
 	public void setImageNewGroupMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
 				chatButton.setGraphic(new ImageView(imageNewMessage));}});
 	}
-	
+
 	public void setImageContactMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
 				contactButton.setGraphic(new ImageView(imageMessage));}});
 	}
-	
+
 	public void setImageGroupMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){

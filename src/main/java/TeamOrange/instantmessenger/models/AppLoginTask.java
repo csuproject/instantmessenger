@@ -15,6 +15,6 @@ public class AppLoginTask implements AppTask{
 
 	@Override
 	public void complete(){
-		loginController.login(userName, password);
+		loginController.actuallyLogin(userName, password);
 	}
 }

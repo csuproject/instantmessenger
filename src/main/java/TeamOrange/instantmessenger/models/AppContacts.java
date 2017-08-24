@@ -17,7 +17,7 @@ public class AppContacts {
 		this.contactList = new LinkedList<AppUser>();
 		this.incomingContactRequestList = new LinkedList<AppJid>();
 	}
-	
+
 	public void reset(){
 		self = null;
 		contactList.clear();
@@ -41,6 +41,17 @@ public class AppContacts {
 	}
 
 	public void addContactRequest(AppJid jid){
+		for(AppUser u : contactList){
+			if(u.getJid().getBareJid().equals(jid.getBareJid())){
+				return;
+			}
+		}
+
+		for(AppJid j : incomingContactRequestList){
+			if(j.getBareJid().equals(j.getBareJid())){
+				return;
+			}
+		}
 		incomingContactRequestList.add(jid);
 	}
 
@@ -57,7 +68,7 @@ public class AppContacts {
 	public AppUser getSelf(){
 		return self;
 	}
-	
+
 	public String getSelfName() {
 		return self.getJid().getLocal();
 	}
