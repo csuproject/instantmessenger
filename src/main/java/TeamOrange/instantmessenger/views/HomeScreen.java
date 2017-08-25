@@ -179,10 +179,43 @@ public class HomeScreen extends Screen {
 		}
 	}
 
-	/**
-	 * Load new contacts
-	 * @param mucList
-	 */
+	public void loadNew(HomeScreenInput input) {
+		
+		// Pass contact requests
+		contactRequestContent.getChildren().clear();
+		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
+		if(!contactRequestList.isEmpty()) {
+			mainVbox.getChildren().clear();
+			mainVbox.getChildren().addAll(contactRequest, contacts, addContactInput);
+			for(AppJid jid : contactRequestList){
+				ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
+				contactRequestContent.getChildren().add(request);
+			}
+		} else {
+			mainVbox.getChildren().clear();
+			mainVbox.getChildren().addAll(contacts, addContactInput);
+		}
+
+		// Pass new AppUsers
+		LinkedList<AppUser> contactList = input.getContactList();
+		for(AppUser appUser : contactList){
+			if(!this.appUserList.contains(appUser)) {
+				MUCContactDisplay contactDisplay = 
+						new MUCContactDisplay(appUser,imageMessage, imageNewMessage,
+								imageOnline, imageOffline);
+				contactDisplay.setOnSelectAppUser(e-> {
+						chatWithContactEvent.openChat(e.getJid().getLocal());
+						setContactInFocus(appUser.getName());
+				});
+				this.appUserList.add(appUser);
+				displayList.add(contactDisplay);
+				contactsContent.getChildren().add(contactDisplay);
+			}
+		}
+	}
+
+/*
+
 	public void loadNew(HomeScreenInput input) {
 
 		// Pass contact requests
@@ -215,7 +248,7 @@ public class HomeScreen extends Screen {
 			}
 		}
 	}
-
+*/
 	public void loadNewLater(HomeScreenInput input){
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
