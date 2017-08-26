@@ -6,6 +6,7 @@ import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.lambda.SelectAppUser;
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppUser;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,7 +23,9 @@ public class MUCContactDisplay extends HBox {
 	private Label usernameLabel;
 	private Label onlineLabel, offlineLabel;
 	private boolean selected;
-	private SelectAppUser selectAppUser;
+	private SelectAppUser openAppUser;
+	private SelectAppUser deleteAppUser;
+	private SelectAppUser blockAppUser;
 	private GetMUCEvent getMUCEvent;
 	private Button deleteButton, blockButton;
 	public AppUser appUser;
@@ -78,8 +81,10 @@ public class MUCContactDisplay extends HBox {
 		HBox onlineHBox = new HBox(onlineLabel);
 		onlineHBox.setAlignment(Pos.CENTER);
 		deleteButton = new Button("Delete");
+		deleteButton.setOnAction(e->deleteAppUser.getAppUser(appUser));
 		deleteButton.setMinHeight(35);
 		blockButton = new Button("Block");
+		blockButton.setOnAction(e->blockAppUser.getAppUser(appUser));
 		blockButton.setMinHeight(35);
 		HBox buttonHBox = new HBox(deleteButton,blockButton);
 		buttonHBox.setAlignment(Pos.CENTER);
@@ -92,7 +97,7 @@ public class MUCContactDisplay extends HBox {
                 "-fx-border-color: black;");
 		this.setMaxWidth(380);
 		this.setOnMouseClicked(e-> { 
-			selectAppUser.getAppUser(appUser);
+			openAppUser.getAppUser(appUser);
 			usernameLabel.setGraphic(new ImageView(imageMessage));
 			System.out.println("Clicked");});
 		HBox mainHBox = new HBox(onlineHBox, usernameHBox, buttonHBox);
@@ -114,7 +119,7 @@ public class MUCContactDisplay extends HBox {
 	                "-fx-border-color: black;");
 			selected = false;
 			System.out.println("Unselect");
-			selectAppUser.getAppUser(appUser);
+			openAppUser.getAppUser(appUser);
 		} else {
 			this.setStyle("-fx-padding: 5;" +
 	                "-fx-border-style: solid inside;" +
@@ -124,7 +129,7 @@ public class MUCContactDisplay extends HBox {
 	                "-fx-border-color: red;");
 			selected = true;
 			System.out.println("Select");
-			selectAppUser.getAppUser(appUser);
+			openAppUser.getAppUser(appUser);
 		}
 	}
 	
@@ -180,13 +185,21 @@ public class MUCContactDisplay extends HBox {
 		onlineLabel.setGraphic(new ImageView(imageOffline));
 		onlineLabel.setText("Offline");
 	}
-	
+		
 	/**
 	 * Set on SelectAppUser Event
 	 * @param selectAppUser
 	 */
 	public void setOnSelectAppUser(SelectAppUser selectAppUser) {
-		this.selectAppUser = selectAppUser;
+		this.openAppUser = selectAppUser;
+	}
+	
+	public void setOnBlockAppUser(SelectAppUser selectAppUser) {
+		this.blockAppUser = selectAppUser;
+	}
+	
+	public void setOnDeletetAppUser(SelectAppUser selectAppUser) {
+		this.deleteAppUser = selectAppUser;
 	}
 	
 	/**
@@ -195,5 +208,9 @@ public class MUCContactDisplay extends HBox {
 	 */
 	public void setOnGetMUCEvent (GetMUCEvent getMUCEvent) {
 		this.getMUCEvent = getMUCEvent;
+	}
+	
+	public AppUser getAppUser() {
+		return this.appUser;
 	}
 }

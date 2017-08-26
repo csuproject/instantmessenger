@@ -39,7 +39,6 @@ public class HomeScreen extends Screen {
 	private AddContactEvent addContactEvent;
 	private AcceptContactRequestEvent acceptContactRequestEvent;
 	private DeclineContactRequestEvent declineContactRequestEvent;
-
 	private List<MUCContactDisplay> displayList;
 	private List<AppUser> appUserList;
 	private Image imageMessage;
@@ -158,11 +157,39 @@ public class HomeScreen extends Screen {
 	public void loadLater(HomeScreenInput input){
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
-				loadNew(input);
+				loadNewUser(input);
 			}
 		});
 	}
 
+	/**
+	 * Delete user from contacts
+	 * @param appUser
+	 */
+	private void deleteUser(AppUser appUser) {
+		
+		for(AppUser getUser : appUserList){
+			if(getUser.getName().equals(appUser.getName()))  {
+				Platform.runLater(new Runnable(){
+					@Override public void run(){
+						appUserList.remove(getUser);
+					}
+				});
+			}
+		}
+				
+		for(MUCContactDisplay display : displayList){
+			if(display.getAppUser().getName().equals(appUser.getName())) {
+				Platform.runLater(new Runnable(){
+					@Override public void run(){
+						contactsContent.getChildren().remove(display);
+						displayList.remove(display);
+					}
+				});
+			}
+		}
+	}
+	
 	public void load(HomeScreenInput input){
 		contactsContent.getChildren().clear();
 
@@ -179,8 +206,9 @@ public class HomeScreen extends Screen {
 		}
 	}
 
-	public void loadNew(HomeScreenInput input) {
+	public void loadNewUser(HomeScreenInput input) {
 		
+		/*
 		// Pass contact requests
 		contactRequestContent.getChildren().clear();
 		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
@@ -194,7 +222,7 @@ public class HomeScreen extends Screen {
 		} else {
 			mainVbox.getChildren().clear();
 			mainVbox.getChildren().addAll(contacts, addContactInput);
-		}
+		}	*/
 
 		// Pass new AppUsers
 		LinkedList<AppUser> contactList = input.getContactList();
@@ -206,6 +234,8 @@ public class HomeScreen extends Screen {
 				contactDisplay.setOnSelectAppUser(e-> {
 						chatWithContactEvent.openChat(e.getJid().getLocal());
 						setContactInFocus(appUser.getName());
+				contactDisplay.setOnBlockAppUser(block->deleteUser(block));
+				contactDisplay.setOnDeletetAppUser(delete->deleteUser(delete));
 				});
 				this.appUserList.add(appUser);
 				displayList.add(contactDisplay);
@@ -213,6 +243,7 @@ public class HomeScreen extends Screen {
 			}
 		}
 	}
+	
 
 /*
 
@@ -252,7 +283,7 @@ public class HomeScreen extends Screen {
 	public void loadNewLater(HomeScreenInput input){
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
-				loadNew(input);
+				loadNewUser(input);
 			}
 		});
 	}
