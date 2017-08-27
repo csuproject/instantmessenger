@@ -9,6 +9,7 @@ import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.lambda.MUCListEvent;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppMuc;
+import TeamOrange.instantmessenger.models.AppMucList;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.MUCChat;
 import TeamOrange.instantmessenger.views.ChatScreen;
@@ -24,7 +25,7 @@ import javafx.application.Platform;
 public class MUCController {
 
 	private ChangeScreen changeScreen;
-	private List<AppMuc> mucList;
+	private AppMucList mucs;
 	private BabblerBase babblerBase;
 	private MUCScreen mucScreen;
 	private AppContacts contacts;
@@ -36,7 +37,7 @@ public class MUCController {
 
 
 	public MUCController(BabblerBase babblerBase, ChatScreen chatScreen,
-			AppContacts contacts, MUCScreen mucScreen, CreateMUCScreen createMUCScreen, ConnectionController connectionController) {
+			AppContacts contacts, AppMucList mucs, MUCScreen mucScreen, CreateMUCScreen createMUCScreen, ConnectionController connectionController) {
 
 		this.babblerBase = babblerBase;
 		this.mucScreen = mucScreen;
@@ -45,10 +46,12 @@ public class MUCController {
 		mucScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		mucScreen.setOnOpenMUC(getMUCEvent->enterMUC(getMUCEvent));
 		mucScreen.setOnAddGroupGetMUCEvent(addMUCEvent->createMUC(addMUCEvent));
+		mucScreen.setOnAcceptMucRequest( (roomID, from)->acceptMucRequest(roomID, from));
+		mucScreen.setOnDeclineMucRequest( (roomID, from)->declineMucRequest(roomID, from));
 		createMUCScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		createMUCScreen.setOnCreateMUCEvent(createMUCEvent->createMUC(createMUCEvent));
 		chatScreen.setOnSendMucMessageEvent((muc, message)->sendMUCMessage(muc, message));
-		mucList = new ArrayList<AppMuc>();
+		this.mucs = mucs;
 		this.connectionController = connectionController;
 	}
 
@@ -68,9 +71,11 @@ public class MUCController {
 			muc.setOnNewMessage(getMUCEvent-> // Set new message notifier
 				newMessageMUC.getMUC(getMUCEvent)
 			);
-			mucList.add(muc);
-			mucListEvent.getMUCList(mucList);
+			this.mucs.addMuc(muc);
+			this.mucScreen.loadNewLater(this.mucs);
+//			mucListEvent.getMUCList(this.mucs.getMucList());
 			requestMUC(mucChat);
+			babblerBase.addChatRoomBookmark(muc.getRoomID(), muc.getNick());
 		} catch (ConfideFailedToEnterChatRoomException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -94,6 +99,7 @@ public class MUCController {
 			muc.setOnNewMessage(getMUCEvent-> // Set new message notifier
 				newMessageMUC.getMUC(getMUCEvent));
 			addtoMUCList(muc);
+			babblerBase.addChatRoomBookmark(muc.getRoomID(), muc.getNick());
 			//requestMUC(roomID);
 		} catch (ConfideFailedToEnterChatRoomException e1) {
 			// TODO Auto-generated catch block
@@ -120,6 +126,9 @@ public class MUCController {
 	public void requestMUC(MUCChat mucChat) {
 
 		List<AppUser> list = mucChat.getUsers();
+		for(AppUser user : list){
+			babblerBase.requestJoinMuc(user.getJid(), mucChat.getName());
+		}
 
 	}
 
@@ -129,8 +138,8 @@ public class MUCController {
 	 */
 	public void enterMUC(String mucName) {
 		// Enter MUC
-		mucList.add(muc(mucName));
-		mucListEvent.getMUCList(mucList);
+		this.mucs.addMuc(muc(mucName));
+		mucListEvent.getMUCList(this.mucs.getMucList());
 	}
 
 	/**
@@ -173,14 +182,26 @@ public class MUCController {
 		}
 	}
 
+	public void acceptMucRequest(String roomID, String from){
+		mucs.removeMucRequest(roomID, from);
+		createMUC(roomID);
+		mucScreen.loadNewLater(mucs);
+	}
+
+	public void declineMucRequest(String roomID, String from){
+		mucs.removeMucRequest(roomID, from);
+		mucScreen.loadNewLater(mucs);
+	}
+
 	private void addtoMUCList(AppMuc appMUC) {
-		mucList.add(appMUC);
-		mucListEvent.getMUCList(mucList);
+		this.mucs.addMuc(appMUC);
+		mucScreen.loadNewLater(this.mucs);
+//		mucListEvent.getMUCList(this.mucs.getMucList());
 	}
 
 	private void removeFromMUCList(AppMuc appMUC) {
-		mucList.remove(appMUC);
-		mucListEvent.getMUCList(mucList);
+		this.mucs.removeMuc(appMUC);
+		mucListEvent.getMUCList(this.mucs.getMucList());
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){

@@ -16,6 +16,7 @@ import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
+import TeamOrange.instantmessenger.models.AppMucBookmark;
 import TeamOrange.instantmessenger.models.AppOccupant;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
@@ -41,6 +42,7 @@ import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stanza.model.Presence;
 import rocks.xmpp.core.stream.StreamErrorException;
 import rocks.xmpp.core.stream.StreamNegotiationException;
+import rocks.xmpp.extensions.bookmarks.model.ChatRoomBookmark;
 import rocks.xmpp.extensions.disco.model.items.Item;
 import rocks.xmpp.extensions.muc.Occupant;
 import rocks.xmpp.extensions.ping.PingManager;
@@ -106,6 +108,10 @@ public class BabblerBase {
 	 */
 	public void requestContactAdd(AppJid to){
 		messageManager.requestContactAdd(client, to);
+	}
+
+	public void requestJoinMuc(AppJid to, String roomID){
+		messageManager.requestJoinMuc(client, to, roomID);
 	}
 
 	/**
@@ -332,6 +338,24 @@ public class BabblerBase {
 //		Jid roomJid = Jid.of(roomID + "@conference.teamorange.space");
 //		mucManager.getMembers(client, roomJid, nick);
 //	}
+
+	public void addChatRoomBookmark(String name, String nick){
+		Jid roomJid = Jid.of(name + "@conference.teamorange.space");
+		mucManager.addChatRoomBookmark(client, name, roomJid, nick);
+	}
+
+	public LinkedList<AppMucBookmark> getChatRoomBookmarks(){
+		List<ChatRoomBookmark> bookmarks = mucManager.getChatRoomBookmarks(client);
+		LinkedList<AppMucBookmark> appBookmarks = new LinkedList();
+		if(bookmarks != null){
+			for(ChatRoomBookmark bm : bookmarks){
+				AppJid room = JidUtilities.appJidFromJid(bm.getRoom());
+				AppMucBookmark appBm = new AppMucBookmark(bm.getNick(), room );
+				appBookmarks.add(appBm);
+			}
+		}
+		return appBookmarks;
+	}
 
 	/**
 	 * Gets a LinkedList of Occupants of the chat room, that is people currently in the chat room.

@@ -2,6 +2,7 @@ package TeamOrange.instantmessenger.xmpp;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -23,6 +24,8 @@ import rocks.xmpp.core.stanza.MessageEvent;
 import rocks.xmpp.core.stanza.model.IQ;
 import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stanza.model.Presence;
+import rocks.xmpp.extensions.bookmarks.BookmarkManager;
+import rocks.xmpp.extensions.bookmarks.model.ChatRoomBookmark;
 import rocks.xmpp.extensions.muc.ChatRoom;
 import rocks.xmpp.extensions.muc.ChatService;
 import rocks.xmpp.extensions.muc.MultiUserChatManager;
@@ -41,6 +44,24 @@ public class MucManager {
 
 	public MucManager(AppContacts contacts){
 		this.contacts = contacts;
+	}
+
+	public void addChatRoomBookmark(XmppClient client, String name, Jid room, String nick){
+		ChatRoomBookmark bookmark = new ChatRoomBookmark(name, room, nick, null, false);
+		BookmarkManager bmManager = client.getManager(BookmarkManager.class);
+		bmManager.addBookmark(bookmark);
+	}
+
+	public List<ChatRoomBookmark> getChatRoomBookmarks(XmppClient client){
+		BookmarkManager bmManager = client.getManager(BookmarkManager.class);
+		AsyncResult<List<ChatRoomBookmark>> result = bmManager.getChatRoomBookmarks();
+		try {
+			List<ChatRoomBookmark> bookmarks = result.getResult();
+			return bookmarks;
+		} catch (XmppException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 //	public void setupInvitationListener(XmppClient client){

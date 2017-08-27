@@ -20,6 +20,8 @@ import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMessageType;
 import TeamOrange.instantmessenger.models.AppMuc;
+import TeamOrange.instantmessenger.models.AppMucList;
+import TeamOrange.instantmessenger.models.AppMucRequest;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.views.AccountScreen;
@@ -42,6 +44,7 @@ public class App {
 	public static final String REQUEST_CONTACT_ADD = "1";
 	public static final String ACCEPT_CONTACT_ADD = "2";
 	public static final String DECLINE_CONTACT_ADD = "3";
+	public static final String REQUEST_JOIN_MUC = "4";
 
 	// xmpp
 	private BabblerBase babblerBase;
@@ -74,8 +77,7 @@ public class App {
 	AppContacts contacts;
 	AppChats chats;
 	AppConnection connection;
-	List<AppMuc> mucList;
-	AppMuc muc;
+	private AppMucList mucs;
 
 
 	public App(GuiBase guiBase){
@@ -89,7 +91,6 @@ public class App {
 		mucScreen = new MUCScreen(guiBase);
 		createMUCScreen = new CreateMUCScreen(guiBase);
 		statusDisplay = new StatusDisplay(guiBase);
-		mucList = new ArrayList<AppMuc>();
 		//mucinput = new MUCScreenInput();
 		guiBase.setScreen(accountScreen);
 		setScreen(ScreenEnum.ACCOUNT);
@@ -98,6 +99,7 @@ public class App {
 		contacts = new AppContacts();
 		chats = new AppChats();
 		connection = new AppConnection( AppConnection.NOT_CONNECTED );
+		this.mucs = new AppMucList();
 
 		// xmpp
 		babblerBase = new BabblerBase(
@@ -118,7 +120,7 @@ public class App {
 		createAccountController = new CreateAccountController(babblerBase, accountScreen, connectionController);
 		createAccountController.setOnChangeScreen( screen->setScreen(screen) );
 
-		loginController = new LoginController(babblerBase, accountScreen, contacts, connectionController);
+		loginController = new LoginController(babblerBase, accountScreen, mucScreen, contacts, mucs, connectionController);
 		loginController.setOnChangeScreen( screen->setScreen(screen) );
 
 		openChatController = new OpenChatController(chats, contacts, babblerBase, homeScreen);
@@ -140,7 +142,7 @@ public class App {
 		naviationController = new NavigationController(navigationScreen, this);
 		naviationController.setOnChangeScreen(screen->setScreen(screen));
 
-		mucController = new MUCController(babblerBase, chatScreen, contacts, mucScreen,
+		mucController = new MUCController(babblerBase, chatScreen, contacts, mucs, mucScreen,
 				createMUCScreen, connectionController);
 		mucController.setOnChangeScreen(screen->setScreen(screen));
 		mucController.setOnMUCListEvent(mucList->setMUCList(mucList));
@@ -151,7 +153,9 @@ public class App {
 	public void reset(){
 		contacts.reset();
 		chats.reset();
+		mucs.reset();
 		connectionController.reset();
+		mucScreen.reset();
 	}
 
 	// Listeners
@@ -184,6 +188,12 @@ public class App {
     		}
     		else if(body.equals(App.DECLINE_CONTACT_ADD)){
 
+    		}
+    		else if(body.equals(App.REQUEST_JOIN_MUC)){
+    			String roomID = message.getID();
+    			AppJid from = message.getFromJid();
+    			this.mucs.addMucRequest( new AppMucRequest(roomID, from) );
+    			mucScreen.loadNewLater(this.mucs);
     		}
     	} else if(message.getType() == AppMessageType.CHAT){
 
@@ -275,7 +285,7 @@ public class App {
 			{
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
-				chatScreen.loadLater(new ChatScreenInput(muc));
+				chatScreen.loadLater(new ChatScreenInput(this.mucs.getMucInFocus()));
 				guiBase.setScreenLater(statusDisplay, chatScreen,navigationScreen);
 			} break;
     	}
@@ -286,8 +296,8 @@ public class App {
      * @param mucList
      */
     public void setMUCList(List<AppMuc> mucList) {
-    	this.mucList = mucList;
-    	mucScreen.loadNewLater( this.mucList);
+//    	this.mucList = mucList;
+//    	mucScreen.loadNewLater( this.mucList);
     }
 
     /**
@@ -295,7 +305,7 @@ public class App {
      * @param muc
      */
     public void setMUCInFocus(AppMuc muc) {
-    	this.muc = muc;
+    	this.mucs.setMucInFocus(muc);
     	setScreen(ScreenEnum.MUCCHAT);
     }
 
@@ -307,14 +317,15 @@ public class App {
 
     	// Set new group message icon
 		if(currentScreen != ScreenEnum.MUC) {
-			if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) {
+			if (currentScreen == ScreenEnum.MUCCHAT &&
+					this.mucs.mucInFocusIs(muc) ) {
     		}
 			else {
 			navigationScreen.setImageNewGroupMessage();
 			}
 		}
 		// Reload open screen
-    	if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc))
+    	if (currentScreen == ScreenEnum.MUCCHAT && this.mucs.mucInFocusIs(muc) )
     		chatScreen.loadLater(new ChatScreenInput(muc));
     	else
     		mucScreen.loadNewMessage(muc);

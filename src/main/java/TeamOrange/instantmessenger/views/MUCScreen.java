@@ -2,6 +2,8 @@ package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.models.AppMuc;
+import TeamOrange.instantmessenger.models.AppMucList;
+import TeamOrange.instantmessenger.models.AppMucRequest;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,8 +14,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import TeamOrange.instantmessenger.lambda.AcceptMucRequestEvent;
 import TeamOrange.instantmessenger.lambda.AddMUCEvent;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
+import TeamOrange.instantmessenger.lambda.DeclineMucRequestEvent;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -35,6 +39,8 @@ import resources.GroupList;
 		private VBox mucVBox;
 		private GetMUCEvent getMUCEvent;
 		private AddMUCEvent addMUCEvent;
+		private DeclineMucRequestEvent declineMucRequestEvent;
+		private AcceptMucRequestEvent acceptMucRequestEvent;
 		private VBox screenVBox;
 		private HBox addGroupHBox;
 		private HBox topHBox;
@@ -175,8 +181,9 @@ import resources.GroupList;
 		 * Load new MUC
 		 * @param mucList
 		 */
-		public void loadNew(List<AppMuc> mucList) {
-			for(AppMuc appMUC : mucList){
+		public void loadNew(AppMucList mucs) {
+			List<AppMuc> inputMucList = mucs.getMucList();
+			for(AppMuc appMUC : inputMucList){
 				if(!this.mucList.contains(appMUC)) {
 					MUCContactDisplay mucDisplay =
 							new MUCContactDisplay(appMUC,imageMessage, imageNewMessage);
@@ -186,12 +193,18 @@ import resources.GroupList;
 					mucVBox.getChildren().add(mucDisplay);
 				}
 			}
+
+			List<AppMucRequest> requests = mucs.getMucRequests();
+			for(AppMucRequest request : requests){
+				MucRequestDisplay requestDisplay = new MucRequestDisplay(this, request.getFrom().getLocal(), request.getRoomID());
+				mucVBox.getChildren().add(requestDisplay);
+			}
 		}
 
-		public void loadNewLater(List<AppMuc> mucList){
+		public void loadNewLater(AppMucList mucs){
 			Platform.runLater(new Runnable(){
 				@Override public void run(){
-					loadNew(mucList);
+					loadNew(mucs);
 				}
 			});
 		}
@@ -246,8 +259,34 @@ import resources.GroupList;
 			this.addMUCEvent = addMUCEvent;
 		}
 
+		public void setOnAcceptMucRequest(AcceptMucRequestEvent acceptMucRequestEvent){
+			this.acceptMucRequestEvent = acceptMucRequestEvent;
+		}
+
+		public void setOnDeclineMucRequest(DeclineMucRequestEvent declineMucRequestEvent){
+			this.declineMucRequestEvent = declineMucRequestEvent;
+		}
+
 		public void setOnChangeScreen(ChangeScreen changeScreen){
 			this.changeScreen = changeScreen;
+		}
+
+		public void reset(){
+			Platform.runLater(new Runnable(){
+				@Override public void run(){
+					mucList.clear();
+					displayList.clear();
+					mucVBox.getChildren().clear();
+				}
+			});
+		}
+
+		public void acceptMucRequestButtonPress(String roomID, String from){
+			this.acceptMucRequestEvent.accept(roomID, from);
+		}
+
+		public void declineMucRequestButtonPress(String roomID, String from){
+			this.declineMucRequestEvent.decline(roomID, from);
 		}
 
 

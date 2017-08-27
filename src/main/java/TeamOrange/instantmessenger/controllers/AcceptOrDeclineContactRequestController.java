@@ -53,8 +53,10 @@ public class AcceptOrDeclineContactRequestController {
 
 	public void actuallyReplyToContactRequest(AppUser contact, AppJid jid, boolean accepted){
 		if(contact == null){
-			contact = babblerBase.addContact(jid.getBareJid());
-			contacts.addContact(contact);
+			if(accepted){
+				contact = babblerBase.addContact(jid.getBareJid());
+				contacts.addContact(contact);
+			}
 		}
 		babblerBase.alertUserOfContactRequestResponse(jid, accepted);
 		homeScreen.loadLater(new HomeScreenInput(contacts));

@@ -33,6 +33,17 @@ public class MessageManager {
 //		result.onAcknowledge(m->onRequestContactAddAcknowledge(m));// Consumer<Message>
 	}
 
+	public void requestJoinMuc(XmppClient client, AppJid to, String roomID){
+		Message message = new Message();
+		message.setType(Message.Type.NORMAL);
+		message.setBody(App.REQUEST_JOIN_MUC);
+		message.setId(roomID);
+		Jid toJid = JidUtilities.jidFromAppJid(to);
+		message.setTo(toJid);
+		SendTask<Message> result = client.sendMessage(message);
+//		result.onSent(m->babblerBase.onRequestContactAddSent(m));
+	}
+
 //	// TODO: messages never seem to be acknowledged
 //	public void onRequestContactAddAcknowledge(Message message){
 //		// contact add requested to message.getTo()
@@ -69,13 +80,14 @@ public class MessageManager {
 		AppJid from = JidUtilities.appJidFromJid( messageEvent.getMessage().getFrom() );
 		String body = messageEvent.getMessage().getBody();
 		String thread = messageEvent.getMessage().getThread();
+		String id = messageEvent.getMessage().getId();
 		AppMessageType type = null;
 		if(messageEvent.getMessage().getType() == Message.Type.CHAT){
 			type = AppMessageType.CHAT;
 		} else if(messageEvent.getMessage().getType() == Message.Type.NORMAL){
 			type = AppMessageType.NORMAL;
 		}
-		AppMessage appMessage = AppMessage.createInboundMessage(from, body, thread, type);
+		AppMessage appMessage = AppMessage.createInboundMessage(from, body, id, thread, type);
 		return appMessage;
 	}
 
