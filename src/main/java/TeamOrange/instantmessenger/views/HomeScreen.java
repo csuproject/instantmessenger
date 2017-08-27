@@ -5,12 +5,10 @@ import TeamOrange.instantmessenger.lambda.DeclineContactRequestEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 import TeamOrange.instantmessenger.lambda.AcceptContactRequestEvent;
 import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.ChatWithContactEvent;
 import TeamOrange.instantmessenger.models.AppJid;
-import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppUser;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -38,7 +36,6 @@ public class HomeScreen extends Screen {
 	private DeclineContactRequestEvent declineContactRequestEvent;
 	private List<MUCContactDisplay> displayList;
 	private List<AppUser> appUserList;
-	private List<AppJid> contactRequestList;
 	private List<ContactRequestDisplay> contactRequestDisplayList;
 	private Image imageMessage,imageNewMessage,imageOnline,imageOffline;
 	private String contactInFocus;
