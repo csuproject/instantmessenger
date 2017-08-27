@@ -88,8 +88,6 @@ public class App {
 		mucScreen = new MUCScreen(guiBase);
 		createMUCScreen = new CreateMUCScreen(guiBase);
 		statusDisplay = new StatusDisplay(guiBase);
-		//mucList = new ArrayList<AppMuc>();
-		//mucinput = new MUCScreenInput();
 		guiBase.setScreen(accountScreen);
 		setScreen(ScreenEnum.ACCOUNT);
 

@@ -1,12 +1,8 @@
 package TeamOrange.instantmessenger.controllers;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
-import TeamOrange.instantmessenger.lambda.GetMUCEvent;
-import TeamOrange.instantmessenger.lambda.MUCListEvent;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
@@ -16,14 +12,12 @@ import TeamOrange.instantmessenger.views.ChatScreen;
 import TeamOrange.instantmessenger.views.ChatScreenInput;
 import TeamOrange.instantmessenger.views.CreateMUCScreen;
 import TeamOrange.instantmessenger.views.HomeScreen;
-import TeamOrange.instantmessenger.views.MUCContactDisplay;
 import TeamOrange.instantmessenger.views.MUCScreen;
 import TeamOrange.instantmessenger.views.NavigationScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideFailedToConfigureChatRoomException;
 import exceptions.ConfideFailedToEnterChatRoomException;
-import javafx.application.Platform;
 
 public class MUCController {
 
@@ -32,17 +26,12 @@ public class MUCController {
 	private BabblerBase babblerBase;
 	private MUCScreen mucScreen;
 	private AppContacts contacts;
-	private MUCListEvent mucListEvent;
 	private ChatScreen chatScreen;
 	private HomeScreen homeScreen;
 	private NavigationScreen navigationScreen;
-	private GetMUCEvent getMUCEvent;
-	private GetMUCEvent newMessageMUC;
 	private ConnectionController connectionController;
 	private ScreenEnum currentScreen;
-	//List<AppMuc> mucList;
-	AppMuc muc;
-
+	private AppMuc muc;
 
 	public MUCController(BabblerBase babblerBase, ChatScreen chatScreen,
 			HomeScreen homeScreen, NavigationScreen navigationScreen, 
@@ -57,6 +46,7 @@ public class MUCController {
 		this.homeScreen = homeScreen;
 		this.navigationScreen = navigationScreen;
 		this.connectionController = connectionController;
+		mucList = new ArrayList<AppMuc>();
 		
 		mucScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		mucScreen.setOnOpenMUC(getMUCEvent->enterMUC(getMUCEvent));
@@ -64,14 +54,6 @@ public class MUCController {
 		createMUCScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		createMUCScreen.setOnCreateMUCEvent(createMUCEvent->createMUC(createMUCEvent));
 		chatScreen.setOnSendMucMessageEvent((muc, message)->sendMUCMessage(muc, message));
-		
-		mucList = new ArrayList<AppMuc>();
-	
-		
-		//mucController.setOnMUCListEvent(mucList->setMUCList(mucList));
-		//mucController.setOnNewMessage(getMUCEvent->loadMUCInFocus(getMUCEvent));
-		//mucController.setOnOpenMUC(getMUCEvent->setMUCInFocus(getMUCEvent));
-		
 	}
 
 
@@ -85,14 +67,11 @@ public class MUCController {
 		// Create MUC
 		AppMuc muc;
 		try {
-			muc = babblerBase.createAndOrEnterRoom(mucChat.getName(), contacts.getSelfName());
+			muc = babblerBase.createAndOrEnterRoom(
+					mucChat.getName(), contacts.getSelfName());
 			muc.setReference(muc);
-			muc.setOnNewMessage(getMUCEvent-> // Set new message notifier
-				//newMessageMUC.getMUC(getMUCEvent)
-				loadMUCInFocus(getMUCEvent)
-			);
+			muc.setOnNewMessage(getMUCEvent->loadMUCInFocus(getMUCEvent));
 			mucList.add(muc);
-			//mucListEvent.getMUCList(mucList);
 			setMUCList(mucList);
 			requestMUC(mucChat);
 		} catch (ConfideFailedToEnterChatRoomException e1) {
@@ -115,9 +94,7 @@ public class MUCController {
 		try {
 			muc = babblerBase.createAndOrEnterRoom(roomID, contacts.getSelfName());
 			muc.setReference(muc);
-			muc.setOnNewMessage(getMUCEvent-> // Set new message notifier
-				//newMessageMUC.getMUC(getMUCEvent)
-				loadMUCInFocus(muc));
+			muc.setOnNewMessage(getMUCEvent->loadMUCInFocus(muc));
 			addtoMUCList(muc);
 			//requestMUC(roomID);
 		} catch (ConfideFailedToEnterChatRoomException e1) {
@@ -156,7 +133,6 @@ public class MUCController {
 		// Enter MUC
 		mucList.add(muc(mucName));
 		setMUCList(mucList);
-		//mucListEvent.getMUCList(mucList);
 	}
 
 	/**
@@ -164,8 +140,6 @@ public class MUCController {
 	 * @param mucChat
 	 */
 	public void enterMUC(AppMuc appMUC) {
-		// Enter MUC
-		//getMUCEvent.getMUC(appMUC);
 		setMUCInFocus(appMUC);
 	}
 
@@ -200,20 +174,17 @@ public class MUCController {
 		}
 	}
 
+
 	private void addtoMUCList(AppMuc appMUC) {
 		mucList.add(appMUC);
 		setMUCList(mucList);
-		//mucListEvent.getMUCList(mucList);
 	}
 
 	private void removeFromMUCList(AppMuc appMUC) {
 		mucList.remove(appMUC);
 		setMUCList(mucList);
-		//mucListEvent.getMUCList(mucList);
 	}
 	
-
-
 	//////////////////////////////////////////////////////////////////////////////
 	//--------------------------Screen Events-----------------------------------//
 	//////////////////////////////////////////////////////////////////////////////
@@ -221,7 +192,7 @@ public class MUCController {
      * Set list of MUC
      * @param mucList
      */
-    public void setMUCList(List<AppMuc> mucList) {
+    private void setMUCList(List<AppMuc> mucList) {
     	this.mucList = mucList;
     	mucScreen.loadNewLater( this.mucList);
     }
@@ -230,7 +201,7 @@ public class MUCController {
      * Set the MUC in focus
      * @param muc
      */
-    public void setMUCInFocus(AppMuc muc) {
+    private void setMUCInFocus(AppMuc muc) {
     	this.muc = muc;
     	changeScreen.SetScreen((ScreenEnum.MUCCHAT));
     }
@@ -239,7 +210,7 @@ public class MUCController {
      * Update MUC of MUCCHAT in focus and Notifications
      * @param muc
      */
-    public void loadMUCInFocus(AppMuc muc) {
+    private void loadMUCInFocus(AppMuc muc) {
 
     	// Set new group message icon
 		if(currentScreen != ScreenEnum.MUC) {
@@ -292,15 +263,4 @@ public class MUCController {
 		this.changeScreen = changeScreen;
 	}
 
-	public void setOnMUCListEvent(MUCListEvent mucListEvent) {
-		this.mucListEvent = mucListEvent;
-	}
-
-	public void setOnOpenMUC(GetMUCEvent getMUCEvent) {
-		this.getMUCEvent = getMUCEvent;
-	}
-
-	public void setOnNewMessage(GetMUCEvent getMUCEvent) {
-		this.newMessageMUC = getMUCEvent;
-	}
 }
