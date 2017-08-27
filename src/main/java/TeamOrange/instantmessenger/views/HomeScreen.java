@@ -84,20 +84,6 @@ public class HomeScreen extends Screen {
 		contacts.setHbarPolicy(ScrollBarPolicy.NEVER);
 
 		//////////////////////////////////////////////////////////////////////////////
-		//------------------------Contact Request Display---------------------------//
-		//////////////////////////////////////////////////////////////////////////////
-		contactRequest = new ScrollPane();
-		contactRequestContent = new VBox();
-		//contactRequestContent.setPrefHeight(400);
-		contactRequestContent.setPrefWidth(400);
-		contactRequest.setContent(contactRequestContent);
-		//contactRequest.setMaxHeight(200);
-		//contactRequest.setMinHeight(200);
-		contactRequest.setFitToWidth(true);
-		contactRequest.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-		contactRequest.setHbarPolicy(ScrollBarPolicy.NEVER);
-
-		//////////////////////////////////////////////////////////////////////////////
 		//------------------------------Add Contact Display-------------------------//
 		//////////////////////////////////////////////////////////////////////////////
 		Label addContactWithUsername = new Label("Add Contact: ");
@@ -162,16 +148,18 @@ public class HomeScreen extends Screen {
 
 	public void loadLater(HomeScreenInput input){
 		Platform.runLater(new Runnable(){
-			@Override public void run(){
-				loadNewUsers(input);}	});
+			@Override public void run(){ loadNewUsers(input);}	});
 	}
 	
 	public void removeRequest(String username) {
 		
 		for(ContactRequestDisplay requestDisplay : contactRequestDisplayList){
 			if(requestDisplay.getName().equals(username)) {
-				contactsContent.getChildren().remove(requestDisplay);
-				contactRequestDisplayList.remove(requestDisplay);
+				
+				Platform.runLater(new Runnable(){
+					@Override public void run(){ 				
+						contactsContent.getChildren().remove(requestDisplay);
+						contactRequestDisplayList.remove(requestDisplay);	}	});
 			}
 		}
 	}
