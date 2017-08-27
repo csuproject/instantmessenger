@@ -27,8 +27,8 @@ public class HomeScreen extends Screen {
 
 	private TextField addContactWithUsernameInputTextField;
 	private Button addContactButton;
-	private ScrollPane contacts,contactRequest;
-	private VBox contactsContent,contactRequestContent,mainVbox;
+	private ScrollPane contacts;
+	private VBox contactsContent,mainVbox;
 	private HBox addContactInput;
 	private ChatWithContactEvent chatWithContactEvent;
 	private AddContactEvent addContactEvent;
@@ -132,6 +132,23 @@ public class HomeScreen extends Screen {
 			this.addContactEvent.add(username);
 		}
 	}
+	
+	/**
+	 * Remove request from contact display
+	 * @param username
+	 */
+	public void removeRequest(String username) {
+		
+		for(ContactRequestDisplay requestDisplay : contactRequestDisplayList){
+			if(requestDisplay.getName().equals(username)) {
+				
+				Platform.runLater(new Runnable(){
+					@Override public void run(){ 				
+						contactsContent.getChildren().remove(requestDisplay);
+						contactRequestDisplayList.remove(requestDisplay);	}	});
+			}
+		}
+	}
 
 	public void acceptContactRequestButtonPress(String username) {
 		acceptContactRequestEvent.accept(username);
@@ -148,18 +165,7 @@ public class HomeScreen extends Screen {
 			@Override public void run(){ loadNewUsers(input);}	});
 	}
 	
-	public void removeRequest(String username) {
-		
-		for(ContactRequestDisplay requestDisplay : contactRequestDisplayList){
-			if(requestDisplay.getName().equals(username)) {
-				
-				Platform.runLater(new Runnable(){
-					@Override public void run(){ 				
-						contactsContent.getChildren().remove(requestDisplay);
-						contactRequestDisplayList.remove(requestDisplay);	}	});
-			}
-		}
-	}
+
 	
 	/**
 	 * Load new AppUsers not in appUserList
@@ -185,10 +191,8 @@ public class HomeScreen extends Screen {
 				contactsContent.getChildren().add(request);
 				contactRequestDisplayList.add(request);
 			}
-		
 		}
 		
-			
 		// Get new AppUsers
 		LinkedList<AppUser> contactList = input.getContactList();
 		for(AppUser appUser : contactList){
@@ -273,6 +277,17 @@ public class HomeScreen extends Screen {
 						display.setOffline();}});					 
 			}
 		}
+	}
+	
+	/**
+	 * Removes all contact content
+	 */
+	public void clearContacts() {
+		appUserList.clear();
+		displayList.clear();
+		appUserList.clear();
+		contactRequestDisplayList.clear();
+		contactsContent.getChildren().clear();
 	}
 
 	/**

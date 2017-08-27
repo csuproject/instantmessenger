@@ -74,8 +74,7 @@ public class App {
 	AppContacts contacts;
 	AppChats chats;
 	AppConnection connection;
-	List<AppMuc> mucList;
-	AppMuc muc;
+
 
 
 	public App(GuiBase guiBase){
@@ -89,7 +88,7 @@ public class App {
 		mucScreen = new MUCScreen(guiBase);
 		createMUCScreen = new CreateMUCScreen(guiBase);
 		statusDisplay = new StatusDisplay(guiBase);
-		mucList = new ArrayList<AppMuc>();
+		//mucList = new ArrayList<AppMuc>();
 		//mucinput = new MUCScreenInput();
 		guiBase.setScreen(accountScreen);
 		setScreen(ScreenEnum.ACCOUNT);
@@ -137,15 +136,13 @@ public class App {
 
 		presenceController = new PresenceController(babblerBase, accountScreen, contacts);
 
-		naviationController = new NavigationController(navigationScreen, this);
+		naviationController = new NavigationController(homeScreen, navigationScreen, this);
 		naviationController.setOnChangeScreen(screen->setScreen(screen));
 
-		mucController = new MUCController(babblerBase, chatScreen, contacts, mucScreen,
+		mucController = new MUCController(babblerBase, chatScreen, homeScreen,
+				navigationScreen, contacts, mucScreen,
 				createMUCScreen, connectionController);
 		mucController.setOnChangeScreen(screen->setScreen(screen));
-		mucController.setOnMUCListEvent(mucList->setMUCList(mucList));
-		mucController.setOnNewMessage(getMUCEvent->loadMUCInFocus(getMUCEvent));
-		mucController.setOnOpenMUC(getMUCEvent->setMUCInFocus(getMUCEvent));
 	}
 
 	public void reset(){
@@ -189,8 +186,7 @@ public class App {
 
     		// Update chats
     		chatController.incomingChatMessage(message, currentScreen==ScreenEnum.CHAT);
-
-    		loadContactNotifications(message);
+    		mucController.loadContactNotifications(message);
     	}
     }
 
@@ -243,6 +239,7 @@ public class App {
 			} break;
 			case HOME:
 			{
+				mucController.setCurrentScreen(currentScreen);
 		    	statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
 				HomeScreenInput input = new HomeScreenInput(contacts);
@@ -251,12 +248,14 @@ public class App {
 			} break;
 			case MUC:
 			{
+				mucController.setCurrentScreen(currentScreen);
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
 				guiBase.setScreen(statusDisplay,mucScreen,navigationScreen);
 			} break;
 			case CREATEMUC:
 			{
+				mucController.setCurrentScreen(currentScreen);
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
 				HomeScreenInput input = new HomeScreenInput(contacts);
@@ -265,6 +264,7 @@ public class App {
 			} break;
 			case CHAT:
 			{
+				mucController.setCurrentScreen(currentScreen);
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
 				ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
@@ -273,75 +273,12 @@ public class App {
 			} break;
 				case MUCCHAT:
 			{
+				mucController.setCurrentScreen(currentScreen);
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
-				chatScreen.loadLater(new ChatScreenInput(muc));
+				chatScreen.loadLater(new ChatScreenInput(mucController.getAppMuc()));
 				guiBase.setScreenLater(statusDisplay, chatScreen,navigationScreen);
 			} break;
     	}
     }
-
-    /**
-     * Set list of MUC
-     * @param mucList
-     */
-    public void setMUCList(List<AppMuc> mucList) {
-    	this.mucList = mucList;
-    	mucScreen.loadNewLater( this.mucList);
-    }
-
-    /**
-     * Set the MUC in focus
-     * @param muc
-     */
-    public void setMUCInFocus(AppMuc muc) {
-    	this.muc = muc;
-    	setScreen(ScreenEnum.MUCCHAT);
-    }
-
-    /**
-     * Update MUC of MUCCHAT in focus and Notifications
-     * @param muc
-     */
-    public void loadMUCInFocus(AppMuc muc) {
-
-    	// Set new group message icon
-		if(currentScreen != ScreenEnum.MUC) {
-			if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) {
-    		}
-			else {
-			navigationScreen.setImageNewGroupMessage();
-			}
-		}
-		// Reload open screen
-    	if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc))
-    		chatScreen.loadLater(new ChatScreenInput(muc));
-    	else
-    		mucScreen.loadNewMessage(muc);
-    }
-
-    /**
-     * Set notification for contacts
-     * @param message
-     */
-    public void loadContactNotifications(AppMessage message) {
-		String contact = message.getFromJid().getLocal();
-
-    	// Set navigation screen new contact message icon
-		if(currentScreen != ScreenEnum.HOME) {
-			if (currentScreen == ScreenEnum.CHAT &&
-					homeScreen.getContactInFocus().equals(contact)) {
-    		}
-			else {
-				navigationScreen.setImageNewContactMessage();
-			}
-		}
-		// Set new message on contact displays
-    	if (currentScreen == ScreenEnum.CHAT &&
-    			homeScreen.getContactInFocus().equals(contact)) {
-    	} else {
-    		homeScreen.loadMessageNotification(contact);
-    	}
-    }
-
 }

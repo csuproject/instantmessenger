@@ -8,14 +8,18 @@ import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.lambda.MUCListEvent;
 import TeamOrange.instantmessenger.models.AppContacts;
+import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.MUCChat;
 import TeamOrange.instantmessenger.views.ChatScreen;
 import TeamOrange.instantmessenger.views.ChatScreenInput;
 import TeamOrange.instantmessenger.views.CreateMUCScreen;
+import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.views.MUCContactDisplay;
 import TeamOrange.instantmessenger.views.MUCScreen;
+import TeamOrange.instantmessenger.views.NavigationScreen;
+import TeamOrange.instantmessenger.views.ScreenEnum;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideFailedToConfigureChatRoomException;
 import exceptions.ConfideFailedToEnterChatRoomException;
@@ -30,26 +34,44 @@ public class MUCController {
 	private AppContacts contacts;
 	private MUCListEvent mucListEvent;
 	private ChatScreen chatScreen;
+	private HomeScreen homeScreen;
+	private NavigationScreen navigationScreen;
 	private GetMUCEvent getMUCEvent;
 	private GetMUCEvent newMessageMUC;
 	private ConnectionController connectionController;
+	private ScreenEnum currentScreen;
+	//List<AppMuc> mucList;
+	AppMuc muc;
 
 
 	public MUCController(BabblerBase babblerBase, ChatScreen chatScreen,
-			AppContacts contacts, MUCScreen mucScreen, CreateMUCScreen createMUCScreen, ConnectionController connectionController) {
+			HomeScreen homeScreen, NavigationScreen navigationScreen, 
+			AppContacts contacts, MUCScreen mucScreen, 
+			CreateMUCScreen createMUCScreen, 
+			ConnectionController connectionController) {
 
 		this.babblerBase = babblerBase;
 		this.mucScreen = mucScreen;
 		this.contacts = contacts;
 		this.chatScreen = chatScreen;
+		this.homeScreen = homeScreen;
+		this.navigationScreen = navigationScreen;
+		this.connectionController = connectionController;
+		
 		mucScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		mucScreen.setOnOpenMUC(getMUCEvent->enterMUC(getMUCEvent));
 		mucScreen.setOnAddGroupGetMUCEvent(addMUCEvent->createMUC(addMUCEvent));
 		createMUCScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		createMUCScreen.setOnCreateMUCEvent(createMUCEvent->createMUC(createMUCEvent));
 		chatScreen.setOnSendMucMessageEvent((muc, message)->sendMUCMessage(muc, message));
+		
 		mucList = new ArrayList<AppMuc>();
-		this.connectionController = connectionController;
+	
+		
+		//mucController.setOnMUCListEvent(mucList->setMUCList(mucList));
+		//mucController.setOnNewMessage(getMUCEvent->loadMUCInFocus(getMUCEvent));
+		//mucController.setOnOpenMUC(getMUCEvent->setMUCInFocus(getMUCEvent));
+		
 	}
 
 
@@ -66,10 +88,12 @@ public class MUCController {
 			muc = babblerBase.createAndOrEnterRoom(mucChat.getName(), contacts.getSelfName());
 			muc.setReference(muc);
 			muc.setOnNewMessage(getMUCEvent-> // Set new message notifier
-				newMessageMUC.getMUC(getMUCEvent)
+				//newMessageMUC.getMUC(getMUCEvent)
+				loadMUCInFocus(getMUCEvent)
 			);
 			mucList.add(muc);
-			mucListEvent.getMUCList(mucList);
+			//mucListEvent.getMUCList(mucList);
+			setMUCList(mucList);
 			requestMUC(mucChat);
 		} catch (ConfideFailedToEnterChatRoomException e1) {
 			// TODO Auto-generated catch block
@@ -92,7 +116,8 @@ public class MUCController {
 			muc = babblerBase.createAndOrEnterRoom(roomID, contacts.getSelfName());
 			muc.setReference(muc);
 			muc.setOnNewMessage(getMUCEvent-> // Set new message notifier
-				newMessageMUC.getMUC(getMUCEvent));
+				//newMessageMUC.getMUC(getMUCEvent)
+				loadMUCInFocus(muc));
 			addtoMUCList(muc);
 			//requestMUC(roomID);
 		} catch (ConfideFailedToEnterChatRoomException e1) {
@@ -130,7 +155,8 @@ public class MUCController {
 	public void enterMUC(String mucName) {
 		// Enter MUC
 		mucList.add(muc(mucName));
-		mucListEvent.getMUCList(mucList);
+		setMUCList(mucList);
+		//mucListEvent.getMUCList(mucList);
 	}
 
 	/**
@@ -139,7 +165,8 @@ public class MUCController {
 	 */
 	public void enterMUC(AppMuc appMUC) {
 		// Enter MUC
-		getMUCEvent.getMUC(appMUC);
+		//getMUCEvent.getMUC(appMUC);
+		setMUCInFocus(appMUC);
 	}
 
 	/**
@@ -175,13 +202,91 @@ public class MUCController {
 
 	private void addtoMUCList(AppMuc appMUC) {
 		mucList.add(appMUC);
-		mucListEvent.getMUCList(mucList);
+		setMUCList(mucList);
+		//mucListEvent.getMUCList(mucList);
 	}
 
 	private void removeFromMUCList(AppMuc appMUC) {
 		mucList.remove(appMUC);
-		mucListEvent.getMUCList(mucList);
+		setMUCList(mucList);
+		//mucListEvent.getMUCList(mucList);
 	}
+	
+
+
+	//////////////////////////////////////////////////////////////////////////////
+	//--------------------------Screen Events-----------------------------------//
+	//////////////////////////////////////////////////////////////////////////////
+    /**
+     * Set list of MUC
+     * @param mucList
+     */
+    public void setMUCList(List<AppMuc> mucList) {
+    	this.mucList = mucList;
+    	mucScreen.loadNewLater( this.mucList);
+    }
+
+    /**
+     * Set the MUC in focus
+     * @param muc
+     */
+    public void setMUCInFocus(AppMuc muc) {
+    	this.muc = muc;
+    	changeScreen.SetScreen((ScreenEnum.MUCCHAT));
+    }
+    
+    /**
+     * Update MUC of MUCCHAT in focus and Notifications
+     * @param muc
+     */
+    public void loadMUCInFocus(AppMuc muc) {
+
+    	// Set new group message icon
+		if(currentScreen != ScreenEnum.MUC) {
+			if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) {
+    		}
+			else {
+			navigationScreen.setImageNewGroupMessage();
+			}
+		}
+		// Reload open screen
+    	if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc))
+    		chatScreen.loadLater(new ChatScreenInput(muc));
+    	else
+    		mucScreen.loadNewMessage(muc);
+    }
+
+    /**
+     * Set notification for contacts
+     * @param message
+     */
+    public void loadContactNotifications(AppMessage message) {
+		String contact = message.getFromJid().getLocal();
+
+    	// Set navigation screen new contact message icon
+		if(currentScreen != ScreenEnum.HOME) {
+			if (currentScreen == ScreenEnum.CHAT &&
+					homeScreen.getContactInFocus().equals(contact)) {
+    		}
+			else {
+				navigationScreen.setImageNewContactMessage();
+			}
+		}
+		// Set new message on contact displays
+    	if (currentScreen == ScreenEnum.CHAT &&
+    			homeScreen.getContactInFocus().equals(contact)) {
+    	} else {
+    		homeScreen.loadMessageNotification(contact);
+    	}
+    }
+    
+    public AppMuc getAppMuc() {
+    	return muc;
+    }
+    
+    public void setCurrentScreen(ScreenEnum screen) {
+    	currentScreen = screen;
+    }
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;
