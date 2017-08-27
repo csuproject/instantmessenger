@@ -149,7 +149,7 @@ public class ChatScreen extends Screen {
 		partnerDetails.setAlignment(Pos.CENTER);
 
 		//////////////////////////////////////////////////////////////////////////////
-		//--------------------------Top Level Screen--------------------------------//
+		//--------------------------------Screen------------------------------------//
 		//////////////////////////////////////////////////////////////////////////////
 		screenVBox = new VBox();
 		screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
@@ -162,10 +162,12 @@ public class ChatScreen extends Screen {
 		
 		ChatScreenInput chatScreenInput = (ChatScreenInput)input;
 		
+		//////////////////////////////////////////////////////////////////////////////
+		//--------------------------MUC Session-------------------------------------//
+		//////////////////////////////////////////////////////////////////////////////
 		if(chatScreenInput.isForMuc()){
-			// Load MUC Chat content
-			AppMuc muc = chatScreenInput.getMuc();
 			setMUCMode(true);
+			AppMuc muc = chatScreenInput.getMuc();
 			setMUCInFocus(muc);
 			LinkedList<AppMucMessage> messages = muc.getMessages();
 			scrollPaneContent.getChildren().clear();
@@ -175,18 +177,17 @@ public class ChatScreen extends Screen {
 						username, m.getBody(), m.getSent(), m.getSentFromSelf());
 				scrollPaneContent.getChildren().add(md);
 			}
-			// Load MUC Screen
 			scrollChat();
 			newMessageTextField.requestFocus();
 			chatNameLabel.setText("Group " + muc.getRoomID());
 			screenVBox.getChildren().clear();
 			screenVBox.getChildren().addAll(mucHbox,scrollPane, newMessage);
 		}
+		//////////////////////////////////////////////////////////////////////////////
+		//--------------------------Chat Session------------------------------------//
+		//////////////////////////////////////////////////////////////////////////////
 		else if(chatScreenInput.isForChatSession()){
 			setMUCMode(false);
-			screenVBox.getChildren().clear();
-			screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
-			//
 			userName = chatScreenInput.getPartner();
 			partnerName.setText(userName);
 			LinkedList<AppChatSessionMessage> messages = chatScreenInput.getMessages();
@@ -198,18 +199,16 @@ public class ChatScreen extends Screen {
 			}
 			scrollChat();
 			newMessageTextField.requestFocus();
+			screenVBox.getChildren().clear();
+			screenVBox.getChildren().addAll(partnerDetails, scrollPane, newMessage);
 		}
-	}
-
-	public void loadMessages() {
-
 	}
 
 	private void setMUCInFocus(AppMuc muc) {
 		this.muc = muc;
 	}
 
-	private AppMuc getMUCInFocus() {
+	public AppMuc getMUCInFocus() {
 		return this.muc;
 	}
 

@@ -29,11 +29,8 @@ public class HomeScreen extends Screen {
 
 	private TextField addContactWithUsernameInputTextField;
 	private Button addContactButton;
-	private ScrollPane contacts;
-	private VBox contactsContent;
-	private ScrollPane contactRequest;
-	private VBox contactRequestContent;
-	private VBox mainVbox;
+	private ScrollPane contacts,contactRequest;
+	private VBox contactsContent,contactRequestContent,mainVbox;
 	private HBox addContactInput;
 	private ChatWithContactEvent chatWithContactEvent;
 	private AddContactEvent addContactEvent;
@@ -41,10 +38,9 @@ public class HomeScreen extends Screen {
 	private DeclineContactRequestEvent declineContactRequestEvent;
 	private List<MUCContactDisplay> displayList;
 	private List<AppUser> appUserList;
-	private Image imageMessage;
-	private Image imageNewMessage;
-	private Image imageOnline;
-	private Image imageOffline;
+	private List<AppJid> contactRequestList;
+	private List<ContactRequestDisplay> contactRequestDisplayList;
+	private Image imageMessage,imageNewMessage,imageOnline,imageOffline;
 	private String contactInFocus;
 
 	public HomeScreen(GuiBase guiBase){
@@ -58,22 +54,21 @@ public class HomeScreen extends Screen {
 
 	public void create() throws Exception {
 
-		appUserList = new ArrayList<AppUser>();
-		displayList = new ArrayList<MUCContactDisplay>();
-
-		// Chat status images
+		//////////////////////////////////////////////////////////////////////////////
+		//------------------------------Image Resources-----------------------------//
+		//////////////////////////////////////////////////////////////////////////////
 		imageMessage = new Image(getClass().getResource(
 				"/resources/message.png").toURI().toString(),50,50,false,false);
 		imageNewMessage = new Image(getClass().getResource(
 				"/resources/message-new.png").toURI().toString(),50,50,false,false);
-
-		// Presence status images
 		imageOnline = new Image(getClass().getResource(
 				"/resources/accept-icon.png").toURI().toString(),25,25,false,false);
 		imageOffline = new Image(getClass().getResource(
 				"/resources/decline-icon.png").toURI().toString(),25,25,false,false);
 		
-		// Build contacts display
+		//////////////////////////////////////////////////////////////////////////////
+		//------------------------------Contact Display-----------------------------//
+		//////////////////////////////////////////////////////////////////////////////
 		contacts = new ScrollPane();
 		contacts.setFocusTraversable(false);
 		contacts.setOnMouseClicked((e)->addContactWithUsernameInputTextField.requestFocus());
@@ -88,29 +83,33 @@ public class HomeScreen extends Screen {
 		contacts.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		contacts.setHbarPolicy(ScrollBarPolicy.NEVER);
 
-		// Build contact request
+		//////////////////////////////////////////////////////////////////////////////
+		//------------------------Contact Request Display---------------------------//
+		//////////////////////////////////////////////////////////////////////////////
 		contactRequest = new ScrollPane();
 		contactRequestContent = new VBox();
-		contactRequestContent.setPrefHeight(400);
+		//contactRequestContent.setPrefHeight(400);
 		contactRequestContent.setPrefWidth(400);
 		contactRequest.setContent(contactRequestContent);
-		contactRequest.setMaxHeight(200);
-		contactRequest.setMinHeight(200);
+		//contactRequest.setMaxHeight(200);
+		//contactRequest.setMinHeight(200);
 		contactRequest.setFitToWidth(true);
 		contactRequest.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		contactRequest.setHbarPolicy(ScrollBarPolicy.NEVER);
 
-		// add contact
+		//////////////////////////////////////////////////////////////////////////////
+		//------------------------------Add Contact Display-------------------------//
+		//////////////////////////////////////////////////////////////////////////////
 		Label addContactWithUsername = new Label("Add Contact: ");
 		addContactWithUsername.setFont(new Font(20));
 		addContactWithUsernameInputTextField = new TextField();
-		addContactWithUsernameInputTextField.setOnKeyPressed(keyEvent->addContactInputKeyPressed(keyEvent));
-		// restrict input to lower case
+		addContactWithUsernameInputTextField.setOnKeyPressed(
+				keyEvent->addContactInputKeyPressed(keyEvent));
+		// Restrict input to lower case
 		addContactWithUsernameInputTextField.textProperty().addListener(
 		  (observable, oldValue, newValue) -> {
-		    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
-		  }
-		);
+		    ((javafx.beans.property.StringProperty)observable)
+		    	.setValue(newValue.toLowerCase());});
 		addContactButton = new Button("Add");
 		addContactButton.setOnAction( e->addContactBtnPress() );
 		addContactButton.setFocusTraversable(false);
@@ -118,7 +117,12 @@ public class HomeScreen extends Screen {
 		addContactInput.getChildren().addAll(addContactWithUsername, addContactWithUsernameInputTextField, addContactButton);
 		addContactInput.setSpacing(10);
 
-		// Build main VBox
+		//////////////////////////////////////////////////////////////////////////////
+		//----------------------------------Screen----------------------------------//
+		//////////////////////////////////////////////////////////////////////////////
+		appUserList = new ArrayList<AppUser>();
+		displayList = new ArrayList<MUCContactDisplay>();
+		contactRequestDisplayList = new ArrayList<ContactRequestDisplay>();
 		mainVbox = new VBox();
 		mainVbox.getChildren().addAll(contacts, addContactInput);
 		mainVbox.setVgrow(contacts, javafx.scene.layout.Priority.ALWAYS);
@@ -148,83 +152,59 @@ public class HomeScreen extends Screen {
 
 	public void acceptContactRequestButtonPress(String username) {
 		acceptContactRequestEvent.accept(username);
+		removeRequest(username);
 	}
 
 	public void declineContactRequestButtonPress(String username) {
 		declineContactRequestEvent.decline(username);
+		removeRequest(username);
 	}
 
 	public void loadLater(HomeScreenInput input){
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
-				loadNewUser(input);
-			}
-		});
+				loadNewUsers(input);}	});
 	}
-
-	/**
-	 * Delete user from contacts
-	 * @param appUser
-	 */
-	private void deleteUser(AppUser appUser) {
+	
+	public void removeRequest(String username) {
 		
-		for(AppUser getUser : appUserList){
-			if(getUser.getName().equals(appUser.getName()))  {
-				Platform.runLater(new Runnable(){
-					@Override public void run(){
-						appUserList.remove(getUser);
-					}
-				});
-			}
-		}
-				
-		for(MUCContactDisplay display : displayList){
-			if(display.getAppUser().getName().equals(appUser.getName())) {
-				Platform.runLater(new Runnable(){
-					@Override public void run(){
-						contactsContent.getChildren().remove(display);
-						displayList.remove(display);
-					}
-				});
+		for(ContactRequestDisplay requestDisplay : contactRequestDisplayList){
+			if(requestDisplay.getName().equals(username)) {
+				contactsContent.getChildren().remove(requestDisplay);
+				contactRequestDisplayList.remove(requestDisplay);
 			}
 		}
 	}
 	
-	public void load(HomeScreenInput input){
-		contactsContent.getChildren().clear();
-
+	/**
+	 * Load new AppUsers not in appUserList
+	 * @param input
+	 */
+	public void loadNewUsers(HomeScreenInput input) {
+			
+		// Get new requests
 		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
-		for(AppJid jid : contactRequestList){
-			ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
-			contactsContent.getChildren().add(request);
-		}
-
-		LinkedList<AppUser> contactList = input.getContactList();
-		for(AppUser user : contactList){
-			ContactDisplay contact = new ContactDisplay(this, user.getJid().getLocal());
-			contactsContent.getChildren().add(contact);
-		}
-	}
-
-	public void loadNewUser(HomeScreenInput input) {
-		
-		/*
-		// Pass contact requests
-		contactRequestContent.getChildren().clear();
-		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
-		if(!contactRequestList.isEmpty()) {
-			mainVbox.getChildren().clear();
-			mainVbox.getChildren().addAll(contactRequest, contacts, addContactInput);
-			for(AppJid jid : contactRequestList){
-				ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
-				contactRequestContent.getChildren().add(request);
+		for(AppJid appUser : contactRequestList) {
+			if (!contactRequestDisplayList.isEmpty()) {
+				for(ContactRequestDisplay requestDisplay : contactRequestDisplayList) {
+					if(!requestDisplay.getName().equals(appUser.getLocal())) {
+						ContactRequestDisplay request = 
+								new ContactRequestDisplay(this, appUser.getLocal());
+						contactsContent.getChildren().add(request);
+						contactRequestDisplayList.add(request);
+					}
+				}
+			} else {
+				ContactRequestDisplay request = 
+						new ContactRequestDisplay(this, appUser.getLocal());
+				contactsContent.getChildren().add(request);
+				contactRequestDisplayList.add(request);
 			}
-		} else {
-			mainVbox.getChildren().clear();
-			mainVbox.getChildren().addAll(contacts, addContactInput);
-		}	*/
-
-		// Pass new AppUsers
+		
+		}
+		
+			
+		// Get new AppUsers
 		LinkedList<AppUser> contactList = input.getContactList();
 		for(AppUser appUser : contactList){
 			if(!this.appUserList.contains(appUser)) {
@@ -244,57 +224,35 @@ public class HomeScreen extends Screen {
 		}
 	}
 	
-
-/*
-
-	public void loadNew(HomeScreenInput input) {
-
-		// Pass contact requests
-		contactsContent.getChildren().clear();
-		mainVbox.getChildren().clear();
-		mainVbox.getChildren().addAll(contacts, addContactInput);
-		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
-		for(AppJid jid : contactRequestList){
-			ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
-			contactsContent.getChildren().add(request);
-		}
-
-
-		LinkedList<AppUser> contactList = input.getContactList();
-		this.appUserList.clear();
-		displayList.clear();
-		for(AppUser appUser : contactList){
-
-			if(!this.appUserList.contains(appUser)) {
-				MUCContactDisplay contactDisplay = 
-						new MUCContactDisplay(appUser,imageMessage, imageNewMessage,
-								imageOnline, imageOffline);
-				contactDisplay.setOnSelectAppUser(e-> {
-						chatWithContactEvent.openChat(e.getJid().getLocal());
-						setContactInFocus(appUser.getName());
-				});
-				this.appUserList.add(appUser);
-				displayList.add(contactDisplay);
-				contactsContent.getChildren().add(contactDisplay);
-			}
-		}
-	}
-*/
-	public void loadNewLater(HomeScreenInput input){
-		Platform.runLater(new Runnable(){
-			@Override public void run(){
-				loadNewUser(input);
-			}
-		});
-	}
-
 	/**
-	 * Load new message notifications
+	 * Delete user from screen
+	 * @param appUser
+	 */
+	private void deleteUser(AppUser appUser) {
+		
+		for(AppUser getUser : appUserList){
+			if(getUser.getName().equals(appUser.getName()))  {
+				Platform.runLater(new Runnable(){
+					@Override public void run(){
+						appUserList.remove(getUser);}	});
+			}
+		}
+				
+		for(MUCContactDisplay display : displayList){
+			if(display.getAppUser().getName().equals(appUser.getName())) {
+				Platform.runLater(new Runnable(){
+					@Override public void run(){
+						contactsContent.getChildren().remove(display);
+						displayList.remove(display);}	});
+			}
+		}
+	}
+	
+	/**
+	 * Load new message notification of contact
 	 * @param mucList
 	 */
-	public void loadNewMessage(String appUser) {
-
-		// Find MUC index
+	public void loadMessageNotification(String appUser) {
 		for(MUCContactDisplay display : displayList) {
 			if(display.appUser.getName().equals(appUser)) {
 				Platform.runLater(new Runnable(){
@@ -304,14 +262,11 @@ public class HomeScreen extends Screen {
 		}
 	}
 
-
 	/**
-	 * Load online status
+	 * Load Contact online status
 	 * @param mucList
 	 */
 	public void loadUserOnline(String appUser) {
-
-		// Find MUC index
 		for(MUCContactDisplay display : displayList) {
 			if(display.appUser.getName().equals(appUser)) {
 				Platform.runLater(new Runnable(){
@@ -322,12 +277,10 @@ public class HomeScreen extends Screen {
 	}
 
 	/**
-	 * Load offline status
+	 * Load Contact offline status
 	 * @param mucList
 	 */
 	public void loadUserOffline(String appUser) {
-
-		// Find MUC index
 		for(MUCContactDisplay display : displayList) {
 			if(display.appUser.getName().equals(appUser)) {
 				Platform.runLater(new Runnable(){

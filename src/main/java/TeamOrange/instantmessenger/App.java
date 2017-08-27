@@ -246,7 +246,7 @@ public class App {
 		    	statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
 				HomeScreenInput input = new HomeScreenInput(contacts);
-				homeScreen.loadNewLater(input);
+				homeScreen.loadLater(input);
 				guiBase.setScreenLater(statusDisplay,homeScreen,navigationScreen);
 			} break;
 			case MUC:
@@ -340,7 +340,7 @@ public class App {
     	if (currentScreen == ScreenEnum.CHAT &&
     			homeScreen.getContactInFocus().equals(contact)) {
     	} else {
-    		homeScreen.loadNewMessage(contact);
+    		homeScreen.loadMessageNotification(contact);
     	}
     }
 

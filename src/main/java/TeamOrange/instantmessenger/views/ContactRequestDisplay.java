@@ -33,4 +33,8 @@ public class ContactRequestDisplay extends HBox {
                 "-fx-border-color: red;");
 		this.getChildren().addAll(usernameLabel, acceptButton, declineButton);
 	}
+	
+	public String getName() {
+		return this.username;
+	}
 }
