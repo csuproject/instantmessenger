@@ -227,29 +227,7 @@ public class MUCController {
     		mucScreen.loadNewMessage(muc);
     }
 
-    /**
-     * Set notification for contacts
-     * @param message
-     */
-    public void loadContactNotifications(AppMessage message) {
-		String contact = message.getFromJid().getLocal();
 
-    	// Set navigation screen new contact message icon
-		if(currentScreen != ScreenEnum.HOME) {
-			if (currentScreen == ScreenEnum.CHAT &&
-					homeScreen.getContactInFocus().equals(contact)) {
-    		}
-			else {
-				navigationScreen.setImageNewContactMessage();
-			}
-		}
-		// Set new message on contact displays
-    	if (currentScreen == ScreenEnum.CHAT &&
-    			homeScreen.getContactInFocus().equals(contact)) {
-    	} else {
-    		homeScreen.loadMessageNotification(contact);
-    	}
-    }
     
     public AppMuc getAppMuc() {
     	return muc;

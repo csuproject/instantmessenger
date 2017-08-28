@@ -27,7 +27,6 @@ public class NavigationController {
 	public void logout(){
 		app.reset();
 		changeScreen.SetScreen(ScreenEnum.ACCOUNT);
-		homeScreen.clearContacts();
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){

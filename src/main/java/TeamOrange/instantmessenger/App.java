@@ -184,7 +184,7 @@ public class App {
 
     		// Update chats
     		chatController.incomingChatMessage(message, currentScreen==ScreenEnum.CHAT);
-    		mucController.loadContactNotifications(message);
+    		notifyContact(message);
     	}
     }
 
@@ -196,10 +196,16 @@ public class App {
     	presenceController.status(fromJid, appPresenceType);
     	String appUser = fromJid.getLocal();
     	if (appPresenceType == AppPresence.Type.AVAILIBLE) {
-    		homeScreen.loadUserOnline(appUser);
+    		contacts.setPresence(appUser, AppPresence.Type.AVAILIBLE);
+    		HomeScreenInput input = new HomeScreenInput(contacts);
+    		homeScreen.loadLater(input);
+    		//homeScreen.loadUserOnline(appUser);
     	}
     	if (appPresenceType == AppPresence.Type.UNAVAILIVLE) {
-    		homeScreen.loadUserOffline(appUser);
+    		contacts.setPresence(appUser, AppPresence.Type.UNAVAILIVLE);
+    		HomeScreenInput input = new HomeScreenInput(contacts);
+    		homeScreen.loadLater(input);
+    		//homeScreen.loadUserOffline(appUser);
     	}
     }
 
@@ -277,6 +283,32 @@ public class App {
 				chatScreen.loadLater(new ChatScreenInput(mucController.getAppMuc()));
 				guiBase.setScreenLater(statusDisplay, chatScreen,navigationScreen);
 			} break;
+    	}
+    }
+ 
+    /**
+     * Set notification for contacts
+     * @param message
+     */
+    public void notifyContact(AppMessage message) {
+		String username = message.getFromJid().getLocal();
+
+    	// Set navigation screen new contact message icon
+		if(currentScreen != ScreenEnum.HOME) {
+			if (currentScreen == ScreenEnum.CHAT &&
+					homeScreen.getContactInFocus().equals(username)) {
+    		}
+			else {
+				navigationScreen.setImageNewContactMessage();
+			}
+		}
+		// Set new message on contact displays
+    	if (currentScreen == ScreenEnum.CHAT &&
+    			homeScreen.getContactInFocus().equals(username)) {
+    	} else {
+    		contacts.setNotification(username, true);
+			HomeScreenInput input = new HomeScreenInput(contacts);
+			homeScreen.loadLater(input);
     	}
     }
 }

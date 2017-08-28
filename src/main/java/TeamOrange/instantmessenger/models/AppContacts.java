@@ -2,6 +2,9 @@ package TeamOrange.instantmessenger.models;
 
 import java.util.LinkedList;
 
+import TeamOrange.instantmessenger.views.MUCContactDisplay;
+import javafx.application.Platform;
+
 /**
  * Holds a list of contacts, incoming contact-add requests
  * And the AppUser self, representing the logged in user.
@@ -97,5 +100,25 @@ public class AppContacts {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Set the Presence of AppUser
+	 * @param username
+	 */
+	public void setPresence(String username, AppPresence.Type presence) {
+		for(AppUser user : contactList) {
+			if(user.getName().equals(username)) {
+				user.setPresence(presence);					 
+			}
+		}
+	}
+
+	public void setNotification(String username, boolean notify) {
+		for(AppUser user : contactList) {
+			if(user.getName().equals(username)) {
+				user.setNotification(notify);				 
+			}
+		}
 	}
 }

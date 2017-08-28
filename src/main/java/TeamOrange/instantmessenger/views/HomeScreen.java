@@ -1,7 +1,6 @@
 package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.DeclineContactRequestEvent;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +8,7 @@ import TeamOrange.instantmessenger.lambda.AcceptContactRequestEvent;
 import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.ChatWithContactEvent;
 import TeamOrange.instantmessenger.models.AppJid;
+import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -31,12 +31,10 @@ public class HomeScreen extends Screen {
 	private VBox contactsContent,mainVbox;
 	private HBox addContactInput;
 	private ChatWithContactEvent chatWithContactEvent;
-	private AddContactEvent addContactEvent;
+	private AddContactEvent addContactEvent, deleteContactEvent, blockContactEvent;
 	private AcceptContactRequestEvent acceptContactRequestEvent;
 	private DeclineContactRequestEvent declineContactRequestEvent;
 	private List<MUCContactDisplay> displayList;
-	private List<AppUser> appUserList;
-	private List<ContactRequestDisplay> contactRequestDisplayList;
 	private Image imageMessage,imageNewMessage,imageOnline,imageOffline;
 	private String contactInFocus;
 
@@ -103,14 +101,57 @@ public class HomeScreen extends Screen {
 		//////////////////////////////////////////////////////////////////////////////
 		//----------------------------------Screen----------------------------------//
 		//////////////////////////////////////////////////////////////////////////////
-		appUserList = new ArrayList<AppUser>();
 		displayList = new ArrayList<MUCContactDisplay>();
-		contactRequestDisplayList = new ArrayList<ContactRequestDisplay>();
 		mainVbox = new VBox();
 		mainVbox.getChildren().addAll(contacts, addContactInput);
 		mainVbox.setVgrow(contacts, javafx.scene.layout.Priority.ALWAYS);
 		this.getChildren().add(mainVbox);
 		this.setPrefHeight(600-50);
+	}
+	
+	public void loadLater(HomeScreenInput input){
+		Platform.runLater(new Runnable(){
+			@Override public void run(){ load(input);}	});
+	}
+	
+	public void load(HomeScreenInput input){
+		contactsContent.getChildren().clear();
+		displayList.clear();
+
+		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
+		for(AppJid jid : contactRequestList){
+			ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
+			contactsContent.getChildren().add(request);
+		}
+
+		LinkedList<AppUser> contactList = input.getContactList();
+		for(AppUser user : contactList){
+			
+			MUCContactDisplay contactDisplay = 
+					new MUCContactDisplay(user,imageMessage, imageNewMessage,
+							imageOnline, imageOffline);
+			contactDisplay.setOnSelectAppUser(e-> {
+					chatWithContactEvent.openChat(e.getJid().getLocal());
+					setContactInFocus(user.getName());
+			});
+			contactDisplay.setOnBlockAppUser(block->blockContactEvent.add(block));
+			contactDisplay.setOnDeletetAppUser(delete->deleteContactEvent.add(delete));
+			
+			// Set Notification
+			if (user.getNotification()) 
+				contactDisplay.setNewMessageImage();
+			else
+				contactDisplay.setMessageImage();
+			// Set Presence
+			AppPresence presence = user.getPresence();
+			if (AppPresence.Type.AVAILIBLE == presence.getType()) 
+				contactDisplay.setOnline();
+			else 
+				contactDisplay.setOffline();
+			// Add to HomeScreen List
+			displayList.add(contactDisplay);
+			contactsContent.getChildren().add(contactDisplay);
+		}
 	}
 
 	public void addContactInputKeyPressed(javafx.scene.input.KeyEvent keyEvent){
@@ -133,161 +174,12 @@ public class HomeScreen extends Screen {
 		}
 	}
 	
-	/**
-	 * Remove request from contact display
-	 * @param username
-	 */
-	public void removeRequest(String username) {
-		
-		for(ContactRequestDisplay requestDisplay : contactRequestDisplayList){
-			if(requestDisplay.getName().equals(username)) {
-				
-				Platform.runLater(new Runnable(){
-					@Override public void run(){ 				
-						contactsContent.getChildren().remove(requestDisplay);
-						contactRequestDisplayList.remove(requestDisplay);	}	});
-			}
-		}
-	}
-
 	public void acceptContactRequestButtonPress(String username) {
 		acceptContactRequestEvent.accept(username);
-		removeRequest(username);
 	}
 
 	public void declineContactRequestButtonPress(String username) {
 		declineContactRequestEvent.decline(username);
-		removeRequest(username);
-	}
-
-	public void loadLater(HomeScreenInput input){
-		Platform.runLater(new Runnable(){
-			@Override public void run(){ loadNewUsers(input);}	});
-	}
-	
-
-	
-	/**
-	 * Load new AppUsers not in appUserList
-	 * @param input
-	 */
-	public void loadNewUsers(HomeScreenInput input) {
-			
-		// Get new requests
-		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
-		for(AppJid appUser : contactRequestList) {
-			if (!contactRequestDisplayList.isEmpty()) {
-				for(ContactRequestDisplay requestDisplay : contactRequestDisplayList) {
-					if(!requestDisplay.getName().equals(appUser.getLocal())) {
-						ContactRequestDisplay request = 
-								new ContactRequestDisplay(this, appUser.getLocal());
-						contactsContent.getChildren().add(request);
-						contactRequestDisplayList.add(request);
-					}
-				}
-			} else {
-				ContactRequestDisplay request = 
-						new ContactRequestDisplay(this, appUser.getLocal());
-				contactsContent.getChildren().add(request);
-				contactRequestDisplayList.add(request);
-			}
-		}
-		
-		// Get new AppUsers
-		LinkedList<AppUser> contactList = input.getContactList();
-		for(AppUser appUser : contactList){
-			if(!this.appUserList.contains(appUser)) {
-				MUCContactDisplay contactDisplay = 
-						new MUCContactDisplay(appUser,imageMessage, imageNewMessage,
-								imageOnline, imageOffline);
-				contactDisplay.setOnSelectAppUser(e-> {
-						chatWithContactEvent.openChat(e.getJid().getLocal());
-						setContactInFocus(appUser.getName());
-				contactDisplay.setOnBlockAppUser(block->deleteUser(block));
-				contactDisplay.setOnDeletetAppUser(delete->deleteUser(delete));
-				});
-				this.appUserList.add(appUser);
-				displayList.add(contactDisplay);
-				contactsContent.getChildren().add(contactDisplay);
-			}
-		}
-	}
-	
-	/**
-	 * Delete user from screen
-	 * @param appUser
-	 */
-	private void deleteUser(AppUser appUser) {
-		
-		for(AppUser getUser : appUserList){
-			if(getUser.getName().equals(appUser.getName()))  {
-				Platform.runLater(new Runnable(){
-					@Override public void run(){
-						appUserList.remove(getUser);}	});
-			}
-		}
-				
-		for(MUCContactDisplay display : displayList){
-			if(display.getAppUser().getName().equals(appUser.getName())) {
-				Platform.runLater(new Runnable(){
-					@Override public void run(){
-						contactsContent.getChildren().remove(display);
-						displayList.remove(display);}	});
-			}
-		}
-	}
-	
-	/**
-	 * Load new message notification of contact
-	 * @param mucList
-	 */
-	public void loadMessageNotification(String appUser) {
-		for(MUCContactDisplay display : displayList) {
-			if(display.appUser.getName().equals(appUser)) {
-				Platform.runLater(new Runnable(){
-					@Override public void run(){
-						display.setNewMessageImage();}});
-			}
-		}
-	}
-
-	/**
-	 * Load Contact online status
-	 * @param mucList
-	 */
-	public void loadUserOnline(String appUser) {
-		for(MUCContactDisplay display : displayList) {
-			if(display.appUser.getName().equals(appUser)) {
-				Platform.runLater(new Runnable(){
-					@Override public void run(){
-						display.setOnline();}});					 
-			}
-		}
-	}
-
-	/**
-	 * Load Contact offline status
-	 * @param mucList
-	 */
-	public void loadUserOffline(String appUser) {
-		for(MUCContactDisplay display : displayList) {
-			if(display.appUser.getName().equals(appUser)) {
-				Platform.runLater(new Runnable(){
-					@Override public void run(){
-						display.setOffline();}});					 
-			}
-		}
-	}
-	
-	/**
-	 * Removes all contact content
-	 */
-	public void clearContacts() {
-		appUserList.clear();
-		displayList.clear();
-		appUserList.clear();
-		contactRequestDisplayList.clear();
-		contactsContent.getChildren().clear();
 	}
 
 	/**
@@ -320,6 +212,14 @@ public class HomeScreen extends Screen {
 
 	public void setOnDeclineContactRequestEvent(DeclineContactRequestEvent declineContactRequestEvent){
 		this.declineContactRequestEvent = declineContactRequestEvent;
+	}
+	
+	public void setOnDeleteContactEvent(AddContactEvent deleteContactEvent){
+		this.deleteContactEvent = deleteContactEvent;
+	}
+	
+	public void setOnBlockContactEvent(AddContactEvent blockContactEvent){
+		this.blockContactEvent = blockContactEvent;
 	}
 
 	public void alert(String message, String title, AlertType type){

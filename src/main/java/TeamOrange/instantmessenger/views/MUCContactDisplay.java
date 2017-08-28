@@ -2,6 +2,7 @@ package TeamOrange.instantmessenger.views;
 
 import java.net.URISyntaxException;
 
+import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.lambda.SelectAppUser;
 import TeamOrange.instantmessenger.models.AppMuc;
@@ -24,8 +25,8 @@ public class MUCContactDisplay extends HBox {
 	private Label onlineLabel, offlineLabel;
 	private boolean selected;
 	private SelectAppUser openAppUser;
-	private SelectAppUser deleteAppUser;
-	private SelectAppUser blockAppUser;
+	private AddContactEvent deleteContact;
+	private AddContactEvent blockContact;
 	private GetMUCEvent getMUCEvent;
 	private Button deleteButton, blockButton;
 	public AppUser appUser;
@@ -71,7 +72,7 @@ public class MUCContactDisplay extends HBox {
 		this.imageOnline = imageOnline;
 		this.imageOffline = imageOffline;
 		usernameLabel = new Label(username);
-		usernameLabel.setGraphic(new ImageView(imageNewMessage));
+		usernameLabel.setGraphic(new ImageView(imageMessage));
 		usernameLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
 		HBox usernameHBox = new HBox(usernameLabel);
 		usernameHBox.setAlignment(Pos.CENTER);
@@ -81,10 +82,10 @@ public class MUCContactDisplay extends HBox {
 		HBox onlineHBox = new HBox(onlineLabel);
 		onlineHBox.setAlignment(Pos.CENTER);
 		deleteButton = new Button("Delete");
-		deleteButton.setOnAction(e->deleteAppUser.getAppUser(appUser));
+		deleteButton.setOnAction(e->deleteContact.add(appUser.getName()));
 		deleteButton.setMinHeight(35);
 		blockButton = new Button("Block");
-		blockButton.setOnAction(e->blockAppUser.getAppUser(appUser));
+		blockButton.setOnAction(e->blockContact.add(appUser.getName()));
 		blockButton.setMinHeight(35);
 		HBox buttonHBox = new HBox(deleteButton,blockButton);
 		buttonHBox.setAlignment(Pos.CENTER);
@@ -139,7 +140,7 @@ public class MUCContactDisplay extends HBox {
 		this.appMUC = appMUC;
 		this.username = appMUC.getRoomID();
 		usernameLabel = new Label(username);
-		usernameLabel.setGraphic(new ImageView(imageNewMessage));
+		usernameLabel.setGraphic(new ImageView(imageMessage));
 		usernameLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
 		
 		this.setStyle("-fx-padding: 5;" +
@@ -194,12 +195,12 @@ public class MUCContactDisplay extends HBox {
 		this.openAppUser = selectAppUser;
 	}
 	
-	public void setOnBlockAppUser(SelectAppUser selectAppUser) {
-		this.blockAppUser = selectAppUser;
+	public void setOnBlockAppUser(AddContactEvent blockContact) {
+		this.blockContact = blockContact;
 	}
 	
-	public void setOnDeletetAppUser(SelectAppUser selectAppUser) {
-		this.deleteAppUser = selectAppUser;
+	public void setOnDeletetAppUser(AddContactEvent blockContact) {
+		this.deleteContact = blockContact;
 	}
 	
 	/**
