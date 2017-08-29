@@ -1,6 +1,7 @@
-package TeamOrange.instantmessenger.models;
+package TeamOrange.instantmessenger.models.tasks;
 
 import TeamOrange.instantmessenger.controllers.MUCController;
+import TeamOrange.instantmessenger.models.AppMuc;
 
 public class AppSendMucMessageTask implements AppTask {
 

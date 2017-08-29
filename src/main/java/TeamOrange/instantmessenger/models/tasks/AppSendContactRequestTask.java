@@ -1,4 +1,4 @@
-package TeamOrange.instantmessenger.models;
+package TeamOrange.instantmessenger.models.tasks;
 
 import TeamOrange.instantmessenger.controllers.AddContactController;
 

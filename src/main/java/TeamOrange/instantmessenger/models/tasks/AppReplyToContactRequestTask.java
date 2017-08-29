@@ -1,6 +1,8 @@
-package TeamOrange.instantmessenger.models;
+package TeamOrange.instantmessenger.models.tasks;
 
 import TeamOrange.instantmessenger.controllers.AcceptOrDeclineContactRequestController;
+import TeamOrange.instantmessenger.models.AppJid;
+import TeamOrange.instantmessenger.models.AppUser;
 
 public class AppReplyToContactRequestTask implements AppTask {
 	private AcceptOrDeclineContactRequestController controller;

@@ -92,7 +92,6 @@ public class App {
 		createMUCScreen = new CreateMUCScreen(guiBase);
 		statusDisplay = new StatusDisplay(guiBase);
 		//mucinput = new MUCScreenInput();
-		guiBase.setScreen(accountScreen);
 		setScreen(ScreenEnum.ACCOUNT);
 
 		// models
