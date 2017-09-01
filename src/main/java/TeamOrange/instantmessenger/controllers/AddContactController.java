@@ -43,10 +43,6 @@ public class AddContactController {
 	}
 
 	public void addContact(String username){
-		if(contacts.getContactWithUsername(username) != null){
-			homeScreen.alertLater("You are already contacts with \""+username+"\"", "Contact Already Exists", AlertType.INFORMATION);
-			return;
-		}
 		connectionController.addSendContactRequestTask(this, username);
 		connectionController.completeTasks();
 	}
