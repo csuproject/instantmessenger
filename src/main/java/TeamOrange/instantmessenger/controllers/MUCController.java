@@ -21,6 +21,7 @@ import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideFailedToConfigureChatRoomException;
 import exceptions.ConfideFailedToEnterChatRoomException;
 import javafx.application.Platform;
+import javafx.scene.control.Alert.AlertType;
 
 public class MUCController {
 
@@ -85,6 +86,10 @@ public class MUCController {
 	}
 
 	public void createMUC(MUCChat mucChat){
+		if( mucs.getMucIfExists(mucChat.getName()) != null ){
+			mucScreen.alertLater("Group Chat \""+mucChat.getName()+"\" already exists", "Group Already Exists", AlertType.INFORMATION);
+			return;
+		}
 		connectionController.addCreateMucWithMucChatTask(this, mucChat);
 		connectionController.completeTasks();
 	}
@@ -110,6 +115,10 @@ public class MUCController {
 	}
 
 	public void createMUC(String roomID){
+		if( mucs.getMucIfExists(roomID) != null ){
+			mucScreen.alertLater("Group Chat \""+roomID+"\" already exists", "Group Already Exists", AlertType.INFORMATION);
+			return;
+		}
 		connectionController.addCreateMucWithRoomIDTask(this, roomID);
 		connectionController.completeTasks();
 	}
@@ -183,13 +192,13 @@ public class MUCController {
 	}
 
 	public void acceptMucRequest(String roomID, String from){
-		mucs.removeMucRequest(roomID, from);
+		mucs.removeMucRequestsWithRoomID(roomID);
 		createMUC(roomID);
 		mucScreen.loadNewLater(mucs);
 	}
 
 	public void declineMucRequest(String roomID, String from){
-		mucs.removeMucRequest(roomID, from);
+		mucs.removeMucRequestsWithRoomID(roomID);
 		mucScreen.loadNewLater(mucs);
 	}
 

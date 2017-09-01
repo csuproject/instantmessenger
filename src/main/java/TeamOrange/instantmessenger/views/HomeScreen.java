@@ -62,7 +62,7 @@ public class HomeScreen extends Screen {
 				"/resources/accept-icon.png").toURI().toString(),25,25,false,false);
 		imageOffline = new Image(getClass().getResource(
 				"/resources/decline-icon.png").toURI().toString(),25,25,false,false);
-		
+
 		//////////////////////////////////////////////////////////////////////////////
 		//------------------------------Contact Display-----------------------------//
 		//////////////////////////////////////////////////////////////////////////////
@@ -89,10 +89,7 @@ public class HomeScreen extends Screen {
 		addContactWithUsernameInputTextField.setOnKeyPressed(
 				keyEvent->addContactInputKeyPressed(keyEvent));
 		// Restrict input to lower case
-		addContactWithUsernameInputTextField.textProperty().addListener(
-		  (observable, oldValue, newValue) -> {
-		    ((javafx.beans.property.StringProperty)observable)
-		    	.setValue(newValue.toLowerCase());});
+		addContactWithUsernameInputTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
 		addContactButton = new Button("Add");
 		addContactButton.setOnAction( e->addContactBtnPress() );
 		addContactButton.setFocusTraversable(false);
@@ -147,53 +144,53 @@ public class HomeScreen extends Screen {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){ loadNewUsers(input);}	});
 	}
-	
+
 	public void removeRequest(String username) {
-		
+
 		for(ContactRequestDisplay requestDisplay : contactRequestDisplayList){
 			if(requestDisplay.getName().equals(username)) {
-				
+
 				Platform.runLater(new Runnable(){
-					@Override public void run(){ 				
+					@Override public void run(){
 						contactsContent.getChildren().remove(requestDisplay);
 						contactRequestDisplayList.remove(requestDisplay);	}	});
 			}
 		}
 	}
-	
+
 	/**
 	 * Load new AppUsers not in appUserList
 	 * @param input
 	 */
 	public void loadNewUsers(HomeScreenInput input) {
-			
+
 		// Get new requests
 		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
 		for(AppJid appUser : contactRequestList) {
 			if (!contactRequestDisplayList.isEmpty()) {
 				for(ContactRequestDisplay requestDisplay : contactRequestDisplayList) {
 					if(!requestDisplay.getName().equals(appUser.getLocal())) {
-						ContactRequestDisplay request = 
+						ContactRequestDisplay request =
 								new ContactRequestDisplay(this, appUser.getLocal());
 						contactsContent.getChildren().add(request);
 						contactRequestDisplayList.add(request);
 					}
 				}
 			} else {
-				ContactRequestDisplay request = 
+				ContactRequestDisplay request =
 						new ContactRequestDisplay(this, appUser.getLocal());
 				contactsContent.getChildren().add(request);
 				contactRequestDisplayList.add(request);
 			}
-		
+
 		}
-		
-			
+
+
 		// Get new AppUsers
 		LinkedList<AppUser> contactList = input.getContactList();
 		for(AppUser appUser : contactList){
 			if(!this.appUserList.contains(appUser)) {
-				MUCContactDisplay contactDisplay = 
+				MUCContactDisplay contactDisplay =
 						new MUCContactDisplay(appUser,imageMessage, imageNewMessage,
 								imageOnline, imageOffline);
 				contactDisplay.setOnSelectAppUser(e-> {
@@ -208,13 +205,13 @@ public class HomeScreen extends Screen {
 			}
 		}
 	}
-	
+
 	/**
 	 * Delete user from screen
 	 * @param appUser
 	 */
 	private void deleteUser(AppUser appUser) {
-		
+
 		for(AppUser getUser : appUserList){
 			if(getUser.getName().equals(appUser.getName()))  {
 				Platform.runLater(new Runnable(){
@@ -222,7 +219,7 @@ public class HomeScreen extends Screen {
 						appUserList.remove(getUser);}	});
 			}
 		}
-				
+
 		for(MUCContactDisplay display : displayList){
 			if(display.getAppUser().getName().equals(appUser.getName())) {
 				Platform.runLater(new Runnable(){
@@ -232,7 +229,7 @@ public class HomeScreen extends Screen {
 			}
 		}
 	}
-	
+
 	/**
 	 * Load new message notification of contact
 	 * @param mucList
@@ -256,7 +253,7 @@ public class HomeScreen extends Screen {
 			if(display.appUser.getName().equals(appUser)) {
 				Platform.runLater(new Runnable(){
 					@Override public void run(){
-						display.setOnline();}});					 
+						display.setOnline();}});
 			}
 		}
 	}
@@ -270,7 +267,7 @@ public class HomeScreen extends Screen {
 			if(display.appUser.getName().equals(appUser)) {
 				Platform.runLater(new Runnable(){
 					@Override public void run(){
-						display.setOffline();}});					 
+						display.setOffline();}});
 			}
 		}
 	}

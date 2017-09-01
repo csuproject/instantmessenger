@@ -20,6 +20,7 @@ import exceptions.ConfideFailedToEnterChatRoomException;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.session.XmppClient;
+import rocks.xmpp.core.session.XmppSession;
 import rocks.xmpp.core.stanza.MessageEvent;
 import rocks.xmpp.core.stanza.model.IQ;
 import rocks.xmpp.core.stanza.model.Message;
@@ -50,6 +51,11 @@ public class MucManager {
 		ChatRoomBookmark bookmark = new ChatRoomBookmark(name, room, nick, null, false);
 		BookmarkManager bmManager = client.getManager(BookmarkManager.class);
 		bmManager.addBookmark(bookmark);
+	}
+
+	public void removeChatRoomBookmark(XmppClient client, Jid room){
+		BookmarkManager bmManager = client.getManager(BookmarkManager.class);
+		bmManager.removeChatRoomBookmark(room);
 	}
 
 	public List<ChatRoomBookmark> getChatRoomBookmarks(XmppClient client){
@@ -120,6 +126,11 @@ public class MucManager {
 	 * @throws ConfideFailedToConfigureChatRoomException
 	 */
 	public AppMuc createAndOrEnterRoom(XmppClient client, BabblerBase babblerBase, Jid roomJid, String nick) throws ConfideFailedToEnterChatRoomException, ConfideFailedToConfigureChatRoomException {
+		while(client.getStatus() != XmppSession.Status.AUTHENTICATED) {
+			try { Thread.sleep(50); }
+			catch (InterruptedException e) { }
+		}
+
 		// assuming using roomID@conference.teamorange.space
 		MultiUserChatManager manager = client.getManager(MultiUserChatManager.class);
 		ChatRoom chatRoom = manager.createChatRoom(roomJid);

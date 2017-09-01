@@ -344,6 +344,11 @@ public class BabblerBase {
 		mucManager.addChatRoomBookmark(client, name, roomJid, nick);
 	}
 
+	public void removeChatRoomBookmark(String roomName, String nick){
+		Jid roomJid = Jid.of(roomName + "@conference.teamorange.space");
+		mucManager.removeChatRoomBookmark(client, roomJid);
+	}
+
 	public LinkedList<AppMucBookmark> getChatRoomBookmarks(){
 		List<ChatRoomBookmark> bookmarks = mucManager.getChatRoomBookmarks(client);
 		LinkedList<AppMucBookmark> appBookmarks = new LinkedList();

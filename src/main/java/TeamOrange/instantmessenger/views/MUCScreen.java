@@ -84,11 +84,7 @@ import resources.GroupList;
 			addGroupTextField.setMinHeight(35);
 			addGroupTextField.setMinWidth(320);
 			// restrict input to lower case
-			addGroupTextField.textProperty().addListener(
-			  (observable, oldValue, newValue) -> {
-			    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
-			  }
-			);
+			addGroupTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
 			addGroupTextField.setOnKeyPressed(ke->{
 				if(ke.getCode() == KeyCode.ENTER){
 					addGroup();
@@ -182,16 +178,18 @@ import resources.GroupList;
 		 * @param mucList
 		 */
 		public void loadNew(AppMucList mucs) {
+			mucList.clear();
+			displayList.clear();
+			mucVBox.getChildren().clear();
+
 			List<AppMuc> inputMucList = mucs.getMucList();
 			for(AppMuc appMUC : inputMucList){
-				if(!this.mucList.contains(appMUC)) {
-					MUCContactDisplay mucDisplay =
-							new MUCContactDisplay(appMUC,imageMessage, imageNewMessage);
-					mucDisplay.setOnGetMUCEvent(e->getMUCEvent.getMUC(e));
-					this.mucList.add(appMUC);
-					displayList.add(mucDisplay);
-					mucVBox.getChildren().add(mucDisplay);
-				}
+				MUCContactDisplay mucDisplay =
+						new MUCContactDisplay(appMUC,imageMessage, imageNewMessage);
+				mucDisplay.setOnGetMUCEvent(e->getMUCEvent.getMUC(e));
+				this.mucList.add(appMUC);
+				displayList.add(mucDisplay);
+				mucVBox.getChildren().add(mucDisplay);
 			}
 
 			List<AppMucRequest> requests = mucs.getMucRequests();
@@ -199,6 +197,26 @@ import resources.GroupList;
 				MucRequestDisplay requestDisplay = new MucRequestDisplay(this, request.getFrom().getLocal(), request.getRoomID());
 				mucVBox.getChildren().add(requestDisplay);
 			}
+
+			////////////////////////////////////////
+
+//			List<AppMuc> inputMucList = mucs.getMucList();
+//			for(AppMuc appMUC : inputMucList){
+//				if(!this.mucList.contains(appMUC)) {
+//					MUCContactDisplay mucDisplay =
+//							new MUCContactDisplay(appMUC,imageMessage, imageNewMessage);
+//					mucDisplay.setOnGetMUCEvent(e->getMUCEvent.getMUC(e));
+//					this.mucList.add(appMUC);
+//					displayList.add(mucDisplay);
+//					mucVBox.getChildren().add(mucDisplay);
+//				}
+//			}
+//
+//			List<AppMucRequest> requests = mucs.getMucRequests();
+//			for(AppMucRequest request : requests){
+//				MucRequestDisplay requestDisplay = new MucRequestDisplay(this, request.getFrom().getLocal(), request.getRoomID());
+//				mucVBox.getChildren().add(requestDisplay);
+//			}
 		}
 
 		public void loadNewLater(AppMucList mucs){

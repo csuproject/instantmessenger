@@ -24,12 +24,11 @@ public class AppMucList {
 		this.mucInFocus = null;
 	}
 
-	public void removeMucRequest(String roomID, String from){
-		for(int i = 0; i < mucRequests.size(); ++i){
+	public void removeMucRequestsWithRoomID(String roomID){
+		for(int i = mucRequests.size()-1; i >= 0 ; --i){
 			AppMucRequest request = mucRequests.get(i);
-			if( request.getFrom().equals(from) && request.getRoomID().equals(roomID) ){
+			if( request.getRoomID().equals(roomID) ){
 				mucRequests.remove(i);
-				return;
 			}
 		}
 	}
@@ -91,12 +90,20 @@ public class AppMucList {
 	}
 
 	public void addMucRequest(AppMucRequest mucRequest){
+		// check an equal muc request doesnt already exist
 		for(AppMucRequest request : mucRequests){
-			if( (request.getFrom() == mucRequest.getFrom()) &&
-				(request.getRoomID() == mucRequest.getRoomID()) ){
+			if( (request.getFrom().getBareJid().equals(mucRequest.getFrom().getBareJid())) &&
+				(request.getRoomID().equals(mucRequest.getRoomID())) ){
 				return;
 			}
 		}
+		//check an equal muc doesnt already exist
+		for(AppMuc muc : mucs){
+			if(muc.getRoomID().equals(mucRequest.getRoomID())){
+				return;
+			}
+		}
+
 		mucRequests.add(mucRequest);
 	}
 }

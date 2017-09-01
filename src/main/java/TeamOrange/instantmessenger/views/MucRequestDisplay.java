@@ -22,9 +22,11 @@ public class MucRequestDisplay extends HBox {
 		label.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
 
 		this.acceptButton = new Button("Accept");
+		this.acceptButton.setFocusTraversable(false);
 		this.acceptButton.setOnAction(e->parent.acceptMucRequestButtonPress(roomName, from));
 
 		this.declineButton = new Button("Decline");
+		this.declineButton.setFocusTraversable(false);
 		this.declineButton.setOnAction(e->parent.declineMucRequestButtonPress(roomName, from));
 
 		this.setStyle("-fx-padding: 5;" +

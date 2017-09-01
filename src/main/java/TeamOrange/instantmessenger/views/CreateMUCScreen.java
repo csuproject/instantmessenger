@@ -70,6 +70,7 @@ public class CreateMUCScreen extends Screen	{
 		mucName.setMinHeight(35);
 		mucName.setPromptText("Name this group chat");
 		mucName.requestFocus();
+		mucName.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
 		mucName.setOnKeyPressed(e->{
 			if(e.getCode() == KeyCode.ENTER){
 				createMUC();
