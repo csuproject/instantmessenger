@@ -61,7 +61,7 @@ public class BabblerBase {
 
 	private String hostName;
 	private XmppClient client;
-	private AppJid appJid;
+	private AppContacts contacts;
 
 	// Listeners
 	private MessageListener messageListener;
@@ -93,6 +93,8 @@ public class BabblerBase {
 		this.contactManager = new ContactManager();
 		this.connectionManager = new ConnectionManager();
 		this.mucManager = new MucManager(contacts);
+
+		this.contacts = contacts;
 	}
 
 	public void setOnRequestContactAddSent(RequestContactAddSentListener requestContactAddSentListener){
@@ -132,7 +134,7 @@ public class BabblerBase {
 	public AppChatSession createChatSession(AppJid to){
 		ChatSession chatSession = messageManager.createChatSession(client, to);
 		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
-		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
+		AppChatSession appChatSession = new AppChatSession(xmppChatSession, contacts.getContactWithUsername(xmppChatSession.getChatPartner().getLocal()));
 		return appChatSession;
 	}
 
@@ -145,7 +147,7 @@ public class BabblerBase {
 	public AppChatSession createChatSessionWithGivenThread(AppJid to, String thread){
 		ChatSession chatSession = messageManager.createChatSessionWithGivenThread(client, to, thread);
 		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
-		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
+		AppChatSession appChatSession = new AppChatSession(xmppChatSession, contacts.getContactWithUsername(xmppChatSession.getChatPartner().getLocal()));
 		return appChatSession;
 	}
 
@@ -218,7 +220,6 @@ public class BabblerBase {
 	public AppJid login(String userName, String password) throws ConfideXmppException {
 		Jid jid = accountManager.login(client, userName, password);
 		AppJid appJid = new AppJid(jid.getLocal(), jid.getDomain(), jid.getResource());
-		this.appJid = appJid;
 		return appJid;
 	}
 

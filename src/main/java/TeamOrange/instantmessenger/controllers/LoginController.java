@@ -11,6 +11,7 @@ import TeamOrange.instantmessenger.models.AppMucList;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.views.AccountScreen;
+import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.views.MUCScreen;
 import TeamOrange.instantmessenger.views.MUCScreenInput;
 import TeamOrange.instantmessenger.views.ScreenEnum;

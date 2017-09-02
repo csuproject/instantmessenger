@@ -14,7 +14,7 @@ public class NavigationController {
 	private App app;
 
 
-	public NavigationController(HomeScreen homeScreen, 
+	public NavigationController(HomeScreen homeScreen,
 			NavigationScreen navigationScreen, App app) {
 		this.homeScreen = homeScreen;
 		this.navigationScreen = navigationScreen;
@@ -25,6 +25,7 @@ public class NavigationController {
 	}
 
 	public void logout(){
+		navigationScreen.setSelectedToLogout();
 		app.reset();
 		changeScreen.SetScreen(ScreenEnum.ACCOUNT);
 	}

@@ -12,9 +12,9 @@ import javafx.scene.layout.HBox;
 public class NavigationScreen extends Screen {
 
 	HBox navigationBox;
-	Button contactButton;
-	Button chatButton;
-	Button logoutButton;
+	CustomButton contactButton;
+	CustomButton chatButton;
+	CustomButton logoutButton;
 	ChangeScreen changeScreen;
 	Image imageMessage;
 	Image imageNewMessage;
@@ -39,7 +39,7 @@ public class NavigationScreen extends Screen {
 				"/resources/message-new.png").toURI().toString(),50,50,false,false);
 		Image imageLogout = new Image(getClass().getResource(
 				"/resources/logout-icon.png").toURI().toString(),25,25,false,false);
-		contactButton = new Button("Chats");
+		contactButton = new CustomButton("Chats");
 
 		contactButton.setGraphic(new ImageView(imageMessage));
 		contactButton.setMinSize(135, 60);
@@ -48,7 +48,7 @@ public class NavigationScreen extends Screen {
 			setImageContactMessage();
 		});
 		contactButton.setFocusTraversable(false);
-		chatButton = new Button("Groups");
+		chatButton = new CustomButton("Groups");
 		chatButton.setMinSize(135, 60);
 		chatButton.setGraphic(new ImageView(imageMessage));
 		chatButton.setOnAction(e->{
@@ -56,15 +56,23 @@ public class NavigationScreen extends Screen {
 			setImageGroupMessage();
 		});
 		chatButton.setFocusTraversable(false);
-		logoutButton = new Button("Logout");
+		logoutButton = new CustomButton("Logout");
 		logoutButton.setGraphic(new ImageView(imageLogout));
 		logoutButton.setMinSize(135, 60);
 		logoutButton.setOnAction(e->{
+			logoutButton.select();
 			setImageContactMessage();
 			setImageGroupMessage();
 			logoutEvent.logout();
 		});
 		logoutButton.setFocusTraversable(false);
+
+		contactButton.setPrefWidth(141.0);
+		contactButton.setPrefHeight(66.0);
+		chatButton.setPrefWidth(141.0);
+		chatButton.setPrefHeight(66.0);
+		logoutButton.setPrefWidth(141.0);
+		logoutButton.setPrefHeight(66.0);
 
 		navigationBox.getChildren().addAll(contactButton, chatButton, logoutButton);
 		this.getChildren().addAll(navigationBox);
@@ -104,6 +112,24 @@ public class NavigationScreen extends Screen {
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;
+	}
+
+	public void setSelectedToContacts(){
+		contactButton.select();
+		chatButton.unSelect();
+		logoutButton.unSelect();
+	}
+
+	public void setSelectedToGroups(){
+		chatButton.select();
+		contactButton.unSelect();
+		logoutButton.unSelect();
+	}
+
+	public void setSelectedToLogout(){
+		logoutButton.select();
+		contactButton.unSelect();
+		chatButton.unSelect();
 	}
 
 }

@@ -256,6 +256,7 @@ public class App {
 			{
 		    	statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
+				navigationScreen.setSelectedToContacts();
 				HomeScreenInput input = new HomeScreenInput(contacts);
 				homeScreen.loadLater(input);
 				guiBase.setScreenLater(statusDisplay,homeScreen,navigationScreen);
@@ -264,6 +265,7 @@ public class App {
 			{
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
+				navigationScreen.setSelectedToGroups();
 				mucScreen.load(new MUCScreenInput(mucs));
 				guiBase.setScreen(statusDisplay,mucScreen,navigationScreen);
 			} break;

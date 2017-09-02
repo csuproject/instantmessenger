@@ -15,14 +15,16 @@ import TeamOrange.instantmessenger.xmpp.XmppChatSession;
 public class AppChatSession {
 	private XmppChatSession xmppChatSession;
 	private LinkedList<AppChatSessionMessage> messages;
+	private AppUser partner;
 
-	public AppChatSession(XmppChatSession xmppChatSession){
+	public AppChatSession(XmppChatSession xmppChatSession, AppUser partner){
 		this.xmppChatSession = xmppChatSession;
 		this.messages = new LinkedList<AppChatSessionMessage>();
+		this.partner = partner;
 	}
 
-	public AppJid getPartner(){
-		return xmppChatSession.getChatPartner();
+	public AppUser getPartner(){
+		return partner;
 	}
 
 	public String getThread(){

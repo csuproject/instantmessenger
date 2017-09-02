@@ -4,7 +4,6 @@ package TeamOrange.instantmessenger.views;
 import java.awt.Dimension;
 import java.util.LinkedList;
 import java.util.Set;
-
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.lambda.SendMucMessageEvent;
@@ -20,6 +19,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -34,6 +34,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
@@ -54,6 +55,7 @@ public class ChatScreen extends Screen {
 	private HBox mucHbox;
 	private HBox partnerDetails;
 	private Label partnerName;
+	private Button backButton;
 	private GetMUCEvent sendMessage;
 	private GetMUCEvent destroyMUC;
 	private GetMUCEvent exitMUC;
@@ -71,7 +73,7 @@ public class ChatScreen extends Screen {
 	}
 
 	public void create() throws Exception {
-		
+
 		//////////////////////////////////////////////////////////////////////////////
 		//------------------------------Chat Display--------------------------------//
 		//////////////////////////////////////////////////////////////////////////////
@@ -100,7 +102,7 @@ public class ChatScreen extends Screen {
 		mucOccupantsPane.setFitToWidth(true);
 		mucOccupantsPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		mucOccupantsPane.setHbarPolicy(ScrollBarPolicy.NEVER);
-		
+
 		//////////////////////////////////////////////////////////////////////////////
 		//--------------------------MUC Control Display-----------------------------//
 		//////////////////////////////////////////////////////////////////////////////
@@ -121,7 +123,7 @@ public class ChatScreen extends Screen {
 		mucHbox = new HBox(
 				destroyButton,chatNameLabel,exitButton);
 		mucHbox.setAlignment(Pos.CENTER);
-		
+
 		//////////////////////////////////////////////////////////////////////////////
 		//--------------------------Send Message Display----------------------------//
 		//////////////////////////////////////////////////////////////////////////////
@@ -143,10 +145,15 @@ public class ChatScreen extends Screen {
 		//////////////////////////////////////////////////////////////////////////////
 		partnerName = new Label();
 		partnerName.setFont(new Font(25));
-		partnerDetails = new HBox(partnerName);
+		backButton = new Button("Back");
+		backButton.setOnAction(e->exitChatSession(e));
+		backButton.setFocusTraversable(false);
+		backButton.setFont(new Font(15));
+		partnerDetails = new HBox(backButton, partnerName);
 		partnerDetails.setMinHeight(25);
 		partnerDetails.setMaxHeight(25);
 		partnerDetails.setAlignment(Pos.CENTER);
+		partnerDetails.setSpacing(50);
 
 		//////////////////////////////////////////////////////////////////////////////
 		//--------------------------------Screen------------------------------------//
@@ -159,9 +166,9 @@ public class ChatScreen extends Screen {
 
 	@Override
 	public void load(ScreenInput input){
-		
+
 		ChatScreenInput chatScreenInput = (ChatScreenInput)input;
-		
+
 		//////////////////////////////////////////////////////////////////////////////
 		//--------------------------MUC Session-------------------------------------//
 		//////////////////////////////////////////////////////////////////////////////
@@ -188,8 +195,14 @@ public class ChatScreen extends Screen {
 		//////////////////////////////////////////////////////////////////////////////
 		else if(chatScreenInput.isForChatSession()){
 			setMUCMode(false);
+			boolean partnerOnline = chatScreenInput.getPartnerOnline();
 			userName = chatScreenInput.getPartner();
 			partnerName.setText(userName);
+			if(partnerOnline){
+				partnerName.setTextFill(Color.web("#00ff00"));
+			} else {
+				partnerName.setTextFill(Color.web("#ff0000"));
+			}
 			LinkedList<AppChatSessionMessage> messages = chatScreenInput.getMessages();
 			scrollPaneContent.getChildren().clear();
 			for(AppChatSessionMessage m : messages){
@@ -244,7 +257,7 @@ public class ChatScreen extends Screen {
 //		muc.sendMessage(message);
 //		load(new ChatScreenInput(muc)); // TODO: load should be called from muc, not here
 	}
-	
+
 	/**
 	 * Exit the MUC
 	 */
@@ -252,14 +265,14 @@ public class ChatScreen extends Screen {
 		changeScreen.SetScreen(ScreenEnum.MUC);
 		exitMUC.getMUC(this.muc);
 	}
-	
+
 	/**
 	 * Set the MUC Occupant List
 	 */
 	public void setMUCOccupants(LinkedList<AppUser> occupantList) {
 		mucOccupantsPaneContent.getChildren().clear();
 		for(AppUser appUser : occupantList){
-			mucOccupantsPaneContent.getChildren().add(new MUCContactDisplay(appUser));		
+			mucOccupantsPaneContent.getChildren().add(new MUCContactDisplay(appUser));
 		}
 		screenVBox.getChildren().clear();
 		screenVBox.getChildren().addAll(mucOccupantsPane,mucHbox,scrollPane, newMessage);
@@ -283,5 +296,9 @@ public class ChatScreen extends Screen {
 
 	public void setOnSendMucMessageEvent(SendMucMessageEvent sendMucMessageEvent){
 		this.sendMucMessageEvent = sendMucMessageEvent;
+	}
+
+	public void exitChatSession(ActionEvent actionEvent){
+		changeScreen.SetScreen(ScreenEnum.HOME);
 	}
 }
