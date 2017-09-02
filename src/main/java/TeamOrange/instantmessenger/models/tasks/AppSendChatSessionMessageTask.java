@@ -1,6 +1,7 @@
-package TeamOrange.instantmessenger.models;
+package TeamOrange.instantmessenger.models.tasks;
 
 import TeamOrange.instantmessenger.controllers.ChatController;
+import TeamOrange.instantmessenger.models.AppChatSessionMessage;
 
 public class AppSendChatSessionMessageTask implements AppTask{
 
