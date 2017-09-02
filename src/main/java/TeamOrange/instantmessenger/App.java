@@ -118,9 +118,6 @@ public class App {
 		createAccountController = new CreateAccountController(babblerBase, accountScreen, connectionController);
 		createAccountController.setOnChangeScreen( screen->setScreen(screen) );
 
-		loginController = new LoginController(babblerBase, accountScreen, mucScreen, contacts, mucs, connectionController);
-		loginController.setOnChangeScreen( screen->setScreen(screen) );
-
 		openChatController = new OpenChatController(chats, contacts, babblerBase, homeScreen);
 		openChatController.setOnChangeScreen( screen->setScreen(screen) );
 
@@ -145,6 +142,10 @@ public class App {
 		mucController.setOnChangeScreen(screen->setScreen(screen));
 		mucController.setOnNotifcationEvent(
 				notifyMUCEvent->notifyAndLoadMUCOnEvent(notifyMUCEvent));
+
+		loginController = new LoginController(babblerBase, accountScreen, mucScreen,
+				contacts, mucs, connectionController, mucController);
+		loginController.setOnChangeScreen( screen->setScreen(screen) );
 	}
 
 	public void reset(){

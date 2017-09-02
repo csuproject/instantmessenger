@@ -35,8 +35,11 @@ public class LoginController {
 	private AppMucList mucs;
 	private ChangeScreen changeScreen;
 	private ConnectionController connectionController;
+	private MUCController mucController;
 
-	public LoginController(BabblerBase babblerBase, AccountScreen accountScreen, MUCScreen mucScreen, AppContacts contacts, AppMucList mucs, ConnectionController connectionController){
+	public LoginController(BabblerBase babblerBase, AccountScreen accountScreen, MUCScreen mucScreen,
+			AppContacts contacts, AppMucList mucs, ConnectionController connectionController,
+			MUCController mucController){
 		this.babblerBase = babblerBase;
 		this.accountScreen = accountScreen;
 		accountScreen.setOnLoginEvent( (userName, password)->login(userName, password) );
@@ -44,6 +47,7 @@ public class LoginController {
 		this.contacts = contacts;
 		this.mucs = mucs;
 		this.connectionController = connectionController;
+		this.mucController = mucController;
 	}
 
 	/**
@@ -69,16 +73,7 @@ public class LoginController {
 			// load mucs
 			LinkedList<AppMucBookmark> mucBookmarks = babblerBase.getChatRoomBookmarks();
 			for(AppMucBookmark bm : mucBookmarks){
-				try {
-					AppMuc muc = babblerBase.createAndOrEnterRoom(bm.getRoom().getLocal(), bm.getNick());
-					this.mucs.add(muc);
-				} catch (ConfideFailedToEnterChatRoomException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ConfideFailedToConfigureChatRoomException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				mucController.createMUC(bm.getRoom().getLocal());
 			}
 			mucScreen.loadLater( new MUCScreenInput(mucs) );
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
 import TeamOrange.instantmessenger.lambda.ConnectionEventListener;
+import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.lambda.LoginEvent;
 import TeamOrange.instantmessenger.lambda.RequestContactAddSentListener;
 import TeamOrange.instantmessenger.lambda.StatusEvent;
@@ -391,9 +392,9 @@ public class BabblerBase {
 	 * @throws ConfideFailedToConfigureChatRoomException
 	 * @throws ConfideFailedToEnterChatRoomException
 	 */
-	public AppMuc createAndOrEnterRoom(String roomID, String nickname) throws ConfideFailedToEnterChatRoomException, ConfideFailedToConfigureChatRoomException{
+	public AppMuc createAndOrEnterRoom(String roomID, String nickname, GetMUCEvent messageEvent) throws ConfideFailedToEnterChatRoomException, ConfideFailedToConfigureChatRoomException{
 		Jid roomJid = Jid.of(roomID + "@conference.teamorange.space");
-		AppMuc muc = mucManager.createAndOrEnterRoom(client, this, roomJid, nickname);
+		AppMuc muc = mucManager.createAndOrEnterRoom(client, this, roomJid, nickname, messageEvent);
 		return muc;
 	}
 

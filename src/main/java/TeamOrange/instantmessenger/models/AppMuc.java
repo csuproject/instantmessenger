@@ -28,12 +28,13 @@ public class AppMuc {
 	boolean messageInit;
 	private boolean notify;
 
-	public AppMuc(String roomID, String nickname, BabblerBase babblerBase){
+	public AppMuc(String roomID, String nickname, BabblerBase babblerBase, GetMUCEvent messageEvent){
 		this.roomID = roomID;
 		this.nickname = nickname;
 		this.babblerBase = babblerBase;
 		messages = new LinkedList<AppMucMessage>();
 		occupants = new LinkedList<AppOccupant>();
+		this.messageEvent = messageEvent;
 	}
 
 	/**
@@ -61,7 +62,7 @@ public class AppMuc {
 	 */
 	public void enter(){
 		try {
-			babblerBase.createAndOrEnterRoom(roomID, nickname);
+			babblerBase.createAndOrEnterRoom(roomID, nickname, messageEvent);
 		} catch (ConfideFailedToEnterChatRoomException e1) {
 			e1.printStackTrace();
 		} catch (ConfideFailedToConfigureChatRoomException e2){
@@ -98,10 +99,8 @@ public class AppMuc {
 		} else{
 			messages.add(message);
 		}
-		// TODO: this is null sometimes, (messageEvent)
-		if(messageEvent != null){
-			messageEvent.getMUC(this);
-		}
+
+		messageEvent.getMUC(this);
 	}
 
 	public AppMucMessage getOutboundMessage(AppMucMessage message){
@@ -156,9 +155,9 @@ public class AppMuc {
 		occupants.remove(occupant);
 	}
 
-	public void setOnNewMessage(GetMUCEvent getMUCEvent) {
-		this.messageEvent = getMUCEvent;
-	}
+//	public void setOnNewMessage(GetMUCEvent getMUCEvent) {
+//		this.messageEvent = getMUCEvent;
+//	}
 
 
 	public void setReference(AppMuc muc) {
@@ -174,11 +173,11 @@ public class AppMuc {
 	    	  return false;
 	    }
 	  }
-	  
+
 	public void setNotification(boolean notify) {
 		this.notify = notify;
 	}
-	
+
 	public boolean getNotification() {
 		return notify;
 	}

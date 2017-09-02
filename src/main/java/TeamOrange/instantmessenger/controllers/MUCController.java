@@ -79,9 +79,8 @@ public class MUCController {
 		AppMuc muc;
 		try {
 			muc = babblerBase.createAndOrEnterRoom(
-					mucChat.getName(), contacts.getSelfName());
+					mucChat.getName(), contacts.getSelfName(), appMUC->notifyMUCEvent.getMUC(appMUC));
 			muc.setReference(muc);
-			muc.setOnNewMessage(appMUC->notifyMUCEvent.getMUC(appMUC));
 			mucs.add(muc);
 			this.mucScreen.loadLater( new MUCScreenInput(this.mucs) );
 			babblerBase.addChatRoomBookmark(muc.getRoomID(), muc.getNick());
@@ -108,9 +107,8 @@ public class MUCController {
 		// Create MUC
 		AppMuc muc;
 		try {
-			muc = babblerBase.createAndOrEnterRoom(roomID, contacts.getSelfName());
+			muc = babblerBase.createAndOrEnterRoom(roomID, contacts.getSelfName(), appMUC->notifyMUCEvent.getMUC(appMUC));
 			muc.setReference(muc);
-			muc.setOnNewMessage(appMUC->notifyMUCEvent.getMUC(appMUC));
 			mucs.add(muc);
 			babblerBase.addChatRoomBookmark(muc.getRoomID(), muc.getNick());
 			this.mucScreen.loadLater( new MUCScreenInput(this.mucs) );

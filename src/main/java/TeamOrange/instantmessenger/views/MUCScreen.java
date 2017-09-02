@@ -190,7 +190,7 @@ import resources.GroupList;
 			mucVBox.getChildren().clear();
 			displayList.clear();
 
-			List<AppMuc> mucList = input.getMUCList();
+			List<AppMuc> mucList = (List)((LinkedList)input.getMUCList()).clone();
 			for(AppMuc muc : mucList){
 
 				MUCContactDisplay mucDisplay =

@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
+import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMuc;
@@ -125,7 +126,7 @@ public class MucManager {
 	 * @throws ConfideFailedToEnterChatRoomException
 	 * @throws ConfideFailedToConfigureChatRoomException
 	 */
-	public AppMuc createAndOrEnterRoom(XmppClient client, BabblerBase babblerBase, Jid roomJid, String nick) throws ConfideFailedToEnterChatRoomException, ConfideFailedToConfigureChatRoomException {
+	public AppMuc createAndOrEnterRoom(XmppClient client, BabblerBase babblerBase, Jid roomJid, String nick, GetMUCEvent messageEvent) throws ConfideFailedToEnterChatRoomException, ConfideFailedToConfigureChatRoomException {
 		while(client.getStatus() != XmppSession.Status.AUTHENTICATED) {
 			try { Thread.sleep(50); }
 			catch (InterruptedException e) { }
@@ -137,7 +138,7 @@ public class MucManager {
 
 		// create AppMuc representatoin of this chat room
 		// TODO: get collection of AppMucs to do this, so it can return an existing one if one exists
-		AppMuc muc = new AppMuc(roomJid.getLocal(), nick, babblerBase);
+		AppMuc muc = new AppMuc(roomJid.getLocal(), nick, babblerBase, messageEvent);
 
 		// setup listeners
 		chatRoom.addInboundMessageListener( me->{
