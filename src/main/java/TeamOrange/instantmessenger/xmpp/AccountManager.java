@@ -8,6 +8,7 @@ import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
 import rocks.xmpp.core.session.NoResponseException;
 import rocks.xmpp.core.session.XmppClient;
+import rocks.xmpp.core.stanza.model.Presence;
 import rocks.xmpp.extensions.register.RegistrationManager;
 import rocks.xmpp.extensions.register.model.Registration;
 import rocks.xmpp.util.concurrent.AsyncResult;
@@ -27,6 +28,7 @@ public class AccountManager {
 			throws ConfideXmppException {
 		try{
     		client.login(userName, password, null);
+    		client.sendPresence( new Presence() );
     	} catch(AuthenticationException e){
     		System.out.println("AuthenticationException");
     		throw new ConfideAuthenticationException();
