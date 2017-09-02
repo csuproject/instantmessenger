@@ -1,17 +1,56 @@
 package TeamOrange.instantmessenger.models;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Holds and manages a list of AppMuc
  *
  */
 public class AppMucList {
-	LinkedList<AppMuc> mucs;
+	private LinkedList<AppMuc> mucs;
+	private LinkedList<AppMucRequest> mucRequests;
 	private AppMuc mucInFocus;
 
 	public AppMucList(){
 		this.mucs = new LinkedList<AppMuc>();
+		this.mucRequests = new LinkedList();
+		this.mucInFocus = null;
+	}
+
+	public void reset(){
+		this.mucs.clear();
+		this.mucRequests.clear();
+		this.mucInFocus = null;
+	}
+
+	public void removeMucRequestsWithRoomID(String roomID){
+		for(int i = mucRequests.size()-1; i >= 0 ; --i){
+			AppMucRequest request = mucRequests.get(i);
+			if( request.getRoomID().equals(roomID) ){
+				mucRequests.remove(i);
+			}
+		}
+	}
+
+	public AppMuc getMucInFocus(){
+		return mucInFocus;
+	}
+
+	public List<AppMuc> getMucList(){
+		return mucs;
+	}
+
+	public List<AppMucRequest> getMucRequests(){
+		return mucRequests;
+	}
+
+	public boolean mucInFocusIs(AppMuc muc){
+		return this.mucInFocus.equals(muc);
+	}
+
+	public void setMucInFocus(AppMuc muc){
+		this.mucInFocus = muc;
 	}
 
 	/**
@@ -38,55 +77,51 @@ public class AppMucList {
 			mucs.add(muc);
 		}
 	}
-	
-	public void reset(){
-		mucs.clear();
-	}
-
-	public void addMUC(AppMuc user){
-		mucs.add(user);
-	}
 
 	public void addAllMUCS(LinkedList<AppMuc> list){
 		if(list != null){
 			for(AppMuc muc : list){
-				addMUC(muc);
+				add(muc);
 			}
 		}
-	}
-
-	public LinkedList<AppMuc> getMUCList(){
-		return mucs;
 	}
 
 	public void setNotification(String mucname, boolean notify) {
 		for(AppMuc muc : mucs) {
 			if(muc.getRoomID().equals(mucname)) {
-				muc.setNotification(notify);				 
+				muc.setNotification(notify);
 			}
 		}
 	}
-	
+
 	public void setNotification(AppMuc notifyMUC, boolean notify) {
 		for(AppMuc muc : mucs) {
 			if(muc.equals(notifyMUC)) {
-				muc.setNotification(notify);				 
+				muc.setNotification(notify);
 			}
 		}
 	}
-    /**
-     * Set the MUC in focus
-     * @param muc
-     */
-    public void setMUCInFocus(AppMuc mucInFocus) {
-    	this.mucInFocus = mucInFocus;
-    }
-    
-    /**
-     * Get the MUC in focus
-     * @param muc
-     */
-    public AppMuc getMUCInFocus() {
-    	return mucInFocus;
-    }
+
+	public void removeMuc(AppMuc muc){
+		mucs.remove(muc);
+	}
+
+	public void addMucRequest(AppMucRequest mucRequest){
+		// check an equal muc request doesnt already exist
+		for(AppMucRequest request : mucRequests){
+			if( (request.getFrom().getBareJid().equals(mucRequest.getFrom().getBareJid())) &&
+				(request.getRoomID().equals(mucRequest.getRoomID())) ){
+				return;
+			}
+		}
+		//check an equal muc doesnt already exist
+		for(AppMuc muc : mucs){
+			if(muc.getRoomID().equals(mucRequest.getRoomID())){
+				return;
+			}
+		}
+
+		mucRequests.add(mucRequest);
+	}
+
 }

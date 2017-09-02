@@ -2,10 +2,17 @@ package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.MUCRoomEvent;
 import TeamOrange.instantmessenger.models.AppMuc;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import TeamOrange.instantmessenger.lambda.AcceptMucRequestEvent;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
+import TeamOrange.instantmessenger.lambda.DeclineMucRequestEvent;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -16,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import resources.GroupList;
 
 	public class MUCScreen extends Screen {
 
@@ -23,7 +31,14 @@ import javafx.scene.layout.VBox;
 		private List<MUCContactDisplay> displayList;
 		private ScrollPane mucScrollPane;
 		private VBox mucVBox;
+//<<<<<<< HEAD
 		private MUCRoomEvent addMUCEvent;
+//=======
+//		private GetMUCEvent getMUCEvent;
+//		private AddMUCEvent addMUCEvent;
+		private DeclineMucRequestEvent declineMucRequestEvent;
+		private AcceptMucRequestEvent acceptMucRequestEvent;
+//>>>>>>> refs/remotes/origin/c4-ft-muc-improvement
 		private VBox screenVBox;
 		private HBox addGroupHBox;
 		private HBox topHBox;
@@ -59,7 +74,7 @@ import javafx.scene.layout.VBox;
 					"/resources/message.png").toURI().toString(),50,50,false,false);
 			imageNewMessage = new Image(getClass().getResource(
 					"/resources/message-new.png").toURI().toString(),50,50,false,false);
-			
+
 			//////////////////////////////////////////////////////////////////////////////
 			//-------------------------------Top Control Display------------------------//
 			//////////////////////////////////////////////////////////////////////////////
@@ -73,7 +88,7 @@ import javafx.scene.layout.VBox;
 			addGroupButton.setFocusTraversable(false);
 			topHBox = new HBox(addGroupButton,createGroupButton);
 			topHBox.setAlignment(Pos.CENTER);
-			
+
 			//////////////////////////////////////////////////////////////////////////////
 			//-------------------------------Add Group Display--------------------------//
 			//////////////////////////////////////////////////////////////////////////////
@@ -81,10 +96,8 @@ import javafx.scene.layout.VBox;
 			addGroupTextField.setPromptText("Add Group Chat");
 			addGroupTextField.setMinHeight(35);
 			addGroupTextField.setMinWidth(320);
-			addGroupTextField.textProperty().addListener( // restrict input to lower case
-			  (observable, oldValue, newValue) -> {
-			    ((javafx.beans.property.StringProperty)observable).setValue(
-			    		newValue.toLowerCase());	}	);
+			// restrict input to lower case
+			addGroupTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
 			addGroupTextField.setOnKeyPressed(ke->{
 				if(ke.getCode() == KeyCode.ENTER){	addGroup();
 				} else if(ke.getCode() == KeyCode.ESCAPE){	closeAddGroupBox();	}	});
@@ -101,7 +114,7 @@ import javafx.scene.layout.VBox;
 			addGroupHBox = new HBox(
 					addGroupTextField,acceptAddGroupButton,declineAddGroupButton);
 			addGroupHBox.setAlignment(Pos.CENTER);
-			
+
 			//////////////////////////////////////////////////////////////////////////////
 			//-------------------------------MUC List Display---------------------------//
 			//////////////////////////////////////////////////////////////////////////////
@@ -116,7 +129,7 @@ import javafx.scene.layout.VBox;
 			mucScrollPane.setFitToWidth(true);
 			mucScrollPane.setFitToHeight(true);
 			mucScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-			
+
 			//////////////////////////////////////////////////////////////////////////////
 			//----------------------------------Screen----------------------------------//
 			//////////////////////////////////////////////////////////////////////////////
@@ -127,7 +140,7 @@ import javafx.scene.layout.VBox;
 			this.setMaxHeight(500);
 			this.getChildren().add(screenVBox);
 		}
-		
+
 		public void loadLater(MUCScreenInput input){
 			Platform.runLater(new Runnable(){
 				@Override public void run(){
@@ -135,25 +148,60 @@ import javafx.scene.layout.VBox;
 				}
 			});
 		}
-		
+
+		private void writeGroupList(GroupList getGroupList) {
+		      try {
+		          FileOutputStream fileOut =
+		          new FileOutputStream("./GroupList.ser");
+		          ObjectOutputStream out = new ObjectOutputStream(fileOut);
+		          out.writeObject(getGroupList);
+		          out.close();
+		          fileOut.close();
+		          System.out.printf("Serialized data is saved in GroupList.ser");
+		       }catch(IOException i) {
+		          i.printStackTrace();
+		       }
+		}
+
+		private void readGroupList() {
+			GroupList getGroupList = null;
+		     try {
+		         FileInputStream fileIn = new FileInputStream("./GroupList.ser");
+		         ObjectInputStream in = new ObjectInputStream(fileIn);
+		         getGroupList = (GroupList) in.readObject();
+		         in.close();
+		         fileIn.close();
+		      }catch(IOException i) {
+		         i.printStackTrace();
+		         getGroupList = new GroupList();
+		    	  writeGroupList(getGroupList);
+		         return;
+		      }catch(ClassNotFoundException c) {
+		         System.out.println("GroupList class not found");
+		         c.printStackTrace();
+		    	  writeGroupList(getGroupList);
+		         return;
+		      }
+		}
+
 		public void load(MUCScreenInput input){
 			mucVBox.getChildren().clear();
 			displayList.clear();
 
-			LinkedList<AppMuc> mucList = input.getMUCList();
+			List<AppMuc> mucList = input.getMUCList();
 			for(AppMuc muc : mucList){
-				
-				MUCContactDisplay mucDisplay = 
+
+				MUCContactDisplay mucDisplay =
 						new MUCContactDisplay(muc,imageMessage, imageNewMessage);
-				
+
 				// Open MUC
 				mucDisplay.setOnGetMUCEvent(e->{
 					muc.setNotification(false);
 					openMUCEvent.getRoomID(e.getRoomID());
 				});
-	
+
 				// Set Notification
-				if (muc.getNotification()) 
+				if (muc.getNotification())
 					mucDisplay.setNewMessageImage();
 				else
 					mucDisplay.setMessageImage();
@@ -162,7 +210,7 @@ import javafx.scene.layout.VBox;
 				mucVBox.getChildren().add(mucDisplay);
 			}
 		}
-		
+
 		/**
 		 * Add MUC to list
 		 */
@@ -189,7 +237,7 @@ import javafx.scene.layout.VBox;
 			screenVBox.getChildren().clear();
 			screenVBox.getChildren().addAll(topHBox, mucScrollPane);
 		}
-		
+
 		public void setOnOpenMUC(MUCRoomEvent openMUCEvent) {
 			this.openMUCEvent = openMUCEvent;
 		}
@@ -198,8 +246,34 @@ import javafx.scene.layout.VBox;
 			this.addMUCEvent = addMUCEvent;
 		}
 
+		public void setOnAcceptMucRequest(AcceptMucRequestEvent acceptMucRequestEvent){
+			this.acceptMucRequestEvent = acceptMucRequestEvent;
+		}
+
+		public void setOnDeclineMucRequest(DeclineMucRequestEvent declineMucRequestEvent){
+			this.declineMucRequestEvent = declineMucRequestEvent;
+		}
+
 		public void setOnChangeScreen(ChangeScreen changeScreen){
 			this.changeScreen = changeScreen;
+		}
+
+//		public void reset(){
+//			Platform.runLater(new Runnable(){
+//				@Override public void run(){
+//					mucList.clear();
+//					displayList.clear();
+//					mucVBox.getChildren().clear();
+//				}
+//			});
+//		}
+
+		public void acceptMucRequestButtonPress(String roomID, String from){
+			this.acceptMucRequestEvent.accept(roomID, from);
+		}
+
+		public void declineMucRequestButtonPress(String roomID, String from){
+			this.declineMucRequestEvent.decline(roomID, from);
 		}
 
 

@@ -73,6 +73,10 @@ public class AppMuc {
 		return roomID;
 	}
 
+	public String getNick(){
+		return nickname;
+	}
+
 	public String toString(){
 		return "MUC( addr: " + roomID + "  nickname: " + nickname + " )\n";
 	}

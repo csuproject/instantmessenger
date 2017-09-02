@@ -33,7 +33,7 @@ public class MUCContactDisplay extends HBox {
 	public AppMuc appMUC;
 	private Image imageMessage, imageNewMessage,
 	imageOnline, imageOffline;
-	
+
 	/**
 	 * Basic Contact Display of AppUser
 	 * @param appUser
@@ -45,7 +45,7 @@ public class MUCContactDisplay extends HBox {
 
 		//usernameLabel.setGraphic(new ImageView(imageMessage));
 		usernameLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-		
+
 		this.setStyle("-fx-padding: 5;" +
                 "-fx-border-style: solid inside;" +
                 "-fx-border-width: 2;" +
@@ -56,7 +56,7 @@ public class MUCContactDisplay extends HBox {
 		this.setOnMouseClicked(e->select());
 		this.getChildren().addAll(usernameLabel);
 	}
-	
+
 	/**
 	 * Contact Display with message notification
 	 * @param appUser
@@ -84,12 +84,14 @@ public class MUCContactDisplay extends HBox {
 		deleteButton = new Button("Delete");
 		deleteButton.setOnAction(e->deleteContact.add(appUser.getName()));
 		deleteButton.setMinHeight(35);
+		deleteButton.setFocusTraversable(false);
 		blockButton = new Button("Block");
 		blockButton.setOnAction(e->blockContact.add(appUser.getName()));
 		blockButton.setMinHeight(35);
+		blockButton.setFocusTraversable(false);
 		HBox buttonHBox = new HBox(deleteButton,blockButton);
 		buttonHBox.setAlignment(Pos.CENTER);
-		
+
 		this.setStyle("-fx-padding: 5;" +
                 "-fx-border-style: solid inside;" +
                 "-fx-border-width: 2;" +
@@ -97,7 +99,7 @@ public class MUCContactDisplay extends HBox {
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: black;");
 		this.setMaxWidth(380);
-		this.setOnMouseClicked(e-> { 
+		this.setOnMouseClicked(e-> {
 			openAppUser.getAppUser(appUser);
 			usernameLabel.setGraphic(new ImageView(imageMessage));
 			System.out.println("Clicked");});
@@ -106,7 +108,7 @@ public class MUCContactDisplay extends HBox {
 		mainHBox.setAlignment(Pos.CENTER);
 		this.getChildren().addAll(mainHBox);
 	}
-	
+
 	/**
 	 * Highlight selected contact
 	 */
@@ -133,7 +135,8 @@ public class MUCContactDisplay extends HBox {
 			openAppUser.getAppUser(appUser);
 		}
 	}
-	
+
+	// TODO: Constructor for MUCS ??
 	public MUCContactDisplay(AppMuc appMUC, Image imageMessage, Image imageNewMessage){
 		this.imageMessage = imageMessage;
 		this.imageNewMessage = imageNewMessage;
@@ -142,7 +145,7 @@ public class MUCContactDisplay extends HBox {
 		usernameLabel = new Label(username);
 		usernameLabel.setGraphic(new ImageView(imageMessage));
 		usernameLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-		
+
 		this.setStyle("-fx-padding: 5;" +
                 "-fx-border-style: solid inside;" +
                 "-fx-border-width: 2;" +
@@ -150,27 +153,27 @@ public class MUCContactDisplay extends HBox {
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: black;");
 		this.setMaxWidth(380);
-		this.setOnMouseClicked(e-> { 
+		this.setOnMouseClicked(e-> {
 			usernameLabel.setGraphic(new ImageView(this.imageMessage));
 			getMUCEvent.getMUC(this.appMUC);});
-		
+
 		this.getChildren().addAll(usernameLabel);
 	}
-	
+
 	/**
 	 * Set new message Image
 	 */
 	public void setNewMessageImage() {
 		usernameLabel.setGraphic(new ImageView(imageNewMessage));
 	}
-	
+
 	/**
 	 * Set no new message icon
 	 */
 	public void setMessageImage() {
 		usernameLabel.setGraphic(new ImageView(imageMessage));
 	}
-	
+
 	/**
 	 * Set user online image
 	 */
@@ -178,7 +181,7 @@ public class MUCContactDisplay extends HBox {
 		onlineLabel.setGraphic(new ImageView(imageOnline));
 		onlineLabel.setText("Online");
 	}
-	
+
 	/**
 	 * Set user offline image
 	 */
@@ -186,7 +189,7 @@ public class MUCContactDisplay extends HBox {
 		onlineLabel.setGraphic(new ImageView(imageOffline));
 		onlineLabel.setText("Offline");
 	}
-		
+
 	/**
 	 * Set on SelectAppUser Event
 	 * @param selectAppUser
@@ -194,15 +197,15 @@ public class MUCContactDisplay extends HBox {
 	public void setOnSelectAppUser(SelectAppUser selectAppUser) {
 		this.openAppUser = selectAppUser;
 	}
-	
+
 	public void setOnBlockAppUser(AddContactEvent blockContact) {
 		this.blockContact = blockContact;
 	}
-	
+
 	public void setOnDeletetAppUser(AddContactEvent blockContact) {
 		this.deleteContact = blockContact;
 	}
-	
+
 	/**
 	 * Set on GetMUCEvent Event
 	 * @param getMUCEvent
@@ -210,7 +213,7 @@ public class MUCContactDisplay extends HBox {
 	public void setOnGetMUCEvent (GetMUCEvent getMUCEvent) {
 		this.getMUCEvent = getMUCEvent;
 	}
-	
+
 	public AppUser getAppUser() {
 		return this.appUser;
 	}

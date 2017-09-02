@@ -60,7 +60,7 @@ public class HomeScreen extends Screen {
 				"/resources/accept-icon.png").toURI().toString(),25,25,false,false);
 		imageOffline = new Image(getClass().getResource(
 				"/resources/decline-icon.png").toURI().toString(),25,25,false,false);
-		
+
 		//////////////////////////////////////////////////////////////////////////////
 		//------------------------------Contact Display-----------------------------//
 		//////////////////////////////////////////////////////////////////////////////
@@ -87,10 +87,7 @@ public class HomeScreen extends Screen {
 		addContactWithUsernameInputTextField.setOnKeyPressed(
 				keyEvent->addContactInputKeyPressed(keyEvent));
 		// Restrict input to lower case
-		addContactWithUsernameInputTextField.textProperty().addListener(
-		  (observable, oldValue, newValue) -> {
-		    ((javafx.beans.property.StringProperty)observable)
-		    	.setValue(newValue.toLowerCase());});
+		addContactWithUsernameInputTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
 		addContactButton = new Button("Add");
 		addContactButton.setOnAction( e->addContactBtnPress() );
 		addContactButton.setFocusTraversable(false);
@@ -108,12 +105,12 @@ public class HomeScreen extends Screen {
 		this.getChildren().add(mainVbox);
 		this.setPrefHeight(600-50);
 	}
-	
+
 	public void loadLater(HomeScreenInput input){
 		Platform.runLater(new Runnable(){
 			@Override public void run(){ load(input);}	});
 	}
-	
+
 	public void load(HomeScreenInput input){
 		contactsContent.getChildren().clear();
 		displayList.clear();
@@ -126,8 +123,8 @@ public class HomeScreen extends Screen {
 
 		LinkedList<AppUser> contactList = input.getContactList();
 		for(AppUser user : contactList){
-			
-			MUCContactDisplay contactDisplay = 
+
+			MUCContactDisplay contactDisplay =
 					new MUCContactDisplay(user,imageMessage, imageNewMessage,
 							imageOnline, imageOffline);
 			contactDisplay.setOnSelectAppUser(e-> {
@@ -136,17 +133,17 @@ public class HomeScreen extends Screen {
 			});
 			contactDisplay.setOnBlockAppUser(block->blockContactEvent.add(block));
 			contactDisplay.setOnDeletetAppUser(delete->deleteContactEvent.add(delete));
-			
+
 			// Set Notification
-			if (user.getNotification()) 
+			if (user.getNotification())
 				contactDisplay.setNewMessageImage();
 			else
 				contactDisplay.setMessageImage();
 			// Set Presence
 			AppPresence presence = user.getPresence();
-			if (AppPresence.Type.AVAILIBLE == presence.getType()) 
+			if (AppPresence.Type.AVAILIBLE == presence.getType())
 				contactDisplay.setOnline();
-			else 
+			else
 				contactDisplay.setOffline();
 			// Add to HomeScreen List
 			displayList.add(contactDisplay);
@@ -173,7 +170,7 @@ public class HomeScreen extends Screen {
 			this.addContactEvent.add(username);
 		}
 	}
-	
+
 	public void acceptContactRequestButtonPress(String username) {
 		acceptContactRequestEvent.accept(username);
 	}
@@ -213,11 +210,11 @@ public class HomeScreen extends Screen {
 	public void setOnDeclineContactRequestEvent(DeclineContactRequestEvent declineContactRequestEvent){
 		this.declineContactRequestEvent = declineContactRequestEvent;
 	}
-	
+
 	public void setOnDeleteContactEvent(AddContactEvent deleteContactEvent){
 		this.deleteContactEvent = deleteContactEvent;
 	}
-	
+
 	public void setOnBlockContactEvent(AddContactEvent blockContactEvent){
 		this.blockContactEvent = blockContactEvent;
 	}

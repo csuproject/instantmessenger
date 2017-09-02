@@ -2,6 +2,7 @@ package TeamOrange.instantmessenger.xmpp;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -19,10 +20,13 @@ import exceptions.ConfideFailedToEnterChatRoomException;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.session.XmppClient;
+import rocks.xmpp.core.session.XmppSession;
 import rocks.xmpp.core.stanza.MessageEvent;
 import rocks.xmpp.core.stanza.model.IQ;
 import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stanza.model.Presence;
+import rocks.xmpp.extensions.bookmarks.BookmarkManager;
+import rocks.xmpp.extensions.bookmarks.model.ChatRoomBookmark;
 import rocks.xmpp.extensions.muc.ChatRoom;
 import rocks.xmpp.extensions.muc.ChatService;
 import rocks.xmpp.extensions.muc.MultiUserChatManager;
@@ -41,6 +45,29 @@ public class MucManager {
 
 	public MucManager(AppContacts contacts){
 		this.contacts = contacts;
+	}
+
+	public void addChatRoomBookmark(XmppClient client, String name, Jid room, String nick){
+		ChatRoomBookmark bookmark = new ChatRoomBookmark(name, room, nick, null, false);
+		BookmarkManager bmManager = client.getManager(BookmarkManager.class);
+		bmManager.addBookmark(bookmark);
+	}
+
+	public void removeChatRoomBookmark(XmppClient client, Jid room){
+		BookmarkManager bmManager = client.getManager(BookmarkManager.class);
+		bmManager.removeChatRoomBookmark(room);
+	}
+
+	public List<ChatRoomBookmark> getChatRoomBookmarks(XmppClient client){
+		BookmarkManager bmManager = client.getManager(BookmarkManager.class);
+		AsyncResult<List<ChatRoomBookmark>> result = bmManager.getChatRoomBookmarks();
+		try {
+			List<ChatRoomBookmark> bookmarks = result.getResult();
+			return bookmarks;
+		} catch (XmppException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 //	public void setupInvitationListener(XmppClient client){
@@ -99,6 +126,11 @@ public class MucManager {
 	 * @throws ConfideFailedToConfigureChatRoomException
 	 */
 	public AppMuc createAndOrEnterRoom(XmppClient client, BabblerBase babblerBase, Jid roomJid, String nick) throws ConfideFailedToEnterChatRoomException, ConfideFailedToConfigureChatRoomException {
+		while(client.getStatus() != XmppSession.Status.AUTHENTICATED) {
+			try { Thread.sleep(50); }
+			catch (InterruptedException e) { }
+		}
+
 		// assuming using roomID@conference.teamorange.space
 		MultiUserChatManager manager = client.getManager(MultiUserChatManager.class);
 		ChatRoom chatRoom = manager.createChatRoom(roomJid);

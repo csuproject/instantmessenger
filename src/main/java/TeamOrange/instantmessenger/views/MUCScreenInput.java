@@ -1,6 +1,8 @@
 package TeamOrange.instantmessenger.views;
 
 import java.util.LinkedList;
+import java.util.List;
+
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppMucList;
 
@@ -11,8 +13,8 @@ public class MUCScreenInput implements ScreenInput {
 		this.mucs = muc;
 	}
 
-	public LinkedList<AppMuc> getMUCList(){
-		return mucs.getMUCList();
+	public List<AppMuc> getMUCList(){
+		return mucs.getMucList();
 	}
-	
+
 }
