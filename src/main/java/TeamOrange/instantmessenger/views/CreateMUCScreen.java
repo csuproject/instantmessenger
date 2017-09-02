@@ -159,7 +159,6 @@ public class CreateMUCScreen extends Screen	{
 	 * Create MUC
 	 */
 	public void createMUC() {
-		System.out.println("create muc");
 		if (!mucList.isEmpty() && !mucName.getText().isEmpty()) {
 			MUCChat muc = new MUCChat(mucName.getText(), mucList);
 			createMUCEvent.getMUC(muc);

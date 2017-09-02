@@ -2,6 +2,8 @@ package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.MUCRoomEvent;
 import TeamOrange.instantmessenger.models.AppMuc;
+import TeamOrange.instantmessenger.models.AppMucRequest;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -208,6 +210,12 @@ import resources.GroupList;
 				// Add to HomeScreen List
 				displayList.add(mucDisplay);
 				mucVBox.getChildren().add(mucDisplay);
+			}
+
+			List<AppMucRequest> requests = input.getMucRequests();
+			for(AppMucRequest request : requests){
+				MucRequestDisplay requestDisplay = new MucRequestDisplay(this, request.getFrom().getLocal(), request.getRoomID());
+				mucVBox.getChildren().add(requestDisplay);
 			}
 		}
 

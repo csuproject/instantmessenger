@@ -85,6 +85,7 @@ public class MUCController {
 			mucs.add(muc);
 			this.mucScreen.loadLater( new MUCScreenInput(this.mucs) );
 			babblerBase.addChatRoomBookmark(muc.getRoomID(), muc.getNick());
+			requestMUC(mucChat);
 		} catch (ConfideFailedToEnterChatRoomException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -145,6 +146,19 @@ public class MUCController {
 
 		connectionController.addSendMucMessageTask(this, muc, message);
 		connectionController.completeTasks();
+	}
+
+	/**
+	 * Send message to users for group chat invite
+	 * @param createMUC
+	 */
+	public void requestMUC(MUCChat mucChat) {
+
+		List<AppUser> list = mucChat.getUsers();
+		for(AppUser user : list){
+			babblerBase.requestJoinMuc(user.getJid(), mucChat.getName());
+		}
+
 	}
 
 	private void openChatScreen(String roomID) {
