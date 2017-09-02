@@ -26,6 +26,7 @@ public class AppMuc {
 	GetMUCEvent messageEvent;
 	AppMuc muc;
 	boolean messageInit;
+	private boolean notify;
 
 	public AppMuc(String roomID, String nickname, BabblerBase babblerBase){
 		this.roomID = roomID;
@@ -169,5 +170,13 @@ public class AppMuc {
 	    	  return false;
 	    }
 	  }
+	  
+	public void setNotification(boolean notify) {
+		this.notify = notify;
+	}
+	
+	public boolean getNotification() {
+		return notify;
+	}
 
 }

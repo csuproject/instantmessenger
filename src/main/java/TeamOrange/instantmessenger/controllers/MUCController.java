@@ -3,16 +3,20 @@ package TeamOrange.instantmessenger.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
+import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
+import TeamOrange.instantmessenger.models.AppMucList;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.MUCChat;
 import TeamOrange.instantmessenger.views.ChatScreen;
 import TeamOrange.instantmessenger.views.ChatScreenInput;
 import TeamOrange.instantmessenger.views.CreateMUCScreen;
 import TeamOrange.instantmessenger.views.HomeScreen;
+import TeamOrange.instantmessenger.views.HomeScreenInput;
 import TeamOrange.instantmessenger.views.MUCScreen;
+import TeamOrange.instantmessenger.views.MUCScreenInput;
 import TeamOrange.instantmessenger.views.NavigationScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
@@ -22,35 +26,35 @@ import exceptions.ConfideFailedToEnterChatRoomException;
 public class MUCController {
 
 	private ChangeScreen changeScreen;
-	private List<AppMuc> mucList;
 	private BabblerBase babblerBase;
 	private MUCScreen mucScreen;
 	private AppContacts contacts;
 	private ChatScreen chatScreen;
-	private HomeScreen homeScreen;
 	private NavigationScreen navigationScreen;
 	private ConnectionController connectionController;
 	private ScreenEnum currentScreen;
-	private AppMuc muc;
+	private AppMucList mucs;
+	private GetMUCEvent notifyMUCEvent;
+
 
 	public MUCController(BabblerBase babblerBase, ChatScreen chatScreen,
 			HomeScreen homeScreen, NavigationScreen navigationScreen, 
 			AppContacts contacts, MUCScreen mucScreen, 
 			CreateMUCScreen createMUCScreen, 
-			ConnectionController connectionController) {
+			ConnectionController connectionController,
+			AppMucList mucs) {
 
 		this.babblerBase = babblerBase;
 		this.mucScreen = mucScreen;
 		this.contacts = contacts;
 		this.chatScreen = chatScreen;
-		this.homeScreen = homeScreen;
 		this.navigationScreen = navigationScreen;
 		this.connectionController = connectionController;
-		mucList = new ArrayList<AppMuc>();
+		this.mucs = mucs;
 		
 		mucScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
-		mucScreen.setOnOpenMUC(getMUCEvent->enterMUC(getMUCEvent));
-		mucScreen.setOnAddGroupGetMUCEvent(addMUCEvent->createMUC(addMUCEvent));
+		mucScreen.setOnOpenMUC(openMUCEvent->openChatScreen(openMUCEvent));
+		mucScreen.setOnAddMUC(addMUCEvent->actuallyCreateMUC(addMUCEvent));
 		createMUCScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		createMUCScreen.setOnCreateMUCEvent(createMUCEvent->createMUC(createMUCEvent));
 		chatScreen.setOnSendMucMessageEvent((muc, message)->sendMUCMessage(muc, message));
@@ -70,10 +74,9 @@ public class MUCController {
 			muc = babblerBase.createAndOrEnterRoom(
 					mucChat.getName(), contacts.getSelfName());
 			muc.setReference(muc);
-			muc.setOnNewMessage(getMUCEvent->loadMUCInFocus(getMUCEvent));
-			mucList.add(muc);
-			setMUCList(mucList);
-			requestMUC(mucChat);
+			muc.setOnNewMessage(appMUC->notifyMUCEvent.getMUC(appMUC));
+			mucs.add(muc);
+			loadMUCScreen();
 		} catch (ConfideFailedToEnterChatRoomException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -94,9 +97,9 @@ public class MUCController {
 		try {
 			muc = babblerBase.createAndOrEnterRoom(roomID, contacts.getSelfName());
 			muc.setReference(muc);
-			muc.setOnNewMessage(getMUCEvent->loadMUCInFocus(muc));
-			addtoMUCList(muc);
-			//requestMUC(roomID);
+			muc.setOnNewMessage(appMUC->notifyMUCEvent.getMUC(appMUC));
+			mucs.add(muc);
+			loadMUCScreen();
 		} catch (ConfideFailedToEnterChatRoomException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -108,39 +111,6 @@ public class MUCController {
 	public void createMUC(String roomID){
 		connectionController.addCreateMucWithRoomIDTask(this, roomID);
 		connectionController.completeTasks();
-	}
-
-	public void exitMUC(AppMuc appMUC) {
-		appMUC.leave();
-		removeFromMUCList(appMUC);
-	}
-
-	/**
-	 * Send message to users for group chat invite
-	 * @param createMUC
-	 */
-	public void requestMUC(MUCChat mucChat) {
-
-		List<AppUser> list = mucChat.getUsers();
-
-	}
-
-	/**
-	 * Enter MUC
-	 * @param mucName
-	 */
-	public void enterMUC(String mucName) {
-		// Enter MUC
-		mucList.add(muc(mucName));
-		setMUCList(mucList);
-	}
-
-	/**
-	 * Enter MUC
-	 * @param mucChat
-	 */
-	public void enterMUC(AppMuc appMUC) {
-		setMUCInFocus(appMUC);
 	}
 
 	/**
@@ -160,83 +130,20 @@ public class MUCController {
 		connectionController.completeTasks();
 	}
 
-	public AppMuc muc(String mucName) {
-		try {
-			return babblerBase.createAndOrEnterRoom(
-					mucName, contacts.getSelfName());
-		} catch (ConfideFailedToEnterChatRoomException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return null;
-		} catch (ConfideFailedToConfigureChatRoomException e2){
-			e2.printStackTrace();
-			return null;
-		}
-	}
-
-
-	private void addtoMUCList(AppMuc appMUC) {
-		mucList.add(appMUC);
-		setMUCList(mucList);
-	}
-
-	private void removeFromMUCList(AppMuc appMUC) {
-		mucList.remove(appMUC);
-		setMUCList(mucList);
+	private void openChatScreen(String roomID) {
+		AppMuc muc = mucs.getMucIfExists(roomID);
+		mucs.setMUCInFocus(muc);
+		changeScreen.SetScreen(ScreenEnum.MUCCHAT);
 	}
 	
-	//////////////////////////////////////////////////////////////////////////////
-	//--------------------------Screen Events-----------------------------------//
-	//////////////////////////////////////////////////////////////////////////////
-    /**
-     * Set list of MUC
-     * @param mucList
-     */
-    private void setMUCList(List<AppMuc> mucList) {
-    	this.mucList = mucList;
-    	mucScreen.loadNewLater( this.mucList);
-    }
-
-    /**
-     * Set the MUC in focus
-     * @param muc
-     */
-    private void setMUCInFocus(AppMuc muc) {
-    	this.muc = muc;
-    	changeScreen.SetScreen((ScreenEnum.MUCCHAT));
-    }
-    
-    /**
-     * Update MUC of MUCCHAT in focus and Notifications
-     * @param muc
-     */
-    private void loadMUCInFocus(AppMuc muc) {
-
-    	// Set new group message icon
-		if(currentScreen != ScreenEnum.MUC) {
-			if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc)) {
-    		}
-			else {
-			navigationScreen.setImageNewGroupMessage();
-			}
-		}
-		// Reload open screen
-    	if (currentScreen == ScreenEnum.MUCCHAT && this.muc.equals(muc))
-    		chatScreen.loadLater(new ChatScreenInput(muc));
-    	else
-    		mucScreen.loadNewMessage(muc);
-    }
-
-
-    
-    public AppMuc getAppMuc() {
-    	return muc;
-    }
-    
-    public void setCurrentScreen(ScreenEnum screen) {
-    	currentScreen = screen;
-    }
-
+	private void loadMUCScreen() {
+		mucScreen.loadLater(new MUCScreenInput(mucs));
+	}
+	
+	public void setOnNotifcationEvent(GetMUCEvent notifyMUCEvent) {
+		this.notifyMUCEvent = notifyMUCEvent;
+	}
+	
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;
 	}

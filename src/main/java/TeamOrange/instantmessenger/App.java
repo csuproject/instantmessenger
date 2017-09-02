@@ -20,6 +20,7 @@ import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMessageType;
 import TeamOrange.instantmessenger.models.AppMuc;
+import TeamOrange.instantmessenger.models.AppMucList;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.views.AccountScreen;
@@ -30,6 +31,7 @@ import TeamOrange.instantmessenger.views.GuiBase;
 import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.views.HomeScreenInput;
 import TeamOrange.instantmessenger.views.MUCScreen;
+import TeamOrange.instantmessenger.views.MUCScreenInput;
 import TeamOrange.instantmessenger.views.NavigationScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
 import TeamOrange.instantmessenger.views.StatusDisplay;
@@ -74,6 +76,7 @@ public class App {
 	AppContacts contacts;
 	AppChats chats;
 	AppConnection connection;
+	AppMucList mucs;
 
 
 
@@ -95,6 +98,7 @@ public class App {
 		contacts = new AppContacts();
 		chats = new AppChats();
 		connection = new AppConnection( AppConnection.NOT_CONNECTED );
+		mucs = new AppMucList();
 
 		// xmpp
 		babblerBase = new BabblerBase(
@@ -123,7 +127,7 @@ public class App {
 
 		chatController = new ChatController(babblerBase, chatScreen, chats, contacts, connectionController);
 		chatController.setOnChangeScreen( screen->setScreen(screen) );
-		chatController.setOnExitMUC(exit->mucController.exitMUC(exit));
+		//chatController.setOnExitMUC(exit->mucController.exitMUC(exit));
 
 		addContactController = new AddContactController(babblerBase, homeScreen, contacts, connectionController);
 		addContactController.setOnChangeScreen( screen->setScreen(screen) );
@@ -139,8 +143,10 @@ public class App {
 
 		mucController = new MUCController(babblerBase, chatScreen, homeScreen,
 				navigationScreen, contacts, mucScreen,
-				createMUCScreen, connectionController);
+				createMUCScreen, connectionController, mucs);
 		mucController.setOnChangeScreen(screen->setScreen(screen));
+		mucController.setOnNotifcationEvent(
+				notifyMUCEvent->notifyAndLoadMUCOnEvent(notifyMUCEvent));
 	}
 
 	public void reset(){
@@ -199,13 +205,11 @@ public class App {
     		contacts.setPresence(appUser, AppPresence.Type.AVAILIBLE);
     		HomeScreenInput input = new HomeScreenInput(contacts);
     		homeScreen.loadLater(input);
-    		//homeScreen.loadUserOnline(appUser);
     	}
     	if (appPresenceType == AppPresence.Type.UNAVAILIVLE) {
     		contacts.setPresence(appUser, AppPresence.Type.UNAVAILIVLE);
     		HomeScreenInput input = new HomeScreenInput(contacts);
     		homeScreen.loadLater(input);
-    		//homeScreen.loadUserOffline(appUser);
     	}
     }
 
@@ -243,7 +247,6 @@ public class App {
 			} break;
 			case HOME:
 			{
-				mucController.setCurrentScreen(currentScreen);
 		    	statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
 				HomeScreenInput input = new HomeScreenInput(contacts);
@@ -252,14 +255,13 @@ public class App {
 			} break;
 			case MUC:
 			{
-				mucController.setCurrentScreen(currentScreen);
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
+				mucScreen.load(new MUCScreenInput(mucs));
 				guiBase.setScreen(statusDisplay,mucScreen,navigationScreen);
 			} break;
 			case CREATEMUC:
 			{
-				mucController.setCurrentScreen(currentScreen);
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
 				HomeScreenInput input = new HomeScreenInput(contacts);
@@ -268,7 +270,6 @@ public class App {
 			} break;
 			case CHAT:
 			{
-				mucController.setCurrentScreen(currentScreen);
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
 				ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
@@ -277,10 +278,9 @@ public class App {
 			} break;
 				case MUCCHAT:
 			{
-				mucController.setCurrentScreen(currentScreen);
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
-				chatScreen.loadLater(new ChatScreenInput(mucController.getAppMuc()));
+				chatScreen.loadLater(new ChatScreenInput(mucs.getMUCInFocus()));
 				guiBase.setScreenLater(statusDisplay, chatScreen,navigationScreen);
 			} break;
     	}
@@ -311,4 +311,33 @@ public class App {
 			homeScreen.loadLater(input);
     	}
     }
+    
+    /**
+     * Update MUC of MUCCHAT in focus and Notifications
+     * @param muc
+     */
+    private void notifyAndLoadMUCOnEvent(AppMuc muc) {
+
+    	// Notify on MUCCHAT
+		if (currentScreen == ScreenEnum.MUCCHAT && !mucs.getMUCInFocus().equals(muc)) {
+			navigationScreen.setImageNewGroupMessage(); // Notify NavigationScreen 
+			mucs.setNotification(muc, true); // Notify MUCChatDisplays
+			mucScreen.loadLater(new MUCScreenInput(mucs));
+		} 
+		// Notify on MUC
+		if(currentScreen == ScreenEnum.MUC) {
+			mucs.setNotification(muc, true); // Notify MUCChatDisplays
+			mucScreen.loadLater(new MUCScreenInput(mucs));
+		}
+		// Notify on HOME
+		if(currentScreen == ScreenEnum.HOME) {
+			navigationScreen.setImageNewGroupMessage(); // Notify NavigationScreen 
+			mucs.setNotification(muc, true); // Notify MUCChatDisplays
+			mucScreen.loadLater(new MUCScreenInput(mucs));
+		}
+		// Load on ChatScreen
+    	if (currentScreen == ScreenEnum.MUCCHAT && mucs.getMUCInFocus().equals(muc))
+    		chatScreen.loadLater(new ChatScreenInput(muc));
+    	}
+    
 }

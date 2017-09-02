@@ -1,27 +1,18 @@
 package TeamOrange.instantmessenger.views;
 
+import java.util.LinkedList;
 import TeamOrange.instantmessenger.models.AppMuc;
-
+import TeamOrange.instantmessenger.models.AppMucList;
 
 public class MUCScreenInput implements ScreenInput {
-	private AppMuc muc;
+	private AppMucList mucs;
 
-	public MUCScreenInput(AppMuc muc){
-		this.muc = muc;
+	public MUCScreenInput(AppMucList muc){
+		this.mucs = muc;
 	}
 
-	public MUCScreenInput() {
+	public LinkedList<AppMuc> getMUCList(){
+		return mucs.getMUCList();
 	}
-
-	public String getGroupName() {
-
-		if (muc == null){
-			return "Group";
-		} else {
-			return muc.getRoomID();
-		}
-
-	}
-
-
+	
 }

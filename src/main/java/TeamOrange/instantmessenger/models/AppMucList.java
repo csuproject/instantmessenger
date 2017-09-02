@@ -8,6 +8,7 @@ import java.util.LinkedList;
  */
 public class AppMucList {
 	LinkedList<AppMuc> mucs;
+	private AppMuc mucInFocus;
 
 	public AppMucList(){
 		this.mucs = new LinkedList<AppMuc>();
@@ -31,10 +32,61 @@ public class AppMucList {
 	 * Adds the given muc, if it isnt already in the list
 	 * @param muc the muc to add
 	 */
-	public void addMuc(AppMuc muc){
+	public void add(AppMuc muc){
 		String roomID = muc.getRoomID();
 		if(getMucIfExists(roomID) == null){
 			mucs.add(muc);
 		}
 	}
+	
+	public void reset(){
+		mucs.clear();
+	}
+
+	public void addMUC(AppMuc user){
+		mucs.add(user);
+	}
+
+	public void addAllMUCS(LinkedList<AppMuc> list){
+		if(list != null){
+			for(AppMuc muc : list){
+				addMUC(muc);
+			}
+		}
+	}
+
+	public LinkedList<AppMuc> getMUCList(){
+		return mucs;
+	}
+
+	public void setNotification(String mucname, boolean notify) {
+		for(AppMuc muc : mucs) {
+			if(muc.getRoomID().equals(mucname)) {
+				muc.setNotification(notify);				 
+			}
+		}
+	}
+	
+	public void setNotification(AppMuc notifyMUC, boolean notify) {
+		for(AppMuc muc : mucs) {
+			if(muc.equals(notifyMUC)) {
+				muc.setNotification(notify);				 
+			}
+		}
+	}
+    /**
+     * Set the MUC in focus
+     * @param muc
+     */
+    public void setMUCInFocus(AppMuc mucInFocus) {
+    	this.mucInFocus = mucInFocus;
+    }
+    
+    /**
+     * Get the MUC in focus
+     * @param muc
+     */
+    public AppMuc getMUCInFocus() {
+    	return mucInFocus;
+    }
 }
