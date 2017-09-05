@@ -7,6 +7,7 @@ import TeamOrange.instantmessenger.controllers.AddContactController;
 import TeamOrange.instantmessenger.controllers.ChatController;
 import TeamOrange.instantmessenger.controllers.ConnectionController;
 import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
+import TeamOrange.instantmessenger.controllers.ContactManagementController;
 import TeamOrange.instantmessenger.controllers.CreateAccountController;
 import TeamOrange.instantmessenger.controllers.OpenChatController;
 import TeamOrange.instantmessenger.controllers.PresenceController;
@@ -46,6 +47,7 @@ public class App {
 	public static final String ACCEPT_CONTACT_ADD = "2";
 	public static final String DECLINE_CONTACT_ADD = "3";
 	public static final String REQUEST_JOIN_MUC = "4";
+	public static final String REQUEST_DELETE_FROM_CONTACTS = "5";
 
 	// xmpp
 	private BabblerBase babblerBase;
@@ -72,6 +74,7 @@ public class App {
 	private NavigationController naviationController;
 	private ConnectionController connectionController;
 	private MUCController mucController;
+	private ContactManagementController contactManagementController;
 
 
 	// models
@@ -146,6 +149,9 @@ public class App {
 		loginController = new LoginController(babblerBase, accountScreen, mucScreen,
 				contacts, mucs, connectionController, mucController);
 		loginController.setOnChangeScreen( screen->setScreen(screen) );
+
+		contactManagementController = new ContactManagementController(babblerBase, homeScreen, chats, contacts, connectionController);
+		contactManagementController.setOnChangeScreen( screen->setScreen(screen) );
 	}
 
 	public void reset(){
@@ -192,6 +198,10 @@ public class App {
     			AppJid from = message.getFromJid();
     			this.mucs.addMucRequest( new AppMucRequest(roomID, from) );
     			mucScreen.loadLater( new MUCScreenInput(this.mucs) );
+    		}
+    		else if(body.equals(App.REQUEST_DELETE_FROM_CONTACTS)){
+    			AppJid from = message.getFromJid();
+    			contactManagementController.onRequestDeleteFromContacts(from.getLocal());
     		}
     	} else if(message.getType() == AppMessageType.CHAT){
 

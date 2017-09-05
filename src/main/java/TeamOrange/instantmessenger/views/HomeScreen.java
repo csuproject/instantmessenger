@@ -131,8 +131,8 @@ public class HomeScreen extends Screen {
 					chatWithContactEvent.openChat(e.getJid().getLocal());
 					setContactInFocus(user.getName());
 			});
-			contactDisplay.setOnBlockAppUser(block->blockContactEvent.add(block));
-			contactDisplay.setOnDeletetAppUser(delete->deleteContactEvent.add(delete));
+			contactDisplay.setOnBlockAppUser( userName->blockContactEvent.add(userName) );
+			contactDisplay.setOnDeletetAppUser( userName->deleteContactEvent.add(userName) );
 
 			// Set Notification
 			if (user.getNotification())

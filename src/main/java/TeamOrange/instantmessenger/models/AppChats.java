@@ -30,6 +30,15 @@ public class AppChats {
 		chats.add(appChatSession);
 	}
 
+	public void removeChat(String userName){
+		for(int i = 0; i < chats.size(); ++i){
+			if(chats.get(i).getPartner().getJid().getLocal().equals(userName)){
+				chats.remove(i);
+				return;
+			}
+		}
+	}
+
 	/**
 	 * sets the given chat to the active chat
 	 * @param chat the AppChatSession to set to active
