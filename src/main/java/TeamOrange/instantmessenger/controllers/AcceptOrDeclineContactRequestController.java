@@ -18,13 +18,16 @@ public class AcceptOrDeclineContactRequestController {
 	private HomeScreen homeScreen;
 	private AppContacts contacts;
 	private ChangeScreen changeScreen;
+	private ConnectionController connectionController;
 
-	public AcceptOrDeclineContactRequestController(BabblerBase babblerBase, HomeScreen homeScreen, AppContacts contacts){
+	public AcceptOrDeclineContactRequestController(BabblerBase babblerBase,
+			HomeScreen homeScreen, AppContacts contacts, ConnectionController connectionController){
 		this.babblerBase = babblerBase;
 		this.homeScreen = homeScreen;
 		homeScreen.setOnAcceptContactRequestEvent(username->onAcceptContactRequestEvent(username));
 		homeScreen.setOnDeclineContactRequestEvent(username->onDeclineContactRequestEvent(username));
 		this.contacts = contacts;
+		this.connectionController = connectionController;
 	}
 
 	/**
@@ -40,12 +43,22 @@ public class AcceptOrDeclineContactRequestController {
 	public void onAcceptContactRequestEvent(String username){
 		AppUser contact = contacts.getContactWithUsername(username);
 		AppJid jid = new AppJid(username, "teamorange.space");
-		if(contact == null){
-			contact = babblerBase.addContact(jid.getBareJid());
-			contacts.addContact(contact);
-		}
+
 		contacts.removeContactRequest(jid);
-		babblerBase.alertUserOfContactRequestResponse(jid, true);
+		homeScreen.loadLater(new HomeScreenInput(contacts));
+
+		connectionController.addReplyToContactRequestTask(this, contact, jid, true);
+		connectionController.completeTasks();
+	}
+
+	public void actuallyReplyToContactRequest(AppUser contact, AppJid jid, boolean accepted){
+		if(contact == null){
+			if(accepted){
+				contact = babblerBase.addContact(jid.getBareJid());
+				contacts.addContact(contact);
+			}
+		}
+		babblerBase.alertUserOfContactRequestResponse(jid, accepted);
 		homeScreen.loadLater(new HomeScreenInput(contacts));
 	}
 
@@ -58,9 +71,12 @@ public class AcceptOrDeclineContactRequestController {
 	 */
 	public void onDeclineContactRequestEvent(String username){
 		AppJid jid = new AppJid(username, "teamorange.space");
+		AppUser contact = contacts.getContactWithUsername(username);
 		contacts.removeContactRequest(jid);
-		babblerBase.alertUserOfContactRequestResponse(jid, false);
 		homeScreen.loadLater(new HomeScreenInput(contacts));
+
+		connectionController.addReplyToContactRequestTask(this, contact, jid, false);
+		connectionController.completeTasks();
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){

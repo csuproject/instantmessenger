@@ -8,8 +8,10 @@ import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.sasl.AuthenticationException;
 import rocks.xmpp.core.session.NoResponseException;
 import rocks.xmpp.core.session.XmppClient;
+import rocks.xmpp.core.stanza.model.Presence;
 import rocks.xmpp.extensions.register.RegistrationManager;
 import rocks.xmpp.extensions.register.model.Registration;
+import rocks.xmpp.util.concurrent.AsyncResult;
 
 
 public class AccountManager {
@@ -26,9 +28,12 @@ public class AccountManager {
 			throws ConfideXmppException {
 		try{
     		client.login(userName, password, null);
+    		client.sendPresence( new Presence() );
     	} catch(AuthenticationException e){
+    		System.out.println("AuthenticationException");
     		throw new ConfideAuthenticationException();
     	} catch(NoResponseException e){
+    		System.out.println("NoResponseException");
     		throw new ConfideNoResponseException();
     	}
 //		catch(StreamErrorException e){
@@ -39,6 +44,7 @@ public class AccountManager {
 //
 //    	}
 		catch(XmppException e){
+			System.out.println("xmppException");
 			throw new ConfideXmppException();
     	}
 		return Jid.of(userName, "teamorange.space", null);
@@ -75,8 +81,9 @@ public class AccountManager {
 	 * @param client
 	 * @param userName the username
 	 * @param password the password
+	 * @throws XmppException
 	 */
-	public void createUser(XmppClient client, String userName, String password) {
+	public void createUser(XmppClient client, String userName, String password) throws XmppException {
 		// TODO: how to tell if this failed?
 		Registration registration = Registration.builder()
     			.username(userName)
@@ -84,7 +91,8 @@ public class AccountManager {
     			.build();
 
 		RegistrationManager registrationManager = client.getManager(RegistrationManager.class);
-    	registrationManager.register(registration);
+    	AsyncResult<Void> result = registrationManager.register(registration);
+    	result.getResult();
 	}
 
 }

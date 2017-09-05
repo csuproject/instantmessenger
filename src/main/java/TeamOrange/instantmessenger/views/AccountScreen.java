@@ -1,37 +1,42 @@
 package TeamOrange.instantmessenger.views;
 
-import java.awt.event.KeyEvent;
 
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
 import TeamOrange.instantmessenger.lambda.LoginEvent;
 import exceptions.CreateUserInvalidFormatException;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 
 public class AccountScreen extends Screen {
 
 	private TextField loginUserNameTextField;
-	private TextField loginPasswordTextField;
+	private PasswordField loginPasswordTextField;
 	private Button login;
 
 	private TextField createAccountUserNameTextField;
-	private TextField createAccountPasswordTextField;
+	private PasswordField createAccountPasswordTextField;
 	private Button createAccount;
 
 	private CreateAccountEvent createAccountEvent;
 	private LoginEvent loginEvent;
 
-	public AccountScreen(){
+	public AccountScreen(GuiBase guiBase){
+		super(guiBase);
 		try {
 			create();
 		} catch (Exception e) {
@@ -47,18 +52,15 @@ public class AccountScreen extends Screen {
 		loginUserNameTextField = new TextField();
 		loginUserNameTextField.setOnKeyPressed(keyEvent->loginKeyPressed(keyEvent));
 		// restrict input to lower case
-		loginUserNameTextField.textProperty().addListener(
-		  (observable, oldValue, newValue) -> {
-		    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
-		  }
-		);
+		loginUserNameTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
+		//loginUserNameTextField.addEventHandler(KeyEvent.KEY_TYPED , loginUserNameTextFieldFormatValidation());
 		Label loginUserNameLabel = new Label("Username: " );
 		loginUserNameLabel.setFont(new Font(18));
 		HBox loginUserNameInput = new HBox();
 		loginUserNameInput.getChildren().addAll(loginUserNameLabel, loginUserNameTextField);
 		loginUserNameInput.setSpacing(10);
 		//
-		loginPasswordTextField = new TextField();
+		loginPasswordTextField = new PasswordField();
 		loginPasswordTextField.setOnKeyPressed(keyEvent->loginKeyPressed(keyEvent));
 		Label loginPasswordLabel = new Label("Password: " );
 		loginPasswordLabel.setFont(new Font(18));
@@ -90,18 +92,14 @@ public class AccountScreen extends Screen {
 		createAccountUserNameTextField = new TextField();
 		createAccountUserNameTextField.setOnKeyPressed(keyEvent->createAccountKeyPressed(keyEvent));
 		// restrict input to lower case
-		createAccountUserNameTextField.textProperty().addListener(
-		  (observable, oldValue, newValue) -> {
-		    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
-		  }
-		);
+		createAccountUserNameTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
 		Label createAccountserNameLabel = new Label("Username: " );
 		createAccountserNameLabel.setFont(new Font(18));
 		HBox createAccountUserNameInput = new HBox();
 		createAccountUserNameInput.getChildren().addAll(createAccountserNameLabel, createAccountUserNameTextField);
 		createAccountUserNameInput.setSpacing(10);
 		//
-		createAccountPasswordTextField = new TextField();
+		createAccountPasswordTextField = new PasswordField();
 		createAccountPasswordTextField.setOnKeyPressed(keyEvent->createAccountKeyPressed(keyEvent));
 		Label createAccountPasswordLabel = new Label("Password: " );
 		createAccountPasswordLabel.setFont(new Font(18));
@@ -128,7 +126,7 @@ public class AccountScreen extends Screen {
 
 		//Pane
 		GridPane gridPane = new GridPane();
-		gridPane.setVgap(50);
+		gridPane.setVgap(40);
 		gridPane.add(loginSection, 0, 0);
 		gridPane.add(createAccountSection, 0, 1);
 		gridPane.setAlignment(Pos.CENTER);
@@ -165,7 +163,7 @@ public class AccountScreen extends Screen {
 
 		if(isValidCreateAccountFormat(username, password)){
 			createAccountEvent.createAccount(username, password);
-			alert("User( \""+username+"\" ) successfully created", "user created", AlertType.CONFIRMATION);
+//			alert("User( \""+username+"\" ) successfully created", "user created", AlertType.CONFIRMATION);
 			loginUserNameTextField.setText(username);
 			loginPasswordTextField.setText(password);
 			loginUserNameTextField.requestFocus();
@@ -187,14 +185,6 @@ public class AccountScreen extends Screen {
 
 	public void setOnLoginEvent(LoginEvent loginEvent){
 		this.loginEvent = loginEvent;
-	}
-
-	public void alert(String message, String title, AlertType type){
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(message);
-		alert.showAndWait();
 	}
 
 }

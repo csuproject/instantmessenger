@@ -3,6 +3,7 @@ package TeamOrange.instantmessenger.models;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import TeamOrange.instantmessenger.controllers.ChatController;
 import TeamOrange.instantmessenger.xmpp.MessageListener;
 import TeamOrange.instantmessenger.xmpp.XmppChatSession;
 
@@ -14,14 +15,16 @@ import TeamOrange.instantmessenger.xmpp.XmppChatSession;
 public class AppChatSession {
 	private XmppChatSession xmppChatSession;
 	private LinkedList<AppChatSessionMessage> messages;
+	private AppUser partner;
 
-	public AppChatSession(XmppChatSession xmppChatSession){
+	public AppChatSession(XmppChatSession xmppChatSession, AppUser partner){
 		this.xmppChatSession = xmppChatSession;
 		this.messages = new LinkedList<AppChatSessionMessage>();
+		this.partner = partner;
 	}
 
-	public AppJid getPartner(){
-		return xmppChatSession.getChatPartner();
+	public AppUser getPartner(){
+		return partner;
 	}
 
 	public String getThread(){
@@ -37,10 +40,16 @@ public class AppChatSession {
 	 * Adds the message to the message list
 	 * @param body the body of the message to send
 	 */
-	public void sendChatMessage(String body){
-		AppChatSessionMessage message = AppChatSessionMessage.createOutbound(body);
-		xmppChatSession.sendMessage(body);
-		messages.add(message);
+	public void sendChatMessage(ChatController controller, AppChatSessionMessage message){
+//		AppChatSessionMessage message = AppChatSessionMessage.createOutbound(body);
+//		messages.add(message);
+		xmppChatSession.sendMessage(controller, message);
+	}
+
+	public AppChatSessionMessage addUnsentMessage(String message){
+		AppChatSessionMessage appMessage = AppChatSessionMessage.createOutbound(message);
+		messages.add(appMessage);
+		return appMessage;
 	}
 
 	public void printMessages(){

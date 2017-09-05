@@ -41,6 +41,7 @@ public class OpenChatController {
 	 * @param username the username of the contact
 	 */
 	public void chatWithContact(String username){
+		contacts.setNotification(username, false);
 		AppChatSession chatSession = chats.getChatWithContact(username);
 		if(chatSession == null){
 			// no chat exists with that contact

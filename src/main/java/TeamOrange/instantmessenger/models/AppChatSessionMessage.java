@@ -5,8 +5,9 @@ package TeamOrange.instantmessenger.models;
  *
  */
 public class AppChatSessionMessage {
-	String body;
-	boolean inbound;
+	private String body;
+	private boolean inbound;
+	private boolean isSent;
 
 	public static AppChatSessionMessage createInbound(String body){
 		return new AppChatSessionMessage(body, true);
@@ -19,6 +20,15 @@ public class AppChatSessionMessage {
 	public AppChatSessionMessage(String body, boolean inbound){
 		this.body = body;
 		this.inbound = inbound;
+		this.isSent = false;
+	}
+
+	public void hasSent(){
+		this.isSent = true;
+	}
+
+	public boolean sent(){
+		return isSent;
 	}
 
 	public String getBody(){

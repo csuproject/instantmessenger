@@ -8,16 +8,17 @@ import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideXmppException;
+import rocks.xmpp.core.XmppException;
 
 public class RosterListTest {
 
-	public static void main(String[] args){
+	public static void main(String[] args) throws XmppException{
 		RosterListTest t = new RosterListTest();
 	}
 
 	BabblerBase babblerBase;
 
-	RosterListTest() {
+	RosterListTest() throws XmppException {
 		babblerBase = new BabblerBase("teamorange.space", appMessage->messageListener(appMessage), (fromJid, appPresenceType)->presenceListener(fromJid, appPresenceType), () -> rosterListener(),
 				type->connectionEventListener(type));
 

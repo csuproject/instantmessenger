@@ -14,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -27,10 +29,13 @@ public class CreateMUCScreen extends Screen	{
 	private List<AppUser> mucList;
 	MUCChat mucChat;
 	CreateMUCEvent createMUCEvent;
+	Image imageMessage;
+	Image imageNewMessage;
 
 
 
-	public CreateMUCScreen(){
+	public CreateMUCScreen(GuiBase guiBase){
+		super(guiBase);
 		try {
 			create();
 		} catch (Exception e) {
@@ -43,37 +48,58 @@ public class CreateMUCScreen extends Screen	{
 	 * @throws Exception
 	 */
 	public void create() throws Exception {
-		
+
 		// MCU create control Top HBox
 		Button cancelButton = new Button("Cancel");
 		cancelButton.setMinWidth(100);
 		cancelButton.setOnAction(e->clear());
+		cancelButton.setFocusTraversable(false);
 		Button createButton = new Button("Create");
 		createButton.setMinWidth(100);
 		createButton.setOnAction(e->createMUC());
+		createButton.setFocusTraversable(false);
 		Label screenNameLabel = new Label("New Group");
 		screenNameLabel.setMinWidth(100);
 		screenNameLabel.setAlignment(Pos.CENTER);
 		HBox topHbox = new HBox(
 				cancelButton,screenNameLabel,createButton);
 		topHbox.setAlignment(Pos.CENTER);
-		
+
 		// MCU User Input
 		mucName = new TextField();
 		mucName.setMinHeight(35);
 		mucName.setPromptText("Name this group chat");
-		
+		mucName.requestFocus();
+		mucName.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
+		mucName.setOnKeyPressed(e->{
+			if(e.getCode() == KeyCode.ENTER){
+				createMUC();
+			} else if(e.getCode() == KeyCode.ESCAPE){
+				clear();
+			}
+		});
+
 		// Contacts List
 		contacts = new ScrollPane();
+		contacts.setOnMouseClicked(e->mucName.requestFocus());
 		contactsContent = new VBox();
 		contactsContent.setPrefHeight(400);
 		contactsContent.setPrefWidth(400);
 		contacts.setContent(contactsContent);
 		contacts.setFitToWidth(true);
 		contacts.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		contacts.setMaxHeight(450);
+		contacts.setMinHeight(450);
 		contactDisplayList = new LinkedList<MUCContactDisplay>();
 		mucList = new ArrayList<AppUser>();
-		
+		this.setMinHeight(450);
+		this.setMaxHeight(450);
+
+		imageMessage = new Image(getClass().getResource(
+				"/resources/message.png").toURI().toString(),50,50,false,false);
+		imageNewMessage = new Image(getClass().getResource(
+				"/resources/message-new.png").toURI().toString(),50,50,false,false);
+
 		// VBox Container holds all Objects
 		VBox vbox = new VBox();
 		vbox.getChildren().addAll(topHbox, mucName, contacts);
@@ -97,7 +123,7 @@ public class CreateMUCScreen extends Screen	{
 		contactsContent.getChildren().clear();
 		contactDisplayList.clear();
 		mucList.clear();
-		
+
 		for(AppUser appUser : contacts){
 			MUCContactDisplay contact = new MUCContactDisplay(appUser);
 			contact.setOnSelectAppUser(selectAppUser->selectContact(selectAppUser));
@@ -105,7 +131,7 @@ public class CreateMUCScreen extends Screen	{
 			contactDisplayList.add(contact);
 		}
 	}
-	
+
 	/**
 	 * Clears create MUC
 	 */
@@ -113,7 +139,7 @@ public class CreateMUCScreen extends Screen	{
 		mucName.clear();
 		changeScreen.SetScreen(ScreenEnum.MUC);
 	}
-	
+
 	/**
 	 * Add or remove selected contacts to MUC List
 	 * @param selectAppUser
@@ -128,9 +154,9 @@ public class CreateMUCScreen extends Screen	{
 		}
 		System.out.println(selectAppUser.getJid());
 	}
-	
+
 	/**
-	 * Create MUC 
+	 * Create MUC
 	 */
 	public void createMUC() {
 		if (!mucList.isEmpty() && !mucName.getText().isEmpty()) {
@@ -139,11 +165,11 @@ public class CreateMUCScreen extends Screen	{
 			clear();
 		}
 	}
-	
+
 	public void setOnCreateMUCEvent(CreateMUCEvent createMUCEvent) {
 		this.createMUCEvent = createMUCEvent;
 	}
-	
+
 	public void setOnChangeScreen(ChangeScreen changeScreen){
 		this.changeScreen = changeScreen;
 	}

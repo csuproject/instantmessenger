@@ -1,4 +1,4 @@
-package connectionEventListener;
+package TeamOrange.instantmessenger.lambda;
 
 import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
 

@@ -1,52 +1,45 @@
 package TeamOrange.instantmessenger.views;
 
-import TeamOrange.instantmessenger.lambda.CreateChatWithUserNameEvent;
 import TeamOrange.instantmessenger.lambda.DeclineContactRequestEvent;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import TeamOrange.instantmessenger.lambda.AcceptContactRequestEvent;
 import TeamOrange.instantmessenger.lambda.AddContactEvent;
 import TeamOrange.instantmessenger.lambda.ChatWithContactEvent;
-import TeamOrange.instantmessenger.lambda.CreateAccountEvent;
-import TeamOrange.instantmessenger.models.AppChatSession;
 import TeamOrange.instantmessenger.models.AppJid;
-import TeamOrange.instantmessenger.models.AppMessage;
+import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
-import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.image.Image;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 public class HomeScreen extends Screen {
 
 	private TextField addContactWithUsernameInputTextField;
 	private Button addContactButton;
-	//chat list
 	private ScrollPane contacts;
-	private VBox contactsContent;
-
-	//private CreateChatWithUserNameEvent chatWithUserNameEvent;
+	private VBox contactsContent,mainVbox;
+	private HBox addContactInput;
 	private ChatWithContactEvent chatWithContactEvent;
-	private AddContactEvent addContactEvent;
+	private AddContactEvent addContactEvent, deleteContactEvent, blockContactEvent;
 	private AcceptContactRequestEvent acceptContactRequestEvent;
 	private DeclineContactRequestEvent declineContactRequestEvent;
+	private List<MUCContactDisplay> displayList;
+	private Image imageMessage,imageNewMessage,imageOnline,imageOffline;
+	private String contactInFocus;
 
-	public HomeScreen(){
+	public HomeScreen(GuiBase guiBase){
+		super(guiBase);
 		try {
 			create();
 		} catch (Exception e) {
@@ -56,38 +49,106 @@ public class HomeScreen extends Screen {
 
 	public void create() throws Exception {
 
-		VBox vbox = new VBox();
+		//////////////////////////////////////////////////////////////////////////////
+		//------------------------------Image Resources-----------------------------//
+		//////////////////////////////////////////////////////////////////////////////
+		imageMessage = new Image(getClass().getResource(
+				"/resources/message.png").toURI().toString(),50,50,false,false);
+		imageNewMessage = new Image(getClass().getResource(
+				"/resources/message-new.png").toURI().toString(),50,50,false,false);
+		imageOnline = new Image(getClass().getResource(
+				"/resources/accept-icon.png").toURI().toString(),25,25,false,false);
+		imageOffline = new Image(getClass().getResource(
+				"/resources/decline-icon.png").toURI().toString(),25,25,false,false);
 
-		//contacts
+		//////////////////////////////////////////////////////////////////////////////
+		//------------------------------Contact Display-----------------------------//
+		//////////////////////////////////////////////////////////////////////////////
 		contacts = new ScrollPane();
+		contacts.setFocusTraversable(false);
+		contacts.setOnMouseClicked((e)->addContactWithUsernameInputTextField.requestFocus());
+		contacts.setStyle("-fx-focus-color: transparent;");
 		contactsContent = new VBox();
-		contactsContent.setPrefHeight(400);
-		contactsContent.setPrefWidth(400);
+		contactsContent.setMaxHeight(500);
+		contactsContent.setPrefWidth(500);
 		contacts.setContent(contactsContent);
+		contacts.setMaxHeight(500);
+		contacts.setMinHeight(500);
+		contacts.setFitToWidth(true);
+		contacts.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		contacts.setHbarPolicy(ScrollBarPolicy.NEVER);
 
-		// add contact
+		//////////////////////////////////////////////////////////////////////////////
+		//------------------------------Add Contact Display-------------------------//
+		//////////////////////////////////////////////////////////////////////////////
 		Label addContactWithUsername = new Label("Add Contact: ");
 		addContactWithUsername.setFont(new Font(20));
 		addContactWithUsernameInputTextField = new TextField();
-		addContactWithUsernameInputTextField.setOnKeyPressed(keyEvent->addContactInputKeyPressed(keyEvent));
-		// restrict input to lower case
-		addContactWithUsernameInputTextField.textProperty().addListener(
-		  (observable, oldValue, newValue) -> {
-		    ((javafx.beans.property.StringProperty)observable).setValue(newValue.toLowerCase());
-		  }
-		);
+		addContactWithUsernameInputTextField.setOnKeyPressed(
+				keyEvent->addContactInputKeyPressed(keyEvent));
+		// Restrict input to lower case
+		addContactWithUsernameInputTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
 		addContactButton = new Button("Add");
 		addContactButton.setOnAction( e->addContactBtnPress() );
 		addContactButton.setFocusTraversable(false);
-		HBox addContactInput = new HBox();
+		addContactInput = new HBox();
 		addContactInput.getChildren().addAll(addContactWithUsername, addContactWithUsernameInputTextField, addContactButton);
 		addContactInput.setSpacing(10);
 
-		vbox.getChildren().addAll(contacts, addContactInput);
-		vbox.setVgrow(contacts, javafx.scene.layout.Priority.ALWAYS);
-		this.getChildren().add(vbox);
+		//////////////////////////////////////////////////////////////////////////////
+		//----------------------------------Screen----------------------------------//
+		//////////////////////////////////////////////////////////////////////////////
+		displayList = new ArrayList<MUCContactDisplay>();
+		mainVbox = new VBox();
+		mainVbox.getChildren().addAll(contacts, addContactInput);
+		mainVbox.setVgrow(contacts, javafx.scene.layout.Priority.ALWAYS);
+		this.getChildren().add(mainVbox);
 		this.setPrefHeight(600-50);
+	}
+
+	public void loadLater(HomeScreenInput input){
+		Platform.runLater(new Runnable(){
+			@Override public void run(){ load(input);}	});
+	}
+
+	public void load(HomeScreenInput input){
+		contactsContent.getChildren().clear();
+		displayList.clear();
+
+		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
+		for(AppJid jid : contactRequestList){
+			ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
+			contactsContent.getChildren().add(request);
+		}
+
+		LinkedList<AppUser> contactList = input.getContactList();
+		for(AppUser user : contactList){
+
+			MUCContactDisplay contactDisplay =
+					new MUCContactDisplay(user,imageMessage, imageNewMessage,
+							imageOnline, imageOffline);
+			contactDisplay.setOnSelectAppUser(e-> {
+					chatWithContactEvent.openChat(e.getJid().getLocal());
+					setContactInFocus(user.getName());
+			});
+			contactDisplay.setOnBlockAppUser(block->blockContactEvent.add(block));
+			contactDisplay.setOnDeletetAppUser(delete->deleteContactEvent.add(delete));
+
+			// Set Notification
+			if (user.getNotification())
+				contactDisplay.setNewMessageImage();
+			else
+				contactDisplay.setMessageImage();
+			// Set Presence
+			AppPresence presence = user.getPresence();
+			if (AppPresence.Type.AVAILIBLE == presence.getType())
+				contactDisplay.setOnline();
+			else
+				contactDisplay.setOffline();
+			// Add to HomeScreen List
+			displayList.add(contactDisplay);
+			contactsContent.getChildren().add(contactDisplay);
+		}
 	}
 
 	public void addContactInputKeyPressed(javafx.scene.input.KeyEvent keyEvent){
@@ -97,7 +158,6 @@ public class HomeScreen extends Screen {
 	}
 
 	public void chatButtonPress(String username) {
-		System.out.println("Chat with " + username);
 		chatWithContactEvent.openChat(username);
 	}
 
@@ -108,7 +168,6 @@ public class HomeScreen extends Screen {
 			alert("Username field must not be empty.", "empty username field", AlertType.WARNING);
 		} else {
 			this.addContactEvent.add(username);
-			alert("Contact-add request sent to user( \""+username+"\")", "request sent", AlertType.CONFIRMATION);
 		}
 	}
 
@@ -120,28 +179,20 @@ public class HomeScreen extends Screen {
 		declineContactRequestEvent.decline(username);
 	}
 
-	public void loadLater(HomeScreenInput input){
-		Platform.runLater(new Runnable(){
-			@Override public void run(){
-				load(input);
-			}
-		});
+	/**
+	 * Set contact in display focus
+	 * @param contactInFocus
+	 */
+	private void setContactInFocus(String contactInFocus) {
+		this.contactInFocus = contactInFocus;
 	}
 
-	public void load(HomeScreenInput input){
-		contactsContent.getChildren().clear();
-
-		LinkedList<AppJid> contactRequestList = input.getContactRequestList();
-		for(AppJid jid : contactRequestList){
-			ContactRequestDisplay request = new ContactRequestDisplay(this, jid.getLocal());
-			contactsContent.getChildren().add(request);
-		}
-
-		LinkedList<AppUser> contactList = input.getContactList();
-		for(AppUser user : contactList){
-			ContactDisplay contact = new ContactDisplay(this, user.getJid().getLocal());
-			contactsContent.getChildren().add(contact);
-		}
+	/**
+	 * Get contact in display focus
+	 * @return
+	 */
+	public String getContactInFocus() {
+		return contactInFocus;
 	}
 
 	public void setOnChatWithContactEvent(ChatWithContactEvent chatWithContactEvent){
@@ -160,6 +211,14 @@ public class HomeScreen extends Screen {
 		this.declineContactRequestEvent = declineContactRequestEvent;
 	}
 
+	public void setOnDeleteContactEvent(AddContactEvent deleteContactEvent){
+		this.deleteContactEvent = deleteContactEvent;
+	}
+
+	public void setOnBlockContactEvent(AddContactEvent blockContactEvent){
+		this.blockContactEvent = blockContactEvent;
+	}
+
 	public void alert(String message, String title, AlertType type){
 		Alert alert = new Alert(type);
 		alert.setTitle(title);
@@ -167,14 +226,5 @@ public class HomeScreen extends Screen {
 		alert.setContentText(message);
 		alert.showAndWait();
 	}
-
-//	public void chatWithBtnPress(){
-//		String userName = chatWithUserNameInputTextField.getText();
-//		chatWithUserNameEvent.chatWithUserName(userName);
-//	}
-//
-//	public void setOnChatWithUserNameEvent(CreateChatWithUserNameEvent chatWithUserNameEvent){
-//		this.chatWithUserNameEvent = chatWithUserNameEvent;
-//	}
 
 }

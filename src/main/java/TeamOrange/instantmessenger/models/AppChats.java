@@ -16,7 +16,7 @@ public class AppChats {
 	public AppChats(){
 		chats = new LinkedList<AppChatSession>();
 	}
-	
+
 	public void reset(){
 		chats.clear();
 		activeChat = null;
@@ -79,7 +79,7 @@ public class AppChats {
 	 */
 	public AppChatSession getChatWithContact(String username){
 		for(AppChatSession chat : chats){
-			if(chat.getPartner().getLocal().equals(username)){
+			if(chat.getPartner().getJid().getLocal().equals(username)){
 				return chat;
 			}
 		}

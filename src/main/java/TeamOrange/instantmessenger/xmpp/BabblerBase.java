@@ -6,17 +6,22 @@ import java.util.LinkedList;
 import java.util.List;
 
 import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
+import TeamOrange.instantmessenger.lambda.ConnectionEventListener;
+import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import TeamOrange.instantmessenger.lambda.LoginEvent;
+import TeamOrange.instantmessenger.lambda.RequestContactAddSentListener;
 import TeamOrange.instantmessenger.lambda.StatusEvent;
 import TeamOrange.instantmessenger.models.AppChatSession;
+import TeamOrange.instantmessenger.models.AppConnection;
+import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
+import TeamOrange.instantmessenger.models.AppMucBookmark;
 import TeamOrange.instantmessenger.models.AppOccupant;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.UserStatus;
-import connectionEventListener.ConnectionEventListener;
 import TeamOrange.instantmessenger.models.AppPresence.Type;
 import exceptions.ConfideAuthenticationException;
 import exceptions.ConfideFailedToConfigureChatRoomException;
@@ -38,8 +43,10 @@ import rocks.xmpp.core.stanza.model.Message;
 import rocks.xmpp.core.stanza.model.Presence;
 import rocks.xmpp.core.stream.StreamErrorException;
 import rocks.xmpp.core.stream.StreamNegotiationException;
+import rocks.xmpp.extensions.bookmarks.model.ChatRoomBookmark;
 import rocks.xmpp.extensions.disco.model.items.Item;
 import rocks.xmpp.extensions.muc.Occupant;
+import rocks.xmpp.extensions.ping.PingManager;
 import rocks.xmpp.extensions.register.RegistrationManager;
 import rocks.xmpp.extensions.register.model.Registration;
 import rocks.xmpp.im.chat.ChatSession;
@@ -47,19 +54,21 @@ import rocks.xmpp.im.roster.RosterEvent;
 import rocks.xmpp.im.roster.RosterManager;
 import rocks.xmpp.im.roster.model.Contact;
 import rocks.xmpp.im.subscription.PresenceManager;
+import rocks.xmpp.util.concurrent.AsyncResult;
 
 
 public class BabblerBase {
 
 	private String hostName;
 	private XmppClient client;
-	private AppJid appJid;
+	private AppContacts contacts;
 
 	// Listeners
 	private MessageListener messageListener;
 	private PresenceListener presenceListener;
 	private RosterListener rosterListener;
 	private ConnectionEventListener connectionEventListener;
+	private RequestContactAddSentListener requestContactAddSentListener;
 
 	// Managers
 	private MessageManager messageManager;
@@ -71,7 +80,7 @@ public class BabblerBase {
 
 	public BabblerBase(String hostName, MessageListener messageListener,
 			PresenceListener presenceListener, RosterListener rosterListener,
-			ConnectionEventListener connectionEventListener) {
+			ConnectionEventListener connectionEventListener, AppContacts contacts) {
 		this.hostName = hostName;
 
 		this.messageListener = messageListener;
@@ -79,11 +88,17 @@ public class BabblerBase {
 		this.rosterListener = rosterListener;
 		this.connectionEventListener = connectionEventListener;
 
-		this.messageManager = new MessageManager();
+		this.messageManager = new MessageManager(this);
 		this.accountManager = new AccountManager();
 		this.contactManager = new ContactManager();
 		this.connectionManager = new ConnectionManager();
-		this.mucManager = new MucManager();
+		this.mucManager = new MucManager(contacts);
+
+		this.contacts = contacts;
+	}
+
+	public void setOnRequestContactAddSent(RequestContactAddSentListener requestContactAddSentListener){
+		this.requestContactAddSentListener = requestContactAddSentListener;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -96,6 +111,10 @@ public class BabblerBase {
 	 */
 	public void requestContactAdd(AppJid to){
 		messageManager.requestContactAdd(client, to);
+	}
+
+	public void requestJoinMuc(AppJid to, String roomID){
+		messageManager.requestJoinMuc(client, to, roomID);
 	}
 
 	/**
@@ -115,7 +134,7 @@ public class BabblerBase {
 	public AppChatSession createChatSession(AppJid to){
 		ChatSession chatSession = messageManager.createChatSession(client, to);
 		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
-		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
+		AppChatSession appChatSession = new AppChatSession(xmppChatSession, contacts.getContactWithUsername(xmppChatSession.getChatPartner().getLocal()));
 		return appChatSession;
 	}
 
@@ -128,7 +147,7 @@ public class BabblerBase {
 	public AppChatSession createChatSessionWithGivenThread(AppJid to, String thread){
 		ChatSession chatSession = messageManager.createChatSessionWithGivenThread(client, to, thread);
 		XmppChatSession xmppChatSession = new XmppChatSession(chatSession);
-		AppChatSession appChatSession = new AppChatSession(xmppChatSession);
+		AppChatSession appChatSession = new AppChatSession(xmppChatSession, contacts.getContactWithUsername(xmppChatSession.getChatPartner().getLocal()));
 		return appChatSession;
 	}
 
@@ -143,12 +162,36 @@ public class BabblerBase {
 		client = connectionManager.setupConnection(hostName, this);
 	}
 
+	public boolean isLoggedIn(){
+		return client.isAuthenticated();
+	}
+
 	/**
 	 * Actually connects
 	 * @throws ConfideXmppException
 	 */
 	public void connect() throws ConfideXmppException {
 		connectionManager.connect(client);
+	}
+
+//	public boolean isConnected(){
+//		return client.getActiveConnection() != null && connectionManager.getConnectionState(client) == AppConnection.CONNECTED;
+//	}
+
+	public boolean isConnected(){
+		if(isLoggedIn()){
+			PingManager pingManager = client.getManager(PingManager.class);
+			AsyncResult<Boolean> result = pingManager.pingServer();
+			try {
+				Boolean r = result.getResult();
+				if(r == Boolean.FALSE){
+					return false;
+				}
+			} catch (XmppException e) {
+				return false;
+			}
+		}
+		return client.getActiveConnection() != null && connectionManager.getConnectionState(client) == AppConnection.CONNECTED;
 	}
 
 	/**
@@ -177,25 +220,29 @@ public class BabblerBase {
 	public AppJid login(String userName, String password) throws ConfideXmppException {
 		Jid jid = accountManager.login(client, userName, password);
 		AppJid appJid = new AppJid(jid.getLocal(), jid.getDomain(), jid.getResource());
-		this.appJid = appJid;
 		return appJid;
 	}
 
 
-//	/**
-//	 * logs out by logging in anonymously
-//	 * @throws ConfideXmppException
-//	 */
-//	public void logout() throws ConfideXmppException {
-//		accountManager.logout(client);
-//	}
+	/**
+	 * logs in anonymously
+	 * @throws ConfideXmppException
+	 */
+	public void loginAnonymously() {
+		try {
+			client.loginAnonymously();
+		} catch (XmppException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Create User on Server
 	 * @param userName
 	 * @param password
+	 * @throws XmppException
 	 */
-	public void createUser(String userName, String password){
+	public void createUser(String userName, String password) throws XmppException{
 		accountManager.createUser(client, userName, password);
 	}
 
@@ -282,11 +329,9 @@ public class BabblerBase {
 
 	/*public void getEnteredRooms(AppJid appJid){
 		Jid jid = JidUtilities.jidFromAppJid(appJid);
-		System.out.println(jid);
 		List<Item> enteredRooms = mucManager.getEnteredRooms(client, jid);
 		if(enteredRooms != null){
 		for(Item i : enteredRooms){
-			System.out.println("entered room( id: " + i.getId() + "  name: " + i.getName() + " )\n" );
 		}
 		}
 	}*/
@@ -295,6 +340,29 @@ public class BabblerBase {
 //		Jid roomJid = Jid.of(roomID + "@conference.teamorange.space");
 //		mucManager.getMembers(client, roomJid, nick);
 //	}
+
+	public void addChatRoomBookmark(String name, String nick){
+		Jid roomJid = Jid.of(name + "@conference.teamorange.space");
+		mucManager.addChatRoomBookmark(client, name, roomJid, nick);
+	}
+
+	public void removeChatRoomBookmark(String roomName, String nick){
+		Jid roomJid = Jid.of(roomName + "@conference.teamorange.space");
+		mucManager.removeChatRoomBookmark(client, roomJid);
+	}
+
+	public LinkedList<AppMucBookmark> getChatRoomBookmarks(){
+		List<ChatRoomBookmark> bookmarks = mucManager.getChatRoomBookmarks(client);
+		LinkedList<AppMucBookmark> appBookmarks = new LinkedList();
+		if(bookmarks != null){
+			for(ChatRoomBookmark bm : bookmarks){
+				AppJid room = JidUtilities.appJidFromJid(bm.getRoom());
+				AppMucBookmark appBm = new AppMucBookmark(bm.getNick(), room );
+				appBookmarks.add(appBm);
+			}
+		}
+		return appBookmarks;
+	}
 
 	/**
 	 * Gets a LinkedList of Occupants of the chat room, that is people currently in the chat room.
@@ -325,9 +393,9 @@ public class BabblerBase {
 	 * @throws ConfideFailedToConfigureChatRoomException
 	 * @throws ConfideFailedToEnterChatRoomException
 	 */
-	public AppMuc createAndOrEnterRoom(String roomID, String nickname) throws ConfideFailedToEnterChatRoomException, ConfideFailedToConfigureChatRoomException{
+	public AppMuc createAndOrEnterRoom(String roomID, String nickname, GetMUCEvent messageEvent) throws ConfideFailedToEnterChatRoomException, ConfideFailedToConfigureChatRoomException{
 		Jid roomJid = Jid.of(roomID + "@conference.teamorange.space");
-		AppMuc muc = mucManager.createAndOrEnterRoom(client, this, roomJid, nickname);
+		AppMuc muc = mucManager.createAndOrEnterRoom(client, this, roomJid, nickname, messageEvent);
 		return muc;
 	}
 
@@ -402,14 +470,13 @@ public class BabblerBase {
 	    } else if(presenceType == Presence.Type.UNAVAILABLE){
 	    	appPresenceType = AppPresence.Type.UNAVAILIVLE;
 	    }
-	    System.out.println("BabblerBase - newPresence()");
 	    presenceListener.presence(fromJid, appPresenceType);
 
 	    // Subscribe
-//	    if (presence.getType() == Presence.Type.SUBSCRIBE) {
-//	    	client.getManager(PresenceManager.class).approveSubscription(presence.getFrom());
-//	    }
-//
+	    if (presence.getType() == Presence.Type.SUBSCRIBE) {
+	    	client.getManager(PresenceManager.class).approveSubscription(presence.getFrom());
+	    }
+
 //	    if (contact != null) {
 //	    	statusEvent.status(new UserStatus(presence.getId(),presence.getStatus()));
 //	    }
@@ -461,6 +528,11 @@ public class BabblerBase {
 			} break;
 		}
 		connectionEventListener.connectionEvent(type);
+	}
+
+	public void onRequestContactAddSent(Message message){
+		AppJid to = JidUtilities.appJidFromJid(message.getTo());
+		requestContactAddSentListener.contactAddRequestSent(to);
 	}
 
 }
