@@ -219,12 +219,4 @@ public class HomeScreen extends Screen {
 		this.blockContactEvent = blockContactEvent;
 	}
 
-	public void alert(String message, String title, AlertType type){
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(message);
-		alert.showAndWait();
-	}
-
 }

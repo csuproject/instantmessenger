@@ -40,6 +40,8 @@ import TeamOrange.instantmessenger.views.StatusDisplay;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideXmppException;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class App {
 	// constants for messages

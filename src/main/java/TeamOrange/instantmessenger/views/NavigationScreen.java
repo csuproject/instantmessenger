@@ -39,7 +39,7 @@ public class NavigationScreen extends Screen {
 				"/resources/message-new.png").toURI().toString(),50,50,false,false);
 		Image imageLogout = new Image(getClass().getResource(
 				"/resources/logout-icon.png").toURI().toString(),25,25,false,false);
-		contactButton = new CustomButton("Chats");
+		contactButton = new CustomButton("Contacts");
 
 		contactButton.setGraphic(new ImageView(imageMessage));
 		contactButton.setMinSize(135, 60);
