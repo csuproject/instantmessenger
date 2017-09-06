@@ -66,18 +66,6 @@ import resources.GroupList;
 		public void create() throws Exception {
 
 			//////////////////////////////////////////////////////////////////////////////
-			//-------------------------------Resources----------------------------------//
-			//////////////////////////////////////////////////////////////////////////////
-			Image imageAccept = new Image(getClass().getResource(
-					"/resources/accept-icon.png").toURI().toString(),25,25,false,false);
-			Image imageDecline = new Image(getClass().getResource(
-					"/resources/decline-icon.png").toURI().toString(),25,25,false,false);
-			imageMessage = new Image(getClass().getResource(
-					"/resources/message.png").toURI().toString(),50,50,false,false);
-			imageNewMessage = new Image(getClass().getResource(
-					"/resources/message-new.png").toURI().toString(),50,50,false,false);
-
-			//////////////////////////////////////////////////////////////////////////////
 			//-------------------------------Top Control Display------------------------//
 			//////////////////////////////////////////////////////////////////////////////
 			Button createGroupButton = new Button("Create Group");
@@ -105,12 +93,12 @@ import resources.GroupList;
 				} else if(ke.getCode() == KeyCode.ESCAPE){	closeAddGroupBox();	}	});
 			Button acceptAddGroupButton = new Button();
 			acceptAddGroupButton.setMaxWidth(30);
-			acceptAddGroupButton.setGraphic(new ImageView(imageAccept));
+			acceptAddGroupButton.setGraphic( GuiBase.IMAGE_ACCEPT );
 			acceptAddGroupButton.setOnAction(e->addGroup());
 			acceptAddGroupButton.setFocusTraversable(false);
 			Button declineAddGroupButton = new Button();
 			declineAddGroupButton.setMaxWidth(20);
-			declineAddGroupButton.setGraphic(new ImageView(imageDecline));
+			declineAddGroupButton.setGraphic( GuiBase.IMAGE_DECLINE );
 			declineAddGroupButton.setOnAction(e->closeAddGroupBox());
 			declineAddGroupButton.setFocusTraversable(false);
 			addGroupHBox = new HBox(

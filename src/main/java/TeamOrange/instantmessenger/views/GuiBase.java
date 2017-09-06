@@ -5,6 +5,8 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -15,17 +17,33 @@ import javafx.stage.Stage;
  *
  */
 public class GuiBase extends Application {
+
+	public static ImageView IMAGE_ACCEPT;
+	public static ImageView IMAGE_DECLINE;
+	public static ImageView IMAGE_MESSAGE;
+	public static ImageView IMAGE_NEW_MESSAGE;
+
 	private Stage stage;
 	private App app;
 	BorderPane borderpane;
 	Scene scene;
 	Button button;
+
 	public static void main(String[] args){
 		launch(args);
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		IMAGE_ACCEPT = new ImageView( new Image(getClass().getResource(
+				"/resources/accept-icon.png").toURI().toString(),25,25,false,false) );
+		IMAGE_DECLINE = new ImageView( new Image(getClass().getResource(
+				"/resources/decline-icon.png").toURI().toString(),25,25,false,false) );
+		IMAGE_MESSAGE = new ImageView( new Image(getClass().getResource(
+				"/resources/message.png").toURI().toString(),50,50,false,false) );
+		IMAGE_NEW_MESSAGE = new ImageView( new Image( getClass().getResource(
+				"/resources/message-new.png").toURI().toString(),50,50,false,false) );
+
 		borderpane = new BorderPane();
 		this.stage = primaryStage;
 		stage.setTitle("Confide");

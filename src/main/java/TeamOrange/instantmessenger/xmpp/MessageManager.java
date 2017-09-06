@@ -44,6 +44,15 @@ public class MessageManager {
 //		result.onSent(m->babblerBase.onRequestContactAddSent(m));
 	}
 
+	public void requestDeleteFromContacts(XmppClient client, AppJid toAppJid){
+		Message message = new Message();
+		message.setType(Message.Type.NORMAL);
+		message.setBody(App.REQUEST_DELETE_FROM_CONTACTS);
+		Jid toJid = JidUtilities.jidFromAppJid(toAppJid);
+		message.setTo(toJid);
+		SendTask<Message> result = client.sendMessage(message);
+	}
+
 //	// TODO: messages never seem to be acknowledged
 //	public void onRequestContactAddAcknowledge(Message message){
 //		// contact add requested to message.getTo()

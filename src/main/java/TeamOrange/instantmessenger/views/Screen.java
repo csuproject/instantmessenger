@@ -3,8 +3,12 @@ package TeamOrange.instantmessenger.views;
 import java.net.URISyntaxException;
 
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.AudioClip;
@@ -47,6 +51,10 @@ public abstract class Screen extends StackPane {
 
 	public void alert(String message, String title, AlertType type){
 		Alert alert = new Alert(type);
+		if(type == AlertType.CONFIRMATION){
+			alert.setGraphic( GuiBase.IMAGE_ACCEPT );
+		}
+		alert.getButtonTypes().removeAll(ButtonType.CANCEL);
 		alert.setTitle(title);
 		alert.setHeaderText(null);
 		alert.setContentText(message);

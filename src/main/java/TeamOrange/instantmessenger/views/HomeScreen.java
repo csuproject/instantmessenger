@@ -131,8 +131,8 @@ public class HomeScreen extends Screen {
 					chatWithContactEvent.openChat(e.getJid().getLocal());
 					setContactInFocus(user.getName());
 			});
-			contactDisplay.setOnBlockAppUser(block->blockContactEvent.add(block));
-			contactDisplay.setOnDeletetAppUser(delete->deleteContactEvent.add(delete));
+			contactDisplay.setOnBlockAppUser( userName->blockContactEvent.add(userName) );
+			contactDisplay.setOnDeletetAppUser( userName->deleteContactEvent.add(userName) );
 
 			// Set Notification
 			if (user.getNotification())
@@ -217,14 +217,6 @@ public class HomeScreen extends Screen {
 
 	public void setOnBlockContactEvent(AddContactEvent blockContactEvent){
 		this.blockContactEvent = blockContactEvent;
-	}
-
-	public void alert(String message, String title, AlertType type){
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(message);
-		alert.showAndWait();
 	}
 
 }
