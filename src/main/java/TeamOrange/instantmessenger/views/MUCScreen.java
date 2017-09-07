@@ -15,6 +15,7 @@ import java.util.List;
 import TeamOrange.instantmessenger.lambda.AcceptMucRequestEvent;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.DeclineMucRequestEvent;
+import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -33,22 +34,16 @@ import resources.GroupList;
 		private List<MUCContactDisplay> displayList;
 		private ScrollPane mucScrollPane;
 		private VBox mucVBox;
-//<<<<<<< HEAD
 		private MUCRoomEvent addMUCEvent;
-//=======
-//		private GetMUCEvent getMUCEvent;
-//		private AddMUCEvent addMUCEvent;
 		private DeclineMucRequestEvent declineMucRequestEvent;
 		private AcceptMucRequestEvent acceptMucRequestEvent;
-//>>>>>>> refs/remotes/origin/c4-ft-muc-improvement
 		private VBox screenVBox;
 		private HBox addGroupHBox;
 		private HBox topHBox;
 		private TextField addGroupTextField;
 		private Image imageMessage;
 		private Image imageNewMessage;
-		private String mucInFocus;
-		private MUCRoomEvent openMUCEvent;
+		private MUCRoomEvent openMUCEvent, deleteMUCEvent, inviteMUCEvent;
 
 		public MUCScreen(GuiBase guiBase){
 			super(guiBase);
@@ -68,15 +63,11 @@ import resources.GroupList;
 			//////////////////////////////////////////////////////////////////////////////
 			//-------------------------------Top Control Display------------------------//
 			//////////////////////////////////////////////////////////////////////////////
-			Button createGroupButton = new Button("Create Group");
-			createGroupButton.setMinWidth(100);
-			createGroupButton.setOnAction(e->changeScreen.SetScreen(ScreenEnum.CREATEMUC));
-			createGroupButton.setFocusTraversable(false);
 			Button addGroupButton = new Button("Add Group");
 			addGroupButton.setMinWidth(100);
 			addGroupButton.setOnAction(e->openAddGroupBox());
 			addGroupButton.setFocusTraversable(false);
-			topHBox = new HBox(addGroupButton,createGroupButton);
+			topHBox = new HBox(addGroupButton);
 			topHBox.setAlignment(Pos.CENTER);
 
 			//////////////////////////////////////////////////////////////////////////////
@@ -139,41 +130,6 @@ import resources.GroupList;
 			});
 		}
 
-		private void writeGroupList(GroupList getGroupList) {
-		      try {
-		          FileOutputStream fileOut =
-		          new FileOutputStream("./GroupList.ser");
-		          ObjectOutputStream out = new ObjectOutputStream(fileOut);
-		          out.writeObject(getGroupList);
-		          out.close();
-		          fileOut.close();
-		          System.out.printf("Serialized data is saved in GroupList.ser");
-		       }catch(IOException i) {
-		          i.printStackTrace();
-		       }
-		}
-
-		private void readGroupList() {
-			GroupList getGroupList = null;
-		     try {
-		         FileInputStream fileIn = new FileInputStream("./GroupList.ser");
-		         ObjectInputStream in = new ObjectInputStream(fileIn);
-		         getGroupList = (GroupList) in.readObject();
-		         in.close();
-		         fileIn.close();
-		      }catch(IOException i) {
-		         i.printStackTrace();
-		         getGroupList = new GroupList();
-		    	  writeGroupList(getGroupList);
-		         return;
-		      }catch(ClassNotFoundException c) {
-		         System.out.println("GroupList class not found");
-		         c.printStackTrace();
-		    	  writeGroupList(getGroupList);
-		         return;
-		      }
-		}
-
 		public void load(MUCScreenInput input){
 			mucVBox.getChildren().clear();
 			displayList.clear();
@@ -185,10 +141,15 @@ import resources.GroupList;
 						new MUCContactDisplay(muc,imageMessage, imageNewMessage);
 
 				// Open MUC
-				mucDisplay.setOnGetMUCEvent(e->{
+				mucDisplay.setOnOpenMUCEvent(e->{
 					muc.setNotification(false);
-					openMUCEvent.getRoomID(e.getRoomID());
-				});
+					openMUCEvent.getRoomID(e.getRoomID());	});
+				// Delete MUC
+				mucDisplay.setOnInviteMUCEvent(
+						invite->inviteMUCEvent.getRoomID(invite.getRoomID()));
+				// Invite MUC
+				mucDisplay.setOnDeleteMUCEvent(
+						delete->deleteMUCEvent.getRoomID(delete.getRoomID()));
 
 				// Set Notification
 				if (muc.getNotification())
@@ -237,6 +198,14 @@ import resources.GroupList;
 		public void setOnOpenMUC(MUCRoomEvent openMUCEvent) {
 			this.openMUCEvent = openMUCEvent;
 		}
+		
+		public void setOnInviteMUCEvent (MUCRoomEvent inviteMUCEvent) {
+			this.inviteMUCEvent = inviteMUCEvent;
+		}
+		
+		public void setOnDeleteMUCEvent (MUCRoomEvent deleteMUCEvent) {
+			this.deleteMUCEvent = deleteMUCEvent;
+		}
 
 		public void setOnAddMUC(MUCRoomEvent addMUCEvent) {
 			this.addMUCEvent = addMUCEvent;
@@ -253,16 +222,6 @@ import resources.GroupList;
 		public void setOnChangeScreen(ChangeScreen changeScreen){
 			this.changeScreen = changeScreen;
 		}
-
-//		public void reset(){
-//			Platform.runLater(new Runnable(){
-//				@Override public void run(){
-//					mucList.clear();
-//					displayList.clear();
-//					mucVBox.getChildren().clear();
-//				}
-//			});
-//		}
 
 		public void acceptMucRequestButtonPress(String roomID, String from){
 			this.acceptMucRequestEvent.accept(roomID, from);

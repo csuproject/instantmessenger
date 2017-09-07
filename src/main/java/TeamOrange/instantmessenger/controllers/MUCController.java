@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
+import TeamOrange.instantmessenger.lambda.MUCRoomEvent;
 import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
@@ -41,6 +42,7 @@ public class MUCController {
 	// lambdas
 	private ChangeScreen changeScreen;
 	private GetMUCEvent notifyMUCEvent;
+	private MUCRoomEvent inviteMUCEvent;
 
 	public MUCController(BabblerBase babblerBase, ChatScreen chatScreen, NavigationScreen navigationScreen,
 			MUCScreen mucScreen, CreateMUCScreen createMUCScreen, AppContacts contacts, AppMucList mucs,
@@ -60,7 +62,8 @@ public class MUCController {
 		mucScreen.setOnAddMUC(addMUCEvent->actuallyCreateMUC(addMUCEvent));
 		mucScreen.setOnAcceptMucRequest( (roomID, from)->acceptMucRequest(roomID, from));
 		mucScreen.setOnDeclineMucRequest( (roomID, from)->declineMucRequest(roomID, from));
-
+		mucScreen.setOnInviteMUCEvent(invite->inviteMUCEvent.getRoomID(invite));
+		//mucScreen.setOnDeleteMUCEvent(deleteMUCEvent);
 		createMUCScreen.setOnChangeScreen(screen->changeScreen.SetScreen(screen));
 		createMUCScreen.setOnCreateMUCEvent(createMUCEvent->createMUC(createMUCEvent));
 
@@ -178,6 +181,10 @@ public class MUCController {
 	public void declineMucRequest(String roomID, String from){
 		mucs.removeMucRequestsWithRoomID(roomID);
 		mucScreen.loadLater( new MUCScreenInput(mucs) );
+	}
+	
+	public void setOnInviteMUCEvent(MUCRoomEvent inviteMUCEvent) {
+		this.inviteMUCEvent = inviteMUCEvent;
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){

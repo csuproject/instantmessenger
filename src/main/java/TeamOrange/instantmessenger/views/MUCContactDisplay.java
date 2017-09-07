@@ -27,8 +27,9 @@ public class MUCContactDisplay extends HBox {
 	private SelectAppUser openAppUser;
 	private AddContactEvent deleteContact;
 	private AddContactEvent blockContact;
-	private GetMUCEvent getMUCEvent;
-	private Button deleteButton, blockButton;
+	private GetMUCEvent openMUCEvent, deleteMUCEvent, inviteMUCEvent;
+	private Button deleteButton, blockButton, 
+	inviteMUCButton, deleteMUCButton;
 	public AppUser appUser;
 	public AppMuc appMUC;
 	private Image imageMessage, imageNewMessage,
@@ -42,8 +43,6 @@ public class MUCContactDisplay extends HBox {
 		this.username = appUser.getJid().getLocal();
 		this.appUser = appUser;
 		usernameLabel = new Label(username);
-
-		//usernameLabel.setGraphic(new ImageView(imageMessage));
 		usernameLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
 
 		this.setStyle("-fx-padding: 5;" +
@@ -136,7 +135,12 @@ public class MUCContactDisplay extends HBox {
 		}
 	}
 
-	// TODO: Constructor for MUCS ??
+	/**
+	 * MUC Display
+	 * @param appMUC
+	 * @param imageMessage
+	 * @param imageNewMessage
+	 */
 	public MUCContactDisplay(AppMuc appMUC, Image imageMessage, Image imageNewMessage){
 		this.imageMessage = imageMessage;
 		this.imageNewMessage = imageNewMessage;
@@ -145,7 +149,19 @@ public class MUCContactDisplay extends HBox {
 		usernameLabel = new Label(username);
 		usernameLabel.setGraphic(new ImageView(imageMessage));
 		usernameLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-
+		HBox usernameHBox = new HBox(usernameLabel);
+		usernameHBox.setAlignment(Pos.CENTER);
+		inviteMUCButton = new Button("Invite");
+		inviteMUCButton.setOnAction(e->inviteMUCEvent.getMUC(this.appMUC));
+		inviteMUCButton.setMinHeight(35);
+		inviteMUCButton.setFocusTraversable(false);
+		deleteMUCButton = new Button("Delete");
+		deleteMUCButton.setOnAction(e->deleteMUCEvent.getMUC(this.appMUC));
+		deleteMUCButton.setMinHeight(35);
+		deleteMUCButton.setFocusTraversable(false);
+		HBox buttonHBox = new HBox(inviteMUCButton,deleteMUCButton);
+		buttonHBox.setAlignment(Pos.CENTER);
+		
 		this.setStyle("-fx-padding: 5;" +
                 "-fx-border-style: solid inside;" +
                 "-fx-border-width: 2;" +
@@ -155,9 +171,12 @@ public class MUCContactDisplay extends HBox {
 		this.setMaxWidth(380);
 		this.setOnMouseClicked(e-> {
 			usernameLabel.setGraphic(new ImageView(this.imageMessage));
-			getMUCEvent.getMUC(this.appMUC);});
+			openMUCEvent.getMUC(this.appMUC);});
 
-		this.getChildren().addAll(usernameLabel);
+		HBox mainHBox = new HBox(usernameHBox, buttonHBox);
+		mainHBox.setSpacing(30);
+		mainHBox.setAlignment(Pos.CENTER);
+		this.getChildren().addAll(mainHBox);
 	}
 
 	/**
@@ -206,14 +225,18 @@ public class MUCContactDisplay extends HBox {
 		this.deleteContact = blockContact;
 	}
 
-	/**
-	 * Set on GetMUCEvent Event
-	 * @param getMUCEvent
-	 */
-	public void setOnGetMUCEvent (GetMUCEvent getMUCEvent) {
-		this.getMUCEvent = getMUCEvent;
+	public void setOnOpenMUCEvent (GetMUCEvent openMUCEvent) {
+		this.openMUCEvent = openMUCEvent;
 	}
-
+	
+	public void setOnInviteMUCEvent (GetMUCEvent inviteMUCEvent) {
+		this.inviteMUCEvent = inviteMUCEvent;
+	}
+	
+	public void setOnDeleteMUCEvent (GetMUCEvent deleteMUCEvent) {
+		this.deleteMUCEvent = deleteMUCEvent;
+	}
+	
 	public AppUser getAppUser() {
 		return this.appUser;
 	}

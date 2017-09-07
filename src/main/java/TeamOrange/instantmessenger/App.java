@@ -147,6 +147,7 @@ public class App {
 		mucController.setOnChangeScreen(screen->setScreen(screen));
 		mucController.setOnNotifcationEvent(
 				notifyMUCEvent->notifyAndLoadMUCOnEvent(notifyMUCEvent));
+		mucController.setOnInviteMUCEvent(invite->setScreenCreateMUC(invite));
 
 		loginController = new LoginController(babblerBase, accountScreen, mucScreen,
 				contacts, mucs, connectionController, mucController);
@@ -305,6 +306,19 @@ public class App {
 				guiBase.setScreenLater(statusDisplay, chatScreen,navigationScreen);
 			} break;
     	}
+    }
+    
+    /**
+     * Open CreateMUCScreen with RoomID 
+     * @param roomID
+     */
+    public void setScreenCreateMUC(String roomID) {
+    	this.currentScreen = ScreenEnum.CREATEMUC;
+		statusDisplay.setScreenViewLater(currentScreen);
+		statusDisplay.setUserNameLater(contacts.getSelfName());
+		HomeScreenInput input = new HomeScreenInput(contacts);
+		createMUCScreen.load(roomID, input.getContactList());
+		guiBase.setScreenLater(statusDisplay,createMUCScreen,navigationScreen);
     }
 
     /**
