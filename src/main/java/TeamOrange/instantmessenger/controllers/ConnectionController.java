@@ -10,7 +10,6 @@ import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.MUCChat;
 import TeamOrange.instantmessenger.models.tasks.AppCreateAccountTask;
-import TeamOrange.instantmessenger.models.tasks.AppCreateMucWithMucChatTask;
 import TeamOrange.instantmessenger.models.tasks.AppCreateMucWithRoomIDTask;
 import TeamOrange.instantmessenger.models.tasks.AppLoginTask;
 import TeamOrange.instantmessenger.models.tasks.AppReplyToContactRequestTask;
@@ -55,10 +54,6 @@ public class ConnectionController {
 
 	public void addSendChatSessionMessageTask(ChatController controller, AppChatSessionMessage message, String userName){
 		tasks.add(new AppSendChatSessionMessageTask(controller, message, userName));
-	}
-
-	public void addCreateMucWithMucChatTask(MUCController controller, MUCChat mucChat){
-		tasks.add(new AppCreateMucWithMucChatTask(controller, mucChat));
 	}
 
 	public void addCreateMucWithRoomIDTask(MUCController controller, String roomID){

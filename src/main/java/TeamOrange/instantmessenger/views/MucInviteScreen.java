@@ -6,6 +6,8 @@ import java.util.List;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.CreateMUCEvent;
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
+import TeamOrange.instantmessenger.lambda.InviteToMucEvent;
+import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.MUCChat;
 import javafx.application.Platform;
@@ -19,20 +21,20 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class CreateMUCScreen extends Screen	{
+public class MucInviteScreen extends Screen	{
 
 	private ScrollPane contacts;
 	private VBox contactsContent, mainVBox;
 	private HBox topHbox, inviteHBox;
 	private ChangeScreen changeScreen;
-	private TextField mucName;
+	private Label mucName;
 	private LinkedList<MUCContactDisplay> contactDisplayList;
 	private List<AppUser> mucList;
-	private CreateMUCEvent createMUCEvent,inviteMUCEvent;
 	private Image imageMessage;
 	private Image imageNewMessage;
+	private InviteToMucEvent inviteToMucEvent;
 
-	public CreateMUCScreen(GuiBase guiBase){
+	public MucInviteScreen(GuiBase guiBase){
 		super(guiBase);
 		try {
 			create();
@@ -56,11 +58,7 @@ public class CreateMUCScreen extends Screen	{
 		cancelInviteButton.setMinWidth(100);
 		cancelInviteButton.setOnAction(e->clear());
 		cancelInviteButton.setFocusTraversable(false);
-		Button createButton = new Button("Create");
-		createButton.setMinWidth(100);
-		createButton.setOnAction(e->createMUC());
-		createButton.setFocusTraversable(false);
-		Button inviteButton = new Button("Send");   
+		Button inviteButton = new Button("Send");
 		inviteButton.setMinWidth(100);
 		inviteButton.setOnAction(e->invite());
 		inviteButton.setFocusTraversable(false);
@@ -71,24 +69,15 @@ public class CreateMUCScreen extends Screen	{
 		inviteLabel.setMinWidth(100);
 		inviteLabel.setAlignment(Pos.CENTER);
 		topHbox = new HBox(
-				cancelButton,screenNameLabel,createButton);
+				cancelButton,screenNameLabel);
 		topHbox.setAlignment(Pos.CENTER);
 		inviteHBox = new HBox(cancelInviteButton,inviteLabel,inviteButton);
 		inviteHBox.setAlignment(Pos.CENTER);
 
 		// MCU User Input
-		mucName = new TextField();
+		mucName = new Label();
 		mucName.setMinHeight(35);
-		mucName.setPromptText("Name this group chat");
-		mucName.requestFocus();
-		mucName.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
-		mucName.setOnKeyPressed(e->{
-			if(e.getCode() == KeyCode.ENTER){
-				createMUC();
-			} else if(e.getCode() == KeyCode.ESCAPE){
-				clear();
-			}
-		});
+		mucName.setAlignment(Pos.CENTER);
 
 		// Contacts List
 		contacts = new ScrollPane();
@@ -111,55 +100,53 @@ public class CreateMUCScreen extends Screen	{
 		imageNewMessage = new Image(getClass().getResource(
 				"/resources/message-new.png").toURI().toString(),50,50,false,false);
 
-		mucName.setEditable(true);
 		// VBox Container holds all Objects
 		mainVBox = new VBox();
 		mainVBox.getChildren().addAll(topHbox, mucName, contacts);
 		this.getChildren().add(mainVBox);
 	}
 
-	public void loadLater(LinkedList<AppUser> contactList){
-		Platform.runLater(new Runnable(){
-			@Override public void run(){
-				load(contactList);
-			}
-		});
-	}
+//	/**
+//	 * Load Contacts
+//	 * @param contacts
+//	 */
+//	public void load(LinkedList<AppUser> appUsers){
+//		mucName.clear();
+//		contactsContent.getChildren().clear();
+//		contactDisplayList.clear();
+//		mucList.clear();
+//
+//		for(AppUser appUser : appUsers){
+//			MUCContactDisplay contact = new MUCContactDisplay(appUser);
+//			contact.setOnSelectAppUser(selectAppUser->selectContact(selectAppUser));
+//			contactsContent.getChildren().add(contact);
+//			contactDisplayList.add(contact);
+//		}
+//		mainVBox.getChildren().clear();
+//		mainVBox.getChildren().addAll(topHbox, mucName, contacts);
+//	}
 
-	/**
-	 * Load Contacts
-	 * @param contacts
-	 */
-	public void load(LinkedList<AppUser> appUsers){
-		mucName.clear();
+	@Override
+	public void load(ScreenInput input) {
+		MucInviteScreenInput mucInviteScreenInput = (MucInviteScreenInput)input;
+		AppMuc muc = mucInviteScreenInput.getMucInvitingTo();
+		String roomID = muc.getRoomID();
+		List<AppUser> appUsers = mucInviteScreenInput.getContacts();
+
+		mucName.setText("Invite contacts to the group \""+roomID+"\"");
 		contactsContent.getChildren().clear();
 		contactDisplayList.clear();
 		mucList.clear();
 
+		System.out.println("mucInviteScreenInput.getContacts(): " + appUsers.size());
 		for(AppUser appUser : appUsers){
+			System.out.println("user: " + appUser.getName());
 			MUCContactDisplay contact = new MUCContactDisplay(appUser);
 			contact.setOnSelectAppUser(selectAppUser->selectContact(selectAppUser));
 			contactsContent.getChildren().add(contact);
 			contactDisplayList.add(contact);
 		}
-		mainVBox.getChildren().clear();
-		mainVBox.getChildren().addAll(topHbox, mucName, contacts);
-	}
-	
-	public void load(String roomID, LinkedList<AppUser> appUsers) {
-		mucName.setText(roomID);
-		mucName.setEditable(false);
-		contactsContent.getChildren().clear();
-		contactDisplayList.clear();
-		mucList.clear();
-		
-		for(AppUser appUser : appUsers){
-			MUCContactDisplay contact = new MUCContactDisplay(appUser);
-			contact.setOnSelectAppUser(selectAppUser->selectContact(selectAppUser));
-			contactsContent.getChildren().add(contact);
-			contactDisplayList.add(contact);
-		}
-		
+
 		mainVBox.getChildren().clear();
 		mainVBox.getChildren().addAll(inviteHBox, mucName, contacts);
 	}
@@ -168,7 +155,6 @@ public class CreateMUCScreen extends Screen	{
 	 * Clears create MUC
 	 */
 	public void clear() {
-		mucName.clear();
 		changeScreen.SetScreen(ScreenEnum.MUC);
 	}
 
@@ -187,31 +173,20 @@ public class CreateMUCScreen extends Screen	{
 		System.out.println(selectAppUser.getJid());
 	}
 
-	/**
-	 * Create MUC
-	 */
-	private void createMUC() {
-		if (!mucList.isEmpty() && !mucName.getText().isEmpty()) {
-			MUCChat muc = new MUCChat(mucName.getText(), mucList);
-			createMUCEvent.getMUC(muc);
-			clear();
-		}
-	}
-	
 	private void invite() {
-		if (!mucList.isEmpty() && !mucName.getText().isEmpty()) {
-			MUCChat muc = new MUCChat(mucName.getText(), mucList);
-			inviteMUCEvent.getMUC(muc);
-			clear();
-		}
+
+		inviteToMucEvent.invite(mucList);
+		clear();
+
+//		if (!mucList.isEmpty() && !mucName.getText().isEmpty()) {
+//			MUCChat muc = new MUCChat(mucName.getText(), mucList);
+//			inviteMUCEvent.getMUC(muc);
+//			clear();
+//		}
 	}
 
-	public void setOnCreateMUCEvent(CreateMUCEvent createMUCEvent) {
-		this.createMUCEvent = createMUCEvent;
-	}
-	
-	public void setOnInviteMUCEvent(CreateMUCEvent inviteMUCEvent) {
-		this.inviteMUCEvent = inviteMUCEvent;
+	public void setOnInviteToMucEvent(InviteToMucEvent inviteToMucEvent){
+		this.inviteToMucEvent = inviteToMucEvent;
 	}
 
 	public void setOnChangeScreen(ChangeScreen changeScreen){

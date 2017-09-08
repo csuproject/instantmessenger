@@ -1,6 +1,7 @@
 package TeamOrange.instantmessenger.views;
 
 import TeamOrange.instantmessenger.lambda.MUCRoomEvent;
+import TeamOrange.instantmessenger.lambda.OpenInviteMucScreenEvent;
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppMucRequest;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import TeamOrange.instantmessenger.lambda.AcceptMucRequestEvent;
 import TeamOrange.instantmessenger.lambda.ChangeScreen;
 import TeamOrange.instantmessenger.lambda.DeclineMucRequestEvent;
+import TeamOrange.instantmessenger.lambda.DeleteMucEvent;
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -43,7 +45,9 @@ import resources.GroupList;
 		private TextField addGroupTextField;
 		private Image imageMessage;
 		private Image imageNewMessage;
-		private MUCRoomEvent openMUCEvent, deleteMUCEvent, inviteMUCEvent;
+		private MUCRoomEvent openMUCEvent;
+		private OpenInviteMucScreenEvent openInviteMucScreenEvent;
+		private DeleteMucEvent deleteMUCEvent;
 
 		public MUCScreen(GuiBase guiBase){
 			super(guiBase);
@@ -145,11 +149,14 @@ import resources.GroupList;
 					muc.setNotification(false);
 					openMUCEvent.getRoomID(e.getRoomID());	});
 				// Delete MUC
-				mucDisplay.setOnInviteMUCEvent(
-						invite->inviteMUCEvent.getRoomID(invite.getRoomID()));
+				mucDisplay.setOnInviteMUCEvent(mucToInvite->{
+					openInviteMucScreenEvent.invite(mucToInvite);
+				});
 				// Invite MUC
-				mucDisplay.setOnDeleteMUCEvent(
-						delete->deleteMUCEvent.getRoomID(delete.getRoomID()));
+				mucDisplay.setOnDeleteMUCEvent(mucToDelete->{
+					deleteMUCEvent.delete(mucToDelete);
+				});
+//						delete->deleteMUCEvent.getRoomID(delete.getRoomID()));
 
 				// Set Notification
 				if (muc.getNotification())
@@ -198,12 +205,12 @@ import resources.GroupList;
 		public void setOnOpenMUC(MUCRoomEvent openMUCEvent) {
 			this.openMUCEvent = openMUCEvent;
 		}
-		
-		public void setOnInviteMUCEvent (MUCRoomEvent inviteMUCEvent) {
-			this.inviteMUCEvent = inviteMUCEvent;
+
+		public void setOnOpenInviteMucScreenEvent (OpenInviteMucScreenEvent openInviteMucScreenEvent) {
+			this.openInviteMucScreenEvent = openInviteMucScreenEvent;
 		}
-		
-		public void setOnDeleteMUCEvent (MUCRoomEvent deleteMUCEvent) {
+
+		public void setOnDeleteMUCEvent (DeleteMucEvent deleteMUCEvent) {
 			this.deleteMUCEvent = deleteMUCEvent;
 		}
 
