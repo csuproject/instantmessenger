@@ -115,13 +115,8 @@ public class ChatScreen extends Screen {
 		destroyButton.setMinWidth(100);
 		destroyButton.setOnAction(e->changeScreen.SetScreen(ScreenEnum.MUC));
 		destroyButton.setFocusTraversable(false);
-		Button exitButton = new Button("Exit");
-		exitButton.setMinWidth(100);
-		exitButton.setOnAction(e->exitMUC());
-		exitButton.setFocusTraversable(false);
-		//exitButton.setOnAction(e->createMUC());
 		mucHbox = new HBox(
-				destroyButton,chatNameLabel,exitButton);
+				destroyButton,chatNameLabel);
 		mucHbox.setAlignment(Pos.CENTER);
 
 		//////////////////////////////////////////////////////////////////////////////
