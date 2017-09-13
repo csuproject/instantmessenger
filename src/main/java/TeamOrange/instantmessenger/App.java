@@ -413,6 +413,12 @@ public class App {
 		// Load on ChatScreen
     	if (currentScreen == ScreenEnum.MUCCHAT && mucs.getMucInFocus().equals(muc))
     		chatScreen.loadLater(new ChatScreenInput(muc));
-    	}
+    }
+
+    public void onClose(){
+//    	connectionController.addEndTaskThreadTask();
+//    	connectionController.completeTasks();
+    	connectionController.endTaskThread();
+    }
 
 }
