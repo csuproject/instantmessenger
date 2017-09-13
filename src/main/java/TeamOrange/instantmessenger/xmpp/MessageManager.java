@@ -40,6 +40,7 @@ public class MessageManager {
 		message.setId(roomID);
 		Jid toJid = JidUtilities.jidFromAppJid(to);
 		message.setTo(toJid);
+		System.out.println("MessageMannager requestJoinMuc toJid: " + toJid + "  roomID: " + roomID);
 		SendTask<Message> result = client.sendMessage(message);
 //		result.onSent(m->babblerBase.onRequestContactAddSent(m));
 	}
@@ -86,7 +87,10 @@ public class MessageManager {
 
 	//AppJid from, String body, String thread, AppMessageType type
 	public AppMessage inboundMessageEventToAppMessage(MessageEvent messageEvent){
-		AppJid from = JidUtilities.appJidFromJid( messageEvent.getMessage().getFrom() );
+		AppJid from = null;
+		if(messageEvent.getMessage().getFrom() != null){
+			from = JidUtilities.appJidFromJid( messageEvent.getMessage().getFrom() );
+		}
 		String body = messageEvent.getMessage().getBody();
 		String thread = messageEvent.getMessage().getThread();
 		String id = messageEvent.getMessage().getId();

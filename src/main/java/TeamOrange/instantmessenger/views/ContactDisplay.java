@@ -1,5 +1,6 @@
 package TeamOrange.instantmessenger.views;
 
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -8,7 +9,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
-public class ContactDisplay extends HBox {
+public class ContactDisplay extends FlowPane {
 
 	private HomeScreen parent;
 	private String username;
@@ -32,6 +33,7 @@ public class ContactDisplay extends HBox {
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: green;");
 		this.setMaxWidth(350);
+		this.setHgap(10);
 		this.getChildren().addAll(usernameLabel, chatButton);
 	}
 }
