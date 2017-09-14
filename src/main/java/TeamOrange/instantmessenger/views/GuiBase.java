@@ -50,6 +50,10 @@ public class GuiBase extends Application {
 		stage.setWidth(416);
 		stage.setHeight(680);
 		stage.setResizable(false);
+		stage.setOnCloseRequest(we->{
+			this.app.onClose();
+		});
+
 		scene = new Scene( new StackPane(), 416, 680);
 		button = new Button();
 		app = new App(this);

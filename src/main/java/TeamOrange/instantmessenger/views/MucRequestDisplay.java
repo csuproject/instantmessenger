@@ -2,11 +2,12 @@ package TeamOrange.instantmessenger.views;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-public class MucRequestDisplay extends HBox {
+public class MucRequestDisplay extends FlowPane {
 	private MUCScreen parent;
 	private String from;
 	private String roomName;
@@ -35,6 +36,7 @@ public class MucRequestDisplay extends HBox {
                 "-fx-border-insets: 3;" +
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: red;");
+		this.setHgap(10);
 		this.getChildren().addAll(label, acceptButton, declineButton);
 	}
 

@@ -29,10 +29,10 @@ public class ContactManagementController {
 	}
 
 	public void onBlockContactEvent(String userName){
-		babblerBase.blockUser(userName);
 		babblerBase.requestDeleteFromContacts(userName);
+		babblerBase.blockUser(userName);
 		deleteContactLocally(userName);
-		homeScreen.load(new HomeScreenInput(contacts));
+		homeScreen.loadLater(new HomeScreenInput(contacts));
 	}
 
 	public void onDeleteContactEvent(String userName){

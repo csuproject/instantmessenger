@@ -9,8 +9,10 @@ import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.models.MUCChat;
+import TeamOrange.instantmessenger.models.tasks.AppConnectTask;
 import TeamOrange.instantmessenger.models.tasks.AppCreateAccountTask;
 import TeamOrange.instantmessenger.models.tasks.AppCreateMucWithRoomIDTask;
+import TeamOrange.instantmessenger.models.tasks.AppEndTaskThreadTask;
 import TeamOrange.instantmessenger.models.tasks.AppLoginTask;
 import TeamOrange.instantmessenger.models.tasks.AppReplyToContactRequestTask;
 import TeamOrange.instantmessenger.models.tasks.AppSendChatSessionMessageTask;
@@ -38,6 +40,7 @@ public class ConnectionController {
 		this.connection = connection;
 		this.tasks = new LinkedList<AppTask>();
 		this.taskThread = new TaskThread();
+		this.taskThread.start();
 	}
 
 	public void addLoginTask(LoginController loginController, String userName, String password){
@@ -68,12 +71,24 @@ public class ConnectionController {
 		tasks.add(new AppReplyToContactRequestTask(controller, contact, jid, accepted));
 	}
 
+	public void addEndTaskThreadTask(){
+		tasks.add(new AppEndTaskThreadTask(this.taskThread));
+	}
+
+	public void addConnectTask(){
+		tasks.add(new AppConnectTask(this.taskThread));
+	}
+
 	public boolean isConnected(){
 		return connection.getStatus() == AppConnection.CONNECTED;
 	}
 
 	public void checkConnection(){
 		connect();
+	}
+
+	public void endTaskThread(){
+		this.taskThread.end();
 	}
 
 	public void reset(){
@@ -87,11 +102,12 @@ public class ConnectionController {
 	}
 
 	public void completeTasks(){
-		(new Thread(this.taskThread)).start();
+		this.taskThread.completeTasksNow();
 	}
 
 	public void connect(){
-		(new Thread(new ConnectThread())).start();
+		addConnectTask();
+		completeTasks();
 	}
 
 	public void disconnect(){
@@ -133,43 +149,67 @@ public class ConnectionController {
 		}
 	}
 
-	public class ConnectThread implements Runnable {
+//	public class ConnectThread implements Runnable {
+//
+//	    public void run() {
+//	    	boolean connected = false;
+//			while(!connected){
+//				try {
+//					connected = babblerBase.isConnected();
+//					if(!connected){
+//						onDisconnected();
+//					}
+//					babblerBase.connect();
+//				} catch (ConfideXmppException e) {
+//					try {
+//						Thread.sleep(5000);
+//					} catch (InterruptedException e1) {
+//						e1.printStackTrace();
+//					}
+//				}
+//			}
+//			onConnected();
+//
+//			while(tasks.peek() != null){
+//				tasks.poll().complete();
+//			}
+//
+//	    }
+//
+//	}
+
+
+	public class TaskThread extends Thread {
+		private volatile boolean running;
+		private volatile boolean shouldCompleteTasks;
+
+		public TaskThread(){
+			running = true;
+			shouldCompleteTasks = false;
+		}
 
 	    public void run() {
-	    	boolean connected = false;
-			while(!connected){
-				try {
-					connected = babblerBase.isConnected();
-					if(!connected){
-						onDisconnected();
-					}
-					babblerBase.connect();
-				} catch (ConfideXmppException e) {
-					try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-				}
-			}
-			onConnected();
-
-			while(tasks.peek() != null){
-				tasks.poll().complete();
-			}
-
+	    	while(running){
+	    		if(shouldCompleteTasks){
+	    			connect();
+	    			completeTasks();
+	    		}
+	    	}
 	    }
 
-	}
+	    public void completeTasksNow(){
+	    	shouldCompleteTasks = true;
+	    }
 
+	    public void end(){
+	    	this.running = false;
+	    }
 
-	public class TaskThread implements Runnable {
-
-	    public void run() {
+	    public void connect(){
 	    	if(!babblerBase.isConnected()){
 	    		onDisconnected();
 		    	boolean connected = false;
-				while(!connected){
+				while(!connected && running){
 					try {
 						babblerBase.connect();
 						connected = babblerBase.isConnected();
@@ -183,8 +223,11 @@ public class ConnectionController {
 				}
 				onConnected();
 	    	}
+	    }
 
-			while(tasks.peek() != null){
+	    private void completeTasks(){
+	    	shouldCompleteTasks = false;
+	    	while(tasks.peek() != null){
 				tasks.poll().complete();
 			}
 	    }

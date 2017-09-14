@@ -64,6 +64,10 @@ public class LoginController {
 	public void actuallyLogin(String userName, String password){
 		AppJid appJid;
 		try{
+			if(userName == null || userName.isEmpty() || password == null || password.isEmpty()){
+				accountScreen.alertLater("The username or password that you entered was incorrect. Please try again, or create a new account if you dont already have one.", "login error", AlertType.WARNING);
+				return;
+			}
 			appJid = babblerBase.login(userName, password);
 			AppPresence presence = new AppPresence(AppPresence.Type.AVAILIBLE);
 			AppUser appUser = new AppUser(appJid, presence);
@@ -79,6 +83,7 @@ public class LoginController {
 			mucScreen.loadLater( new MUCScreenInput(mucs) );
 
 		} catch(ConfideAuthenticationException e){
+			System.out.println("confide authentication exception");
 			accountScreen.alertLater("The username or password that you entered was incorrect. Please try again, or create a new account if you dont already have one.", "login error", AlertType.WARNING);
 			return;
 		} catch(ConfideNoResponseException e){
