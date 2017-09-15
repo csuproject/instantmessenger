@@ -4,6 +4,7 @@ import javafx.scene.control.Button;
 
 public class CustomButton extends Button {
 
+	private static final int FONT_SIZE = 16;
 	private boolean selected;
 	private boolean mouseIn;
 
@@ -57,9 +58,9 @@ public class CustomButton extends Button {
 				"-fx-background-color: white;"+
 				"-fx-background-insets: 0,1,4,5,6;"+
 				"-fx-background-radius: 9,8,5,4,3;"+
-				"-fx-padding: 5 10 5 10;"+
+				"-fx-padding: 2.5 5 2.5 5;"+
 				"-fx-font-family: \"Helvetica\";"+
-				"-fx-font-size: 18px;"+
+				"-fx-font-size: "+FONT_SIZE+"px;"+
 				"-fx-font-weight: bold;"+
 				"-fx-text-fill: grey;"+
 				"-fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.2) , 1, 0.0 , 0 , 1);"+
@@ -74,9 +75,9 @@ public class CustomButton extends Button {
 				"-fx-background-color: grey;"+
 				"-fx-background-insets: 0,1,4,5,6;"+
 				"-fx-background-radius: 9,8,5,4,3;"+
-				"-fx-padding: 5 10 5 10;"+
+				"-fx-padding: 2.5 5 2.5 5;"+
 				"-fx-font-family: \"Helvetica\";"+
-				"-fx-font-size: 18px;"+
+				"-fx-font-size: "+FONT_SIZE+"px;"+
 				"-fx-font-weight: bold;"+
 				"-fx-text-fill: white;"+
 				"-fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.2) , 1, 0.0 , 0 , 1);"+
@@ -95,9 +96,9 @@ public class CustomButton extends Button {
 				"-fx-background-color: white;"+
 				"-fx-background-insets: 0,1,4,5,6;"+
 				"-fx-background-radius: 20;"+
-				"-fx-padding: 5 10 5 10;"+
+				"-fx-padding: 2.5 5 2.5 5;"+
 				"-fx-font-family: \"Helvetica\";"+
-				"-fx-font-size: 18px;"+
+				"-fx-font-size: "+FONT_SIZE+"px;"+
 				"-fx-font-weight: bold;"+
 				"-fx-text-fill: black;"+
 				"-fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.2) , 1, 0.0 , 0 , 1);"+
@@ -112,9 +113,9 @@ public class CustomButton extends Button {
 				"-fx-background-color: grey;"+
 				"-fx-background-insets: 0,1,4,5,6;"+
 				"-fx-background-radius: 20;"+
-				"-fx-padding: 5 10 5 10;"+
+				"-fx-padding: 2.5 5 2.5 5;"+
 				"-fx-font-family: \"Helvetica\";"+
-				"-fx-font-size: 18px;"+
+				"-fx-font-size: "+FONT_SIZE+"px;"+
 				"-fx-font-weight: bold;"+
 				"-fx-text-fill: black;"+
 				"-fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.2) , 1, 0.0 , 0 , 1);"+

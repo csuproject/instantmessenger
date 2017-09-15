@@ -27,10 +27,10 @@ public class AccountManager {
 	public Jid login(XmppClient client, String userName, String password)
 			throws ConfideXmppException {
 		try{
-    		client.login(userName, password, null);
-    		client.sendPresence( new Presence() );
+			client.login(userName, password, null);
+	    	client.sendPresence( new Presence() );
     	} catch(AuthenticationException e){
-    		System.out.println("AuthenticationException");
+    		System.out.println("AuthenticationException ------");
     		throw new ConfideAuthenticationException();
     	} catch(NoResponseException e){
     		System.out.println("NoResponseException");

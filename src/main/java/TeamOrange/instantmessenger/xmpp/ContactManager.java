@@ -60,7 +60,7 @@ public class ContactManager {
 		Jid jid = Jid.of(contact);
 		Presence presence = client.getManager(PresenceManager.class).getPresence(jid);
 		client.getManager(RosterManager.class).addContact(new Contact(jid), true, null);
-		
+
 		AppJid appJid = JidUtilities.appJidFromJid(jid);
 		AppPresence appPresence = new AppPresence(presence);
 		return new AppUser(appJid, appPresence);
@@ -73,7 +73,7 @@ public class ContactManager {
 	 */
 	public void removeContact(XmppClient client, String contact) {
 
-		client.getManager(RosterManager.class).removeContact(Jid.of(contact));
+		client.getManager(RosterManager.class).removeContact(Jid.of(contact + "@teamorange.space"));
 	}
 
 	/**
@@ -82,11 +82,11 @@ public class ContactManager {
 	 * @param user the jid of the user to block
 	 */
 	public void blockUser(XmppClient client, String user) {
-		Jid contactJid = Jid.of(user);
+		Jid contactJid = Jid.of(user+"@teamorange.space");
 		PrivacyListManager plManager = client.getManager(PrivacyListManager.class);
 		// create new rule
 		PrivacyRule newRule = PrivacyRule.blockAllCommunicationWith(contactJid, 1);
-		
+
 		PrivacyList blockedList = null;
 		// retrieve existing blocked list if it exists
 		try {
@@ -94,7 +94,7 @@ public class ContactManager {
 		} catch (Exception e) {
 			blockedList = null;
 		}
-		
+
 		// create new rule list
 		Collection<PrivacyRule> newRules =  new LinkedList<PrivacyRule>();
 		// add existing rules if they exist

@@ -11,11 +11,13 @@ public class AppMucList {
 	private LinkedList<AppMuc> mucs;
 	private LinkedList<AppMucRequest> mucRequests;
 	private AppMuc mucInFocus;
+	private AppMuc mucInvitingTo;
 
 	public AppMucList(){
 		this.mucs = new LinkedList<AppMuc>();
 		this.mucRequests = new LinkedList();
 		this.mucInFocus = null;
+		this.mucInvitingTo = null;
 	}
 
 	public void reset(){
@@ -51,6 +53,14 @@ public class AppMucList {
 
 	public void setMucInFocus(AppMuc muc){
 		this.mucInFocus = muc;
+	}
+
+	public void setMucInvitingTo(AppMuc muc){
+		this.mucInvitingTo = muc;
+	}
+
+	public AppMuc getMucInvitingTo(){
+		return mucInvitingTo;
 	}
 
 	/**

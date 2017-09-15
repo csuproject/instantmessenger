@@ -35,6 +35,15 @@ public class AppContacts {
 		contactList.add(user);
 	}
 
+	public void removeContact(String userName){
+		for(int i = 0; i < contactList.size(); ++i){
+			if(contactList.get(i).getName().equals(userName)){
+				contactList.remove(i);
+				return;
+			}
+		}
+	}
+
 	public void addAllContacts(LinkedList<AppUser> list){
 		if(list != null){
 			for(AppUser au : list){
@@ -101,7 +110,7 @@ public class AppContacts {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Set the Presence of AppUser
 	 * @param username
@@ -109,7 +118,7 @@ public class AppContacts {
 	public void setPresence(String username, AppPresence.Type presence) {
 		for(AppUser user : contactList) {
 			if(user.getName().equals(username)) {
-				user.setPresence(presence);					 
+				user.setPresence(presence);
 			}
 		}
 	}
@@ -117,7 +126,7 @@ public class AppContacts {
 	public void setNotification(String username, boolean notify) {
 		for(AppUser user : contactList) {
 			if(user.getName().equals(username)) {
-				user.setNotification(notify);				 
+				user.setNotification(notify);
 			}
 		}
 	}

@@ -117,6 +117,11 @@ public class BabblerBase {
 		messageManager.requestJoinMuc(client, to, roomID);
 	}
 
+	public void requestDeleteFromContacts(String toUserName){
+		AppJid toJid = new AppJid(toUserName, "teamorange.space");
+		messageManager.requestDeleteFromContacts(client, toJid);
+	}
+
 	/**
 	 * Sends a response to a contact-add request.
 	 * @param jid the jid of the user to respond to

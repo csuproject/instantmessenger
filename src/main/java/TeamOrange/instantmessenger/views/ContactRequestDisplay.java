@@ -4,9 +4,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 
-public class ContactRequestDisplay extends HBox {
+public class ContactRequestDisplay extends FlowPane {
 	private HomeScreen parent;
 	private String username;
 	private Label usernameLabel;
@@ -31,6 +32,7 @@ public class ContactRequestDisplay extends HBox {
                 "-fx-border-insets: 3;" +
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: red;");
+		this.setHgap(10);
 		this.getChildren().addAll(usernameLabel, acceptButton, declineButton);
 	}
 

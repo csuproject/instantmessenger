@@ -7,6 +7,7 @@ import TeamOrange.instantmessenger.controllers.AddContactController;
 import TeamOrange.instantmessenger.controllers.ChatController;
 import TeamOrange.instantmessenger.controllers.ConnectionController;
 import TeamOrange.instantmessenger.controllers.ConnectionEventEnum;
+import TeamOrange.instantmessenger.controllers.ContactManagementController;
 import TeamOrange.instantmessenger.controllers.CreateAccountController;
 import TeamOrange.instantmessenger.controllers.OpenChatController;
 import TeamOrange.instantmessenger.controllers.PresenceController;
@@ -27,7 +28,8 @@ import TeamOrange.instantmessenger.models.AppUser;
 import TeamOrange.instantmessenger.views.AccountScreen;
 import TeamOrange.instantmessenger.views.ChatScreen;
 import TeamOrange.instantmessenger.views.ChatScreenInput;
-import TeamOrange.instantmessenger.views.CreateMUCScreen;
+import TeamOrange.instantmessenger.views.MucInviteScreen;
+import TeamOrange.instantmessenger.views.MucInviteScreenInput;
 import TeamOrange.instantmessenger.views.GuiBase;
 import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.views.HomeScreenInput;
@@ -39,6 +41,8 @@ import TeamOrange.instantmessenger.views.StatusDisplay;
 import TeamOrange.instantmessenger.xmpp.BabblerBase;
 import exceptions.ConfideXmppException;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class App {
 	// constants for messages
@@ -46,6 +50,7 @@ public class App {
 	public static final String ACCEPT_CONTACT_ADD = "2";
 	public static final String DECLINE_CONTACT_ADD = "3";
 	public static final String REQUEST_JOIN_MUC = "4";
+	public static final String REQUEST_DELETE_FROM_CONTACTS = "5";
 
 	// xmpp
 	private BabblerBase babblerBase;
@@ -58,7 +63,7 @@ public class App {
 	private ScreenEnum currentScreen;
 	private NavigationScreen navigationScreen;
 	private MUCScreen mucScreen;
-	private CreateMUCScreen createMUCScreen;
+	private MucInviteScreen mucInviteScreen;
 	private StatusDisplay statusDisplay;
 
 	// Controllers
@@ -72,6 +77,7 @@ public class App {
 	private NavigationController naviationController;
 	private ConnectionController connectionController;
 	private MUCController mucController;
+	private ContactManagementController contactManagementController;
 
 
 	// models
@@ -89,7 +95,7 @@ public class App {
 		chatScreen = new ChatScreen(guiBase);
 		navigationScreen = new NavigationScreen(guiBase);
 		mucScreen = new MUCScreen(guiBase);
-		createMUCScreen = new CreateMUCScreen(guiBase);
+		mucInviteScreen = new MucInviteScreen(guiBase);
 		statusDisplay = new StatusDisplay(guiBase);
 		setScreen(ScreenEnum.ACCOUNT);
 
@@ -138,7 +144,7 @@ public class App {
 		naviationController.setOnChangeScreen(screen->setScreen(screen));
 
 		mucController = new MUCController(babblerBase, chatScreen, navigationScreen,
-				mucScreen, createMUCScreen, contacts, mucs, connectionController);
+				mucScreen, mucInviteScreen, contacts, mucs, connectionController);
 		mucController.setOnChangeScreen(screen->setScreen(screen));
 		mucController.setOnNotifcationEvent(
 				notifyMUCEvent->notifyAndLoadMUCOnEvent(notifyMUCEvent));
@@ -146,6 +152,9 @@ public class App {
 		loginController = new LoginController(babblerBase, accountScreen, mucScreen,
 				contacts, mucs, connectionController, mucController);
 		loginController.setOnChangeScreen( screen->setScreen(screen) );
+
+		contactManagementController = new ContactManagementController(babblerBase, homeScreen, chats, contacts, connectionController);
+		contactManagementController.setOnChangeScreen( screen->setScreen(screen) );
 	}
 
 	public void reset(){
@@ -192,6 +201,10 @@ public class App {
     			AppJid from = message.getFromJid();
     			this.mucs.addMucRequest( new AppMucRequest(roomID, from) );
     			mucScreen.loadLater( new MUCScreenInput(this.mucs) );
+    		}
+    		else if(body.equals(App.REQUEST_DELETE_FROM_CONTACTS)){
+    			AppJid from = message.getFromJid();
+    			contactManagementController.onRequestDeleteFromContacts(from.getLocal());
     		}
     	} else if(message.getType() == AppMessageType.CHAT){
 
@@ -266,17 +279,25 @@ public class App {
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
 				navigationScreen.setSelectedToGroups();
-				mucScreen.load(new MUCScreenInput(mucs));
+				mucScreen.loadLater(new MUCScreenInput(mucs));
 				guiBase.setScreen(statusDisplay,mucScreen,navigationScreen);
 			} break;
-			case CREATEMUC:
+			case MUC_INVITE:
 			{
 				statusDisplay.setScreenViewLater(currentScreen);
 				statusDisplay.setUserNameLater(contacts.getSelfName());
-				HomeScreenInput input = new HomeScreenInput(contacts);
-				createMUCScreen.load(input.getContactList());
-				guiBase.setScreenLater(statusDisplay,createMUCScreen,navigationScreen);
+				navigationScreen.setSelectedToGroups();
+				mucInviteScreen.loadLater(new MucInviteScreenInput(mucs, contacts));
+				guiBase.setScreen(statusDisplay,mucInviteScreen,navigationScreen);
 			} break;
+//			case CREATEMUC:
+//			{
+//				statusDisplay.setScreenViewLater(currentScreen);
+//				statusDisplay.setUserNameLater(contacts.getSelfName());
+//				HomeScreenInput input = new HomeScreenInput(contacts);
+//				createMUCScreen.load(input.getContactList());
+//				guiBase.setScreenLater(statusDisplay,createMUCScreen,navigationScreen);
+//			} break;
 			case CHAT:
 			{
 				statusDisplay.setScreenViewLater(currentScreen);
@@ -294,6 +315,19 @@ public class App {
 			} break;
     	}
     }
+
+    /**
+     * Open CreateMUCScreen with RoomID
+     * @param roomID
+     */
+//    public void setScreenCreateMUC(String roomID) {
+//    	this.currentScreen = ScreenEnum.CREATEMUC;
+//		statusDisplay.setScreenViewLater(currentScreen);
+//		statusDisplay.setUserNameLater(contacts.getSelfName());
+//		HomeScreenInput input = new HomeScreenInput(contacts);
+//		createMUCScreen.load(roomID, input.getContactList());
+//		guiBase.setScreenLater(statusDisplay,createMUCScreen,navigationScreen);
+//    }
 
     /**
      * Set the MUC in focus
@@ -379,6 +413,12 @@ public class App {
 		// Load on ChatScreen
     	if (currentScreen == ScreenEnum.MUCCHAT && mucs.getMucInFocus().equals(muc))
     		chatScreen.loadLater(new ChatScreenInput(muc));
-    	}
+    }
+
+    public void onClose(){
+//    	connectionController.addEndTaskThreadTask();
+//    	connectionController.completeTasks();
+    	connectionController.endTaskThread();
+    }
 
 }

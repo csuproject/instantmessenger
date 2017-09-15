@@ -110,8 +110,8 @@ public class StatusDisplay extends Screen {
 				{screenView.setText("Contacts");} break;
 				case MUC:
 				{screenView.setText("Groups");} break;
-				case CREATEMUC:
-				{screenView.setText("Create Group");} break;
+//				case CREATEMUC:
+//				{screenView.setText("Create Group");} break;
 				case CHAT:
 				{screenView.setText("Chat");} break;
 				case MUCCHAT:
