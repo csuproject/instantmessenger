@@ -2,18 +2,23 @@ package TeamOrange.instantmessenger.models;
 
 import rocks.xmpp.core.stanza.model.Presence;
 
+/**
+ * Represents a presence.
+ * Can either be AVAILIBLE or UNAVAILIBLE
+ *
+ */
 public class AppPresence {
-	
+
 	public enum Type {
 		AVAILIBLE, UNAVAILIVLE
 	}
-	
+
 	private Type type;
-	
+
 	public AppPresence(Type type){
 		this.type = type;
 	}
-	
+
 	public AppPresence(Presence presence){
 		if(presence.getType() == null){
 			this.type = AppPresence.Type.AVAILIBLE;
@@ -23,19 +28,19 @@ public class AppPresence {
 			this.type = null;
 		}
 	}
-	
+
 	public Type getType(){
 		return type;
 	}
-	
+
 	public String sGetType(){
 		return typeString(type);
 	}
-	
+
 	public void set(Type type){
 		this.type = type;
 	}
-	
+
 	public static String typeString(Type type){
 		if(type == Type.AVAILIBLE){
 			return "AVAILIBLE";
@@ -45,5 +50,5 @@ public class AppPresence {
 			return "OTHER";
 		}
 	}
-	
+
 }

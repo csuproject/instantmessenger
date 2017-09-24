@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Holds and manages a list of AppMuc
+ * Holds and manages mucs and muc reqeusts.
  *
  */
 public class AppMucList {
@@ -20,12 +20,19 @@ public class AppMucList {
 		this.mucInvitingTo = null;
 	}
 
+	/**
+	 * Resets this object.
+	 */
 	public void reset(){
 		this.mucs.clear();
 		this.mucRequests.clear();
 		this.mucInFocus = null;
 	}
 
+	/**
+	 * Removes the requests with the given room id, if such a request exists
+	 * @param roomID the id of the muc to remove
+	 */
 	public void removeMucRequestsWithRoomID(String roomID){
 		for(int i = mucRequests.size()-1; i >= 0 ; --i){
 			AppMucRequest request = mucRequests.get(i);
@@ -88,6 +95,10 @@ public class AppMucList {
 		}
 	}
 
+	/**
+	 * Adds a list of mucs
+	 * @param list the list of mucs
+	 */
 	public void addAllMUCS(LinkedList<AppMuc> list){
 		if(list != null){
 			for(AppMuc muc : list){
@@ -96,6 +107,11 @@ public class AppMucList {
 		}
 	}
 
+	/**
+	 * Sets the notification on the given muc
+	 * @param mucname the name of the muc to set the notification for
+	 * @param notify the notification value
+	 */
 	public void setNotification(String mucname, boolean notify) {
 		for(AppMuc muc : mucs) {
 			if(muc.getRoomID().equals(mucname)) {
@@ -104,6 +120,11 @@ public class AppMucList {
 		}
 	}
 
+	/**
+	 * Sets the notification on the given muc
+	 * @param notifyMuc the muc to set the notification for
+	 * @param notify the notification value
+	 */
 	public void setNotification(AppMuc notifyMUC, boolean notify) {
 		for(AppMuc muc : mucs) {
 			if(muc.equals(notifyMUC)) {
@@ -112,10 +133,18 @@ public class AppMucList {
 		}
 	}
 
+	/**
+	 * Removes the given muc
+	 * @param muc the muc to remove
+	 */
 	public void removeMuc(AppMuc muc){
 		mucs.remove(muc);
 	}
 
+	/**
+	 * Adds the fiven muc reqeust to the list, if an equivilent muc or muc request doesnt already exist
+	 * @param mucRequest the request to add
+	 */
 	public void addMucRequest(AppMucRequest mucRequest){
 		// check an equal muc request doesnt already exist
 		for(AppMucRequest request : mucRequests){

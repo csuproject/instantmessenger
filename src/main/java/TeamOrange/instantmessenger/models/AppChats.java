@@ -17,6 +17,9 @@ public class AppChats {
 		chats = new LinkedList<AppChatSession>();
 	}
 
+	/**
+	 * Resets this object.
+	 */
 	public void reset(){
 		chats.clear();
 		activeChat = null;
@@ -30,6 +33,10 @@ public class AppChats {
 		chats.add(appChatSession);
 	}
 
+	/**
+	 * Removes the chat with the user with the given username, if such a chat exists.
+	 * @param userName the username of the user who's chat is to be deleted
+	 */
 	public void removeChat(String userName){
 		for(int i = 0; i < chats.size(); ++i){
 			if(chats.get(i).getPartner().getJid().getLocal().equals(userName)){
@@ -56,7 +63,7 @@ public class AppChats {
 
 	/**
 	 * If the relevant chat exists (one with the same thread) then it adds the message to that chat
-	 * @param message
+	 * @param message the message to be added
 	 */
 	public void handleMessage(AppMessage message){
 		String thread = message.getThread();
@@ -69,7 +76,7 @@ public class AppChats {
 
 	/**
 	 * Returns the chat with the given thread, or null
-	 * @param thread
+	 * @param thread the thread to look for
 	 * @return the AppChatSession with the given thread, or null
 	 */
 	public AppChatSession getChatOfThread(String thread){
@@ -97,7 +104,7 @@ public class AppChats {
 
 	/**
 	 * returns if the given chat is the active chat
-	 * @param chat
+	 * @param chat the chat to check for
 	 * @return if the given chat is the active chat
 	 */
 	public boolean isActiveChat(AppChatSession chat){

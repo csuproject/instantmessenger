@@ -22,6 +22,11 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 
+/**
+ * This is the homescreen which is first presented upon opening the app, and upon logging out.
+ * Allows the user to create an account or login.
+ *
+ */
 public class AccountScreen extends Screen {
 
 	private TextField loginUserNameTextField;
@@ -44,6 +49,10 @@ public class AccountScreen extends Screen {
 		}
 	}
 
+	/**
+	 * Creates the screen.
+	 * @throws Exception
+	 */
 	public void create() throws Exception {
 		// Login
 		Label loginLabel = new Label("Login");
@@ -134,19 +143,32 @@ public class AccountScreen extends Screen {
 		this.getChildren().add(gridPane);
 	}
 
+	/**
+	 * This is called when a key is pressed whilst in the login area.
+	 * Logs in if the button was Enter.
+	 * @param keyEvent
+	 */
 	public void loginKeyPressed(javafx.scene.input.KeyEvent keyEvent){
 		if( keyEvent.getCode().equals(javafx.scene.input.KeyCode.ENTER) ){
 			loginBtnPress();
 		}
 	}
 
+	/**
+	 * This is called when a key is pressed whilst in the create account area.
+	 * Creates the account in if the button was Enter.
+	 * @param keyEvent
+	 */
 	public void createAccountKeyPressed(javafx.scene.input.KeyEvent keyEvent){
 		if( keyEvent.getCode().equals(javafx.scene.input.KeyCode.ENTER) ){
 			createAccountBtnPress();
 		}
 	}
 
-
+	/**
+	 * This is called when the login button is pressed.
+	 * Sends the login event.
+	 */
 	public void loginBtnPress(){
 		String username = loginUserNameTextField.getText().trim();
 		String password = loginPasswordTextField.getText().trim();
@@ -155,6 +177,10 @@ public class AccountScreen extends Screen {
 		loginEvent.login(username, password);
 	}
 
+	/**
+	 * This is called when the create account button is pressed.
+	 * Sends the crate account event, if the input is valid.
+	 */
 	public void createAccountBtnPress(){
 		String username = createAccountUserNameTextField.getText().trim();
 		String password = createAccountPasswordTextField.getText().trim();
@@ -172,6 +198,12 @@ public class AccountScreen extends Screen {
 		}
 	}
 
+	/**
+	 * Validates create account format
+	 * @param userName the username to validate
+	 * @param password the password to validate
+	 * @return true if the format is valid, false if it is invalid
+	 */
 	private boolean isValidCreateAccountFormat(String userName, String password){
 		if(userName.isEmpty() || password.isEmpty()){
 			return false;

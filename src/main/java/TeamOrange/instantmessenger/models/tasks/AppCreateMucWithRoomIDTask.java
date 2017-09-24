@@ -2,6 +2,10 @@ package TeamOrange.instantmessenger.models.tasks;
 
 import TeamOrange.instantmessenger.controllers.MUCController;
 
+/**
+ * Represents a task to create a muc
+ *
+ */
 public class AppCreateMucWithRoomIDTask implements AppTask {
 
 	private MUCController controller;

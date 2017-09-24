@@ -23,6 +23,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+/**
+ * This is the homescreen.
+ * It is the screen the user is taken to once they login.
+ * Within the app it is called the Contacts screen.
+ * It contains contacts, contact reqeusts, and chat sessions with contacts.
+ *
+ */
 public class HomeScreen extends Screen {
 
 	private TextField addContactWithUsernameInputTextField;
@@ -47,6 +54,10 @@ public class HomeScreen extends Screen {
 		}
 	}
 
+	/**
+	 * Creates the screen.
+	 * @throws Exception
+	 */
 	public void create() throws Exception {
 
 		//////////////////////////////////////////////////////////////////////////////
@@ -111,6 +122,10 @@ public class HomeScreen extends Screen {
 			@Override public void run(){ load(input);}	});
 	}
 
+	/**
+	 * Loads the screen, updating its contents based on the input.
+	 * @param input the input to load the screen based on
+	 */
 	public void load(HomeScreenInput input){
 		contactsContent.getChildren().clear();
 		displayList.clear();
@@ -151,16 +166,30 @@ public class HomeScreen extends Screen {
 		}
 	}
 
+	/**
+	 * This is called when a key is pressed while the add contact text field is focused (which is always).
+	 * If the button is enter, it sends the add contact event.
+	 * @param keyEvent
+	 */
 	public void addContactInputKeyPressed(javafx.scene.input.KeyEvent keyEvent){
 		if( keyEvent.getCode().equals(javafx.scene.input.KeyCode.ENTER) ){
 			addContactBtnPress();
 		}
 	}
 
+	/**
+	 * This is called when a contact is clicked on, in order to chat with them.
+	 * Sends a chat with contact event.
+	 * @param username the username of the  contact to chat with
+	 */
 	public void chatButtonPress(String username) {
 		chatWithContactEvent.openChat(username);
 	}
 
+	/**
+	 * This is called when the add contact button is pressed.
+	 * Sends an add contact event, if the input is valid.
+	 */
 	public void addContactBtnPress(){
 		String username = addContactWithUsernameInputTextField.getText().trim();
 		addContactWithUsernameInputTextField.clear();
@@ -171,10 +200,20 @@ public class HomeScreen extends Screen {
 		}
 	}
 
+	/**
+	 * This is called when the accept contact request button is pressed.
+	 * Sends a accept contact request event.
+	 * @param username the username of the contact whos contact request is being accepted.
+	 */
 	public void acceptContactRequestButtonPress(String username) {
 		acceptContactRequestEvent.accept(username);
 	}
 
+	/**
+	 * This is called when the decline contact request button is pressed.
+	 * Sends a decline contact request event.
+	 * @param username the username of the contact whos contact request is being declined.
+	 */
 	public void declineContactRequestButtonPress(String username) {
 		declineContactRequestEvent.decline(username);
 	}

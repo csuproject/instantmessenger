@@ -26,6 +26,11 @@ import rocks.xmpp.im.roster.RosterManager;
 import rocks.xmpp.im.subscription.PresenceManager;
 import rocks.xmpp.util.concurrent.AsyncResult;
 
+/**
+ * Handles the xmpp connection management
+ * @author Tim
+ *
+ */
 public class ConnectionManager {
 
 	/**
@@ -98,6 +103,11 @@ public class ConnectionManager {
 
 	}
 
+	/**
+	 *
+	 * @param client
+	 * @return the connetion status
+	 */
 	public int getConnectionState(XmppClient client){
 		int answer = AppConnection.NOT_CONNECTED;
 		if(client.isConnected()){

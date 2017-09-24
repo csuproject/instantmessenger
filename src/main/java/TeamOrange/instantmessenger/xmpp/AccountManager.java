@@ -13,7 +13,10 @@ import rocks.xmpp.extensions.register.RegistrationManager;
 import rocks.xmpp.extensions.register.model.Registration;
 import rocks.xmpp.util.concurrent.AsyncResult;
 
-
+/**
+ * Handles the xmpp account management.
+ *
+ */
 public class AccountManager {
 
 	/**

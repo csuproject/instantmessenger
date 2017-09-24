@@ -51,6 +51,13 @@ public class AcceptOrDeclineContactRequestController {
 		connectionController.completeTasks();
 	}
 
+	/**
+	 * This function responds to a contact request.
+	 * It is called by connectionController, so that it can be ensured that the app is connected before sending the response.
+	 * @param contact the contact to reply to.
+	 * @param jid the jid of the contact to reply to.
+	 * @param accepted if the request was accepted or declined.
+	 */
 	public void actuallyReplyToContactRequest(AppUser contact, AppJid jid, boolean accepted){
 		if(contact == null){
 			if(accepted){

@@ -51,15 +51,12 @@ public class LoginController {
 		this.mucController = mucController;
 	}
 
+
 	/**
-	 * This is called by AccountScreen when the onLoginEvent occurs
-	 * attempts to login with the given username and password
-	 * if successfull, self data is saved to AppContacts,
-	 * 		contacts are retreived and saved into AppContacts,
-	 * 		screen is changed to the home screen
-	 * if it fails then an exception will be thrown and an alert will be raised.
-	 * @param userName
-	 * @param password
+	 * Logs in.
+	 * Used by connectionController.
+	 * @param userName the username to login with
+	 * @param password the password to login with
 	 */
 	public void actuallyLogin(String userName, String password){
 		AppJid appJid;
@@ -96,6 +93,17 @@ public class LoginController {
 		}
 	}
 
+	/**
+	 * This is called by AccountScreen when the onLoginEvent occurs
+	 * attempts to login with the given username and password
+	 * if successfull, self data is saved to AppContacts,
+	 * 		contacts are retreived and saved into AppContacts,
+	 * 		screen is changed to the home screen
+	 * if it fails then an exception will be thrown and an alert will be raised.
+	 * The actual work for logging in is differed to connectionController so that it can be ensured that the app has a connection before loggin in.
+	 * @param userName the username to login with
+	 * @param password the password to login with
+	 */
 	public void login(String userName, String password){
 		connectionController.addLoginTask(this, userName, password);
 		connectionController.completeTasks();

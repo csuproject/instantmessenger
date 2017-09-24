@@ -6,6 +6,10 @@ import TeamOrange.instantmessenger.views.HomeScreen;
 import TeamOrange.instantmessenger.views.NavigationScreen;
 import TeamOrange.instantmessenger.views.ScreenEnum;
 
+/**
+ * Controls the flow for the logout event
+ *
+ */
 public class NavigationController {
 
 	private NavigationScreen navigationScreen;
@@ -24,6 +28,9 @@ public class NavigationController {
 		this.app = app;
 	}
 
+	/**
+	 * Logs out of the application.
+	 */
 	public void logout(){
 		navigationScreen.setSelectedToLogout();
 		app.reset();

@@ -7,6 +7,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+
+/**
+ * Displays a muc request.
+ *
+ */
 public class MucRequestDisplay extends FlowPane {
 	private MUCScreen parent;
 	private String from;

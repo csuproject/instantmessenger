@@ -2,6 +2,11 @@ package TeamOrange.instantmessenger.models.tasks;
 
 import TeamOrange.instantmessenger.controllers.AddContactController;
 
+
+/**
+ * Represents a task to send a contact request.
+ *
+ */
 public class AppSendContactRequestTask implements AppTask {
 
 	private AddContactController controller;

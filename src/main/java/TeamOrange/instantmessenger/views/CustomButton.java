@@ -2,6 +2,11 @@ package TeamOrange.instantmessenger.views;
 
 import javafx.scene.control.Button;
 
+
+/**
+ * Displays a custom button, used in the navigation bar for the Contacts, Groups, and Logout buttons.
+ *
+ */
 public class CustomButton extends Button {
 
 	private static final int FONT_SIZE = 16;

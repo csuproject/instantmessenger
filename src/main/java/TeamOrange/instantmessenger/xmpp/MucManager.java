@@ -40,6 +40,10 @@ import rocks.xmpp.extensions.muc.model.RoomConfiguration;
 import rocks.xmpp.extensions.register.model.Registration;
 import rocks.xmpp.util.concurrent.AsyncResult;
 
+/**
+ * Handles xmpp muc management.
+ *
+ */
 public class MucManager {
 	MultiUserChatManager manager;
 	private AppContacts contacts;
@@ -48,17 +52,34 @@ public class MucManager {
 		this.contacts = contacts;
 	}
 
+	/**
+	 * Adds a chat room bookmark
+	 * @param client
+	 * @param name the name of the room to bookmark
+	 * @param room the jid of the room to bookmark
+	 * @param nick the nickname for the bookmark
+	 */
 	public void addChatRoomBookmark(XmppClient client, String name, Jid room, String nick){
 		ChatRoomBookmark bookmark = new ChatRoomBookmark(name, room, nick, null, false);
 		BookmarkManager bmManager = client.getManager(BookmarkManager.class);
 		bmManager.addBookmark(bookmark);
 	}
 
+	/**
+	 * Removes a chat room bookmark
+	 * @param client
+	 * @param room the jid of the room to remove
+	 */
 	public void removeChatRoomBookmark(XmppClient client, Jid room){
 		BookmarkManager bmManager = client.getManager(BookmarkManager.class);
 		bmManager.removeChatRoomBookmark(room);
 	}
 
+	/**
+	 * Gets a list of chat room bookmarks for this user
+	 * @param client
+	 * @return a list of this users chat room bookmarks
+	 */
 	public List<ChatRoomBookmark> getChatRoomBookmarks(XmppClient client){
 		BookmarkManager bmManager = client.getManager(BookmarkManager.class);
 		AsyncResult<List<ChatRoomBookmark>> result = bmManager.getChatRoomBookmarks();

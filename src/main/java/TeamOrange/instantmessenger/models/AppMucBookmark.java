@@ -1,5 +1,10 @@
 package TeamOrange.instantmessenger.models;
 
+/**
+ * Represents the bookmark to a muc.
+ * This is how we load mucs upon login.
+ *
+ */
 public class AppMucBookmark {
 	private String nick;
 	private AppJid room;

@@ -2,6 +2,10 @@ package TeamOrange.instantmessenger.models.tasks;
 
 import TeamOrange.instantmessenger.controllers.LoginController;
 
+/**
+ * Represents a task to login
+ *
+ */
 public class AppLoginTask implements AppTask{
 	private String userName;
 	private String password;

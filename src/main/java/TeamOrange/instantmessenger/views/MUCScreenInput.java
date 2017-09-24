@@ -7,6 +7,10 @@ import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppMucList;
 import TeamOrange.instantmessenger.models.AppMucRequest;
 
+/**
+ * Represents the input for the muc screen.
+ *
+ */
 public class MUCScreenInput implements ScreenInput {
 	private AppMucList mucs;
 

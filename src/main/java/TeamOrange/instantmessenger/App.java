@@ -44,6 +44,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * Top level of the application, creates and connects objects, determines architecture.
+ * This is not the starting point of the application, because JavaFX wants the starting point to be a view class that extends Application.
+ * The staring point is GuiBase, which sets up JavaFX, then creates an instance of this class.
+ */
 public class App {
 	// constants for messages
 	public static final String REQUEST_CONTACT_ADD = "1";
@@ -216,7 +221,8 @@ public class App {
 
     /**
      * This is called by BabblerBase when there is a new presence event
-     * @param appPresence the new presence
+     * @param fromJid the appJid that the presence is from
+     * @param appPresenceType the type of the new presence
      */
     public void presenceListener(AppJid fromJid, AppPresence.Type appPresenceType){
     	presenceController.status(fromJid, appPresenceType);
@@ -240,6 +246,10 @@ public class App {
 
     }
 
+    /**
+     * This is called by babblerBase when a new connection event occurs.
+     * @param type the type of event
+     */
     public void connectionEventListener(ConnectionEventEnum type){
     	connectionController.onConnectionEvent(type);
     }
@@ -316,10 +326,10 @@ public class App {
     	}
     }
 
-    /**
-     * Open CreateMUCScreen with RoomID
-     * @param roomID
-     */
+//    /**
+//     * Open CreateMUCScreen with RoomID
+//     * @param roomID
+//     */
 //    public void setScreenCreateMUC(String roomID) {
 //    	this.currentScreen = ScreenEnum.CREATEMUC;
 //		statusDisplay.setScreenViewLater(currentScreen);
@@ -415,6 +425,10 @@ public class App {
     		chatScreen.loadLater(new ChatScreenInput(muc));
     }
 
+    /**
+     * This is called by GuiBase when the application is closed
+     * It shuts down the thread within connectionController, which may be trying to connect.
+     */
     public void onClose(){
 //    	connectionController.addEndTaskThreadTask();
 //    	connectionController.completeTasks();

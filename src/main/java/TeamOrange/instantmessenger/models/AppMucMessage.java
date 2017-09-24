@@ -17,10 +17,22 @@ public class AppMucMessage {
 		this.sentFromSelf = sentFromSelf;
 	}
 
+	/**
+	 * Creates an outbound message
+	 * @param body the body of the message
+	 * @param fromNick the nickname of the user that the message is from
+	 * @return the created outbound muc message
+	 */
 	public static AppMucMessage createOutbound(String body, String fromNick){
 		return new AppMucMessage(body, fromNick, false, true);
 	}
 
+	/**
+	 * Creates an inbound message
+	 * @param body the body of the message
+	 * @param fromNick the nickname of the user that the message is from
+	 * @return the created inbound muc message
+	 */
 	public static AppMucMessage createInbound(String body, String fromNick){
 		return new AppMucMessage(body, fromNick, true, false);
 	}

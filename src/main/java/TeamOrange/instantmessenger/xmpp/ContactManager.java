@@ -24,6 +24,10 @@ import rocks.xmpp.im.roster.model.ContactGroup;
 import rocks.xmpp.im.subscription.PresenceManager;
 import rocks.xmpp.util.concurrent.AsyncResult;
 
+/**
+ * Handles the xmpp contact management
+ *
+ */
 public class ContactManager {
 
 	/**
@@ -133,7 +137,6 @@ public class ContactManager {
 	 * @param client
 	 * @return
 	 */
-
 	public LinkedList<String> getContacts(XmppClient client) {
 
 		LinkedList<String> contacts = new LinkedList<String>();
@@ -173,7 +176,6 @@ public class ContactManager {
 	 * @param client
 	 * @return
 	 */
-
 	public LinkedList<String> getContactGroups(XmppClient client) {
 
 		LinkedList<String> groups = new LinkedList<String>();

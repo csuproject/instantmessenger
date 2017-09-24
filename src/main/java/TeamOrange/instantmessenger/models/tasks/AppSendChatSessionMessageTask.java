@@ -3,6 +3,11 @@ package TeamOrange.instantmessenger.models.tasks;
 import TeamOrange.instantmessenger.controllers.ChatController;
 import TeamOrange.instantmessenger.models.AppChatSessionMessage;
 
+
+/**
+ * Represents a task to send a message to a chat session.
+ *
+ */
 public class AppSendChatSessionMessageTask implements AppTask{
 
 	private ChatController controller;

@@ -40,7 +40,8 @@ public class ChatController {
 	/**
 	 * This is called by ChatScren when the onSendNewMessageEvent occurs
 	 * Sends the message to the active chat, and reloads the chat screen
-	 * @param message
+	 * @param message the message to send
+	 * @param userName the username of the user to send the message to.
 	 */
 	public void sendChatSessionMessage(String message, String userName){
 		// add unsent messge to messages and update screen
@@ -53,6 +54,12 @@ public class ChatController {
 
 	}
 
+	/**
+	 * This actually sends the message.
+	 * It is handled by contactController so that it can be ensured that there is a connection first.
+	 * @param message the message to send
+	 * @param userName the username of the user to send the message to
+	 */
 	public void actuallySendChatSessionMessage(AppChatSessionMessage message, String userName){
 		chats.getChatWithContact(userName).sendChatMessage(this, message);
 //		reload to see the sent message
@@ -60,6 +67,10 @@ public class ChatController {
 		chatScreen.loadLater(input);
 	}
 
+	/**
+	 * This is called when a message is successfully sent, so that the view can update according to this information.
+	 * @param message the message that has been sent
+	 */
 	public void messageSent(AppChatSessionMessage message){
 		message.hasSent();
 		ChatScreenInput input = new ChatScreenInput(chats.getActiveChat());
@@ -72,8 +83,8 @@ public class ChatController {
 	 * passes the message to the relevant chat to handle
 	 * if the relevant chat session is the current chat session, and teh current screen is the chat scren,
 	 * 		then the chatscreen re loads
-	 * @param message
-	 * @param currentScreenIsChatScreen
+	 * @param message the message that has been recieved
+	 * @param currentScreenIsChatScreen this is true if the current screen is the chat screen, or false otherwise
 	 */
 	public void incomingChatMessage(AppMessage message, boolean currentScreenIsChatScreen){
 		AppChatSession chatSession = chats.getChatOfThread(message.getThread());

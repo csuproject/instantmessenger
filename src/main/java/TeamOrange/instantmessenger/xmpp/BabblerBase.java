@@ -56,7 +56,10 @@ import rocks.xmpp.im.roster.model.Contact;
 import rocks.xmpp.im.subscription.PresenceManager;
 import rocks.xmpp.util.concurrent.AsyncResult;
 
-
+/**
+ * This is the top level interface through which the rest of the app interacts with the server via XMPP.
+ *
+ */
 public class BabblerBase {
 
 	private String hostName;
@@ -113,10 +116,19 @@ public class BabblerBase {
 		messageManager.requestContactAdd(client, to);
 	}
 
+	/**
+	 * Requests a contact to join a muc
+	 * @param to the user the request is being sent to
+	 * @param roomID the id of the room they are being requested to join
+	 */
 	public void requestJoinMuc(AppJid to, String roomID){
 		messageManager.requestJoinMuc(client, to, roomID);
 	}
 
+	/**
+	 * Sends a reqeust to a user to delete this user from their contacts.
+	 * @param toUserName the username of the user the request is being sent to
+	 */
 	public void requestDeleteFromContacts(String toUserName){
 		AppJid toJid = new AppJid(toUserName, "teamorange.space");
 		messageManager.requestDeleteFromContacts(client, toJid);
@@ -183,6 +195,10 @@ public class BabblerBase {
 //		return client.getActiveConnection() != null && connectionManager.getConnectionState(client) == AppConnection.CONNECTED;
 //	}
 
+	/**
+	 * Checks if there is a connection
+	 * @return true if connected, false if not connected
+	 */
 	public boolean isConnected(){
 		if(isLoggedIn()){
 			PingManager pingManager = client.getManager(PingManager.class);
@@ -346,16 +362,30 @@ public class BabblerBase {
 //		mucManager.getMembers(client, roomJid, nick);
 //	}
 
+	/**
+	 * Adds a chat room bookmark
+	 * @param name the name of the chat room
+	 * @param nick the nickname to have in the bookmark
+	 */
 	public void addChatRoomBookmark(String name, String nick){
 		Jid roomJid = Jid.of(name + "@conference.teamorange.space");
 		mucManager.addChatRoomBookmark(client, name, roomJid, nick);
 	}
 
+	/**
+	 * Removes a chat room bookmark
+	 * @param roomName the name of the chat room
+	 * @param nick the nickname in the bookmark
+	 */
 	public void removeChatRoomBookmark(String roomName, String nick){
 		Jid roomJid = Jid.of(roomName + "@conference.teamorange.space");
 		mucManager.removeChatRoomBookmark(client, roomJid);
 	}
 
+	/**
+	 *
+	 * @return a list of chat room bookmarks for this user
+	 */
 	public LinkedList<AppMucBookmark> getChatRoomBookmarks(){
 		List<ChatRoomBookmark> bookmarks = mucManager.getChatRoomBookmarks(client);
 		LinkedList<AppMucBookmark> appBookmarks = new LinkedList();
@@ -429,12 +459,12 @@ public class BabblerBase {
 	//------------------------------Listeners (Message, Presence, Roster)------------------------------//
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * This function is called when there is a new presence event
-	 * handles the event
-	 * consumes the event
-	 * @param presenceEvent represents the presence event
-	 */
+//	/**
+//	 * This function is called when there is a new presence event
+//	 * handles the event
+//	 * consumes the event
+//	 * @param presenceEvent represents the presence event
+//	 */
 //	public void newPresence(PresenceEvent presenceEvent){
 //	    Presence presence = presenceEvent.getPresence();
 //	    Contact contact = client.getManager(RosterManager.class).getContact(presence.getFrom());
@@ -463,6 +493,10 @@ public class BabblerBase {
 //	    presenceEvent.consume();
 //	}
 
+	/**
+	 * This is called when there is a new presence event
+	 * @param presenceEvent the new presence event
+	 */
 	public void newPresence(PresenceEvent presenceEvent){
 	    Presence presence = presenceEvent.getPresence();
 	    Contact contact = client.getManager(RosterManager.class).getContact(presence.getFrom());
@@ -512,6 +546,10 @@ public class BabblerBase {
 		rosterListener.roster();
 	}
 
+	/**
+	 * This is called when there is a new connection event.
+	 * @param connectionEvent the new connection event
+	 */
 	public void newConnectionEvent(ConnectionEvent connectionEvent){
 		ConnectionEventEnum type = null;
 		switch(connectionEvent.getType()){
@@ -535,6 +573,10 @@ public class BabblerBase {
 		connectionEventListener.connectionEvent(type);
 	}
 
+	/**
+	 * This is called when a request contact add has beeen successfully sent.
+	 * @param message the message that has been sent
+	 */
 	public void onRequestContactAddSent(Message message){
 		AppJid to = JidUtilities.appJidFromJid(message.getTo());
 		requestContactAddSentListener.contactAddRequestSent(to);

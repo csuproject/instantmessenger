@@ -7,6 +7,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 
+/**
+ * Displays a message.
+ *
+ */
 public class MessageDisplay extends VBox{
 	Label username;
 	Label message;

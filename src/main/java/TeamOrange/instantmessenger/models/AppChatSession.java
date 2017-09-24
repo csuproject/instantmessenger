@@ -31,6 +31,10 @@ public class AppChatSession {
 		return xmppChatSession.getThread();
 	}
 
+	/**
+	 * Adds a message to this chat.
+	 * @param message the message to add
+	 */
 	public void addMessage(AppChatSessionMessage message){
 		messages.add(message);
 	}
@@ -46,6 +50,11 @@ public class AppChatSession {
 		xmppChatSession.sendMessage(controller, message);
 	}
 
+	/**
+	 * Adds an unsent message to this chat.
+	 * @param message the message to add
+	 * @return the message that thas been added
+	 */
 	public AppChatSessionMessage addUnsentMessage(String message){
 		AppChatSessionMessage appMessage = AppChatSessionMessage.createOutbound(message);
 		messages.add(appMessage);

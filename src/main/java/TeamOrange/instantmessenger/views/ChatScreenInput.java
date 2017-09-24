@@ -7,6 +7,9 @@ import TeamOrange.instantmessenger.models.AppChatSessionMessage;
 import TeamOrange.instantmessenger.models.AppMuc;
 import TeamOrange.instantmessenger.models.AppPresence;
 
+/**
+ * Represents the input for the chat screen.
+ */
 public class ChatScreenInput implements ScreenInput {
 	private AppChatSession chatSession;
 	private AppMuc muc;

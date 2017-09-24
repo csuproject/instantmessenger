@@ -9,6 +9,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
+/**
+ * This is the navigation screen. It is always present at the bottom of the screen when the user is logged in.
+ * It allows the user to navigate to the Contacts screen, the Groups screen, or to logout.
+ * It also alows the user to know which section they are in, as the button for that section looks selected.
+ *
+ */
 public class NavigationScreen extends Screen {
 
 	HBox navigationBox;
@@ -29,6 +35,10 @@ public class NavigationScreen extends Screen {
 		}
 	}
 
+	/**
+	 * Creates the screen.
+	 * @throws Exception
+	 */
 	public void create() throws Exception {
 
 		navigationBox = new HBox();
@@ -78,30 +88,46 @@ public class NavigationScreen extends Screen {
 		this.getChildren().addAll(navigationBox);
 	}
 
+	/**
+	 * Updates the image on the Contacts button to reflect that there is a new message in the Contacts screen.
+	 */
 	public void setImageNewContactMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
 				contactButton.setGraphic(new ImageView(imageNewMessage));}});
 	}
 
+	/**
+	 * Updates the image on the Groups button to reflect that there is a new message in the Groups screen.
+	 */
 	public void setImageNewGroupMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
 				chatButton.setGraphic(new ImageView(imageNewMessage));}});
 	}
 
+	/**
+	 * Updates the image on the Contacts button to reflect that there is NOT a new message in the Contacts screen.
+	 */
 	public void setImageContactMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
 				contactButton.setGraphic(new ImageView(imageMessage));}});
 	}
 
+	/**
+	 * Updates the image on the Groups button to reflect that there is NOT a new message in the Groups screen.
+	 */
 	public void setImageGroupMessage() {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
 				chatButton.setGraphic(new ImageView(imageMessage));}});
 	}
 
+	/**
+	 * This is called when the logout button is pressed.
+	 * Sends the logout event.
+	 */
 	public void logout(){
 		logoutEvent.logout();
 	}

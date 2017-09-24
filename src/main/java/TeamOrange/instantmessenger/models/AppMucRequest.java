@@ -1,5 +1,9 @@
 package TeamOrange.instantmessenger.models;
 
+/**
+ * Represents a request to join a muc
+ *
+ */
 public class AppMucRequest {
 	private String roomID;
 	private AppJid from;

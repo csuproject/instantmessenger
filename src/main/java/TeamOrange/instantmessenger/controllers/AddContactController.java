@@ -34,7 +34,7 @@ public class AddContactController {
 	/**
 	 * This is called by HomeScreen when the onAddContactEvent occurs
 	 * sends a contact-add request to the given user
-	 * @param username
+	 * @param username the username of the contact to send a contact-add request to.
 	 */
 	public void actuallyAddContact(String username){
 		AppJid jid = new AppJid(username, "teamorange.space");
@@ -42,11 +42,21 @@ public class AddContactController {
 		//babblerBase.requestSubsription(jid.getBareJid(), "Hello, I would like to to chat!?");
 	}
 
+	/**
+	 * This actually sends the contact request.
+	 * It is handled by contactController so that it can be ensured that there is a connection first.
+	 * @param username the username of the user to send the request to.
+	 */
 	public void addContact(String username){
 		connectionController.addSendContactRequestTask(this, username);
 		connectionController.completeTasks();
 	}
 
+	/**
+	 * This function is called when the contact-add request has been successfully sent.
+	 * It then updates the screen accordingly.
+	 * @param to the jid of the user that the contact request has been sent to.
+	 */
 	public void contactAddRequestSent(AppJid to){
     	homeScreen.alertLater("Contact add request sent to "+to.getBareJid(), "Contact Add Request Sent", AlertType.CONFIRMATION);
     }

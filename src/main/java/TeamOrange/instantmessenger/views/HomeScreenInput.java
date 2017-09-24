@@ -5,6 +5,10 @@ import TeamOrange.instantmessenger.models.AppContacts;
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppUser;
 
+/**
+ * Represents the input for the home screen.
+ *
+ */
 public class HomeScreenInput implements ScreenInput {
 	private AppContacts contacts;
 

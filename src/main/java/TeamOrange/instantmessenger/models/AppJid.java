@@ -1,5 +1,9 @@
 package TeamOrange.instantmessenger.models;
 
+/**
+ * Represents a Jid
+ *
+ */
 public class AppJid {
 	private String local;
 	private String domain;

@@ -9,6 +9,10 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
+/**
+ * Displays a contact.
+ *
+ */
 public class ContactDisplay extends FlowPane {
 
 	private HomeScreen parent;

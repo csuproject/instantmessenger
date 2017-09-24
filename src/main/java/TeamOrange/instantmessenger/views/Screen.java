@@ -13,6 +13,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.AudioClip;
 
+/**
+ * This is the base class for all screens.
+ */
 public abstract class Screen extends StackPane {
 
 	private GuiBase guiBase;
@@ -29,10 +32,18 @@ public abstract class Screen extends StackPane {
 		}
 	}
 
+	/**
+	 * Loads the screen based on the input.
+	 * @param input
+	 */
 	protected void load(ScreenInput input){
 
 	}
 
+	/**
+	 * Calls load() safely from JavaFX
+	 * @param input
+	 */
 	public void loadLater(ScreenInput input){
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
@@ -41,6 +52,12 @@ public abstract class Screen extends StackPane {
 		});
 	}
 
+	/**
+	 * Calls alert() safely form JavaFX
+	 * @param message the message of the alert
+	 * @param title the title of the alert
+	 * @param type the type of the alert
+	 */
 	public void alertLater(String message, String title, AlertType type){
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
@@ -49,6 +66,12 @@ public abstract class Screen extends StackPane {
 		});
 	}
 
+	/**
+	 * Creates an alert.
+	 * @param message the message of the alert
+	 * @param title the title of the alert
+	 * @param type the type of the alert
+	 */
 	public void alert(String message, String title, AlertType type){
 		Alert alert = new Alert(type);
 		if(type == AlertType.CONFIRMATION){

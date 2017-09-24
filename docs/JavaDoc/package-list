@@ -1,0 +1,9 @@
+TeamOrange.instantmessenger
+TeamOrange.instantmessenger.controllers
+TeamOrange.instantmessenger.lambda
+TeamOrange.instantmessenger.models
+TeamOrange.instantmessenger.models.tasks
+TeamOrange.instantmessenger.views
+TeamOrange.instantmessenger.xmpp
+exceptions
+resources

@@ -1,5 +1,9 @@
 package TeamOrange.instantmessenger.models;
 
+/**
+ * Represents an occupant in a muc
+ *
+ */
 public class AppOccupant {
 	private String nickname;
 

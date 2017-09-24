@@ -38,6 +38,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+/**
+ * This is the chatscreen, it is used to chat with a user or a group.
+ *
+ */
 public class ChatScreen extends Screen {
 
 	private TextField newMessageTextField;
@@ -72,6 +76,10 @@ public class ChatScreen extends Screen {
 		}
 	}
 
+	/**
+	 * Creates the screen
+	 * @throws Exception
+	 */
 	public void create() throws Exception {
 
 		//////////////////////////////////////////////////////////////////////////////
@@ -160,6 +168,10 @@ public class ChatScreen extends Screen {
 	}
 
 	@Override
+	/**
+	 * Loads the screen, updating elements based on the input.
+	 * @param input the input to load the screen based on
+	 */
 	public void load(ScreenInput input){
 
 		ChatScreenInput chatScreenInput = (ChatScreenInput)input;
@@ -236,6 +248,10 @@ public class ChatScreen extends Screen {
 		scrollPane.setVvalue(1);
 	}
 
+	/**
+	 * This is called when the send new message button is pressed.
+	 * Fires the send new message event.
+	 */
 	public void sendNewMessageBtnPress(){
 		String message = newMessageTextField.getText();
 		if (!newMessageTextField.getText().isEmpty()) {
@@ -247,6 +263,10 @@ public class ChatScreen extends Screen {
 		newMessageTextField.clear();
 	}
 
+	/**
+	 * Fires the send new message event.
+	 * @param message the message to send.
+	 */
 	public void sendMUCMessage(String message) {
 		sendMucMessageEvent.send(muc, message);
 //		muc.sendMessage(message);
@@ -263,6 +283,7 @@ public class ChatScreen extends Screen {
 
 	/**
 	 * Set the MUC Occupant List
+	 * @param occupantList the list of occupants to set
 	 */
 	public void setMUCOccupants(LinkedList<AppUser> occupantList) {
 		mucOccupantsPaneContent.getChildren().clear();

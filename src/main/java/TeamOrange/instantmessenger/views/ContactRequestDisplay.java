@@ -7,6 +7,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 
+/**
+ * Displays a contact request.
+ *
+ */
 public class ContactRequestDisplay extends FlowPane {
 	private HomeScreen parent;
 	private String username;

@@ -4,6 +4,10 @@ import TeamOrange.instantmessenger.controllers.AcceptOrDeclineContactRequestCont
 import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppUser;
 
+/**
+ * Represents a task to reply to a contact request.
+ *
+ */
 public class AppReplyToContactRequestTask implements AppTask {
 	private AcceptOrDeclineContactRequestController controller;
 	private AppUser contact;

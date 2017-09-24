@@ -39,7 +39,7 @@ public class AppMuc {
 
 	/**
 	 * Sends the given message to the group chat
-	 * @param message
+	 * @param message the message to send
 	 */
 	public void sendMessage(String message){
 		babblerBase.sendGroupMessage(roomID, message);
@@ -52,6 +52,11 @@ public class AppMuc {
 		babblerBase.leaveRoom(roomID);
 	}
 
+	/**
+	 * Adds an unsent message to this group chat
+	 * @param message the messsage to add
+	 * @param from the user that the message is from
+	 */
 	public void addUnsentMessage(String message, String from){
 		AppMucMessage appMessage = AppMucMessage.createOutbound(message, from);
 		messages.add(appMessage);
@@ -86,7 +91,9 @@ public class AppMuc {
 
 	/**
 	 * This function is called whenever a new message is received for this muc
-	 * @param message
+	 * If the message is sent from self, then the message is located and sent is set to true.
+	 * Otherwise the message is just added.
+	 * @param message the received message
 	 */
 	public void inboundMessage(AppMucMessage message){
 		if(message.getSentFromSelf()){
@@ -103,6 +110,11 @@ public class AppMuc {
 		messageEvent.getMUC(this);
 	}
 
+	/**
+	 * Retrieves an outbound message
+	 * @param message the message to retrieve
+	 * @return the retrieved message, or null if none exists
+	 */
 	public AppMucMessage getOutboundMessage(AppMucMessage message){
 		String body = message.getBody();
 		AppMucMessage answer = null;

@@ -26,10 +26,10 @@ public class CreateAccountController {
 	}
 
 	/**
-	 * This is called by AccountScreen when the onCreateAccountEvent occurs
-	 * Tells BabblerBase to create a user with the given username and password
-	 * @param userName
-	 * @param password
+	 * Creates an acocunt.
+	 * This is used by connectionController.
+	 * @param userName the username to create the account with
+	 * @param password the password to create the account with
 	 */
 	public void actuallyCreateAccount(String userName, String password) {
 		try {
@@ -40,6 +40,13 @@ public class CreateAccountController {
 		}
 	}
 
+	/**
+	 * This is called by AccountScreen when the onCreateAccountEvent occurs
+	 * Tells BabblerBase to create a user with the given username and password
+	 * The actual work for creating the account is differed to connectionController so that it can be ensured that the app has a connection before creating the account.
+	 * @param userName the username to create the account with
+	 * @param password the password to create the account with
+	 */
 	public void createAccount(String userName, String password){
 		connectionController.addCreateAccountTask(this, userName, password);
 		connectionController.completeTasks();

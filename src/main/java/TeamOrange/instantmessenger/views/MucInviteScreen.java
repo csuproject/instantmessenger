@@ -21,6 +21,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * This is the muc invite screen, in which the user can invite their contacts to a muc.
+ *
+ */
 public class MucInviteScreen extends Screen	{
 
 	private ScrollPane contacts;
@@ -127,6 +131,10 @@ public class MucInviteScreen extends Screen	{
 //	}
 
 	@Override
+	/**
+	 * Loads the screen based on the input.
+	 * @param input the input to load the screen based on.
+	 */
 	public void load(ScreenInput input) {
 		MucInviteScreenInput mucInviteScreenInput = (MucInviteScreenInput)input;
 		AppMuc muc = mucInviteScreenInput.getMucInvitingTo();
@@ -173,6 +181,9 @@ public class MucInviteScreen extends Screen	{
 		System.out.println(selectAppUser.getJid());
 	}
 
+	/**
+	 * Invites the list of selected contacts to the muc.
+	 */
 	private void invite() {
 
 		inviteToMucEvent.invite(mucList);

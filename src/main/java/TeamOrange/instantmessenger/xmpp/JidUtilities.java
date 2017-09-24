@@ -3,6 +3,10 @@ package TeamOrange.instantmessenger.xmpp;
 import TeamOrange.instantmessenger.models.AppJid;
 import rocks.xmpp.addr.Jid;
 
+/**
+ * A static class containing some helper functions for dealing with Jid and AppJid
+ *
+ */
 public class JidUtilities {
 
 	/**

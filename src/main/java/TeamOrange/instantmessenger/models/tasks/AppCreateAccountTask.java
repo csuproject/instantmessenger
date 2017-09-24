@@ -2,6 +2,10 @@ package TeamOrange.instantmessenger.models.tasks;
 
 import TeamOrange.instantmessenger.controllers.CreateAccountController;
 
+/**
+ * Represents a task to create an account
+ *
+ */
 public class AppCreateAccountTask implements AppTask {
 	private CreateAccountController createAccountController;
 	private String userName;

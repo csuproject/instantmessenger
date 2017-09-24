@@ -16,6 +16,10 @@ import exceptions.ConfideAuthenticationException;
 import exceptions.ConfideNoResponseException;
 import exceptions.ConfideXmppException;
 
+/**
+ * Controls the flow when a new presence is received.
+ *
+ */
 public class PresenceController {
 
 	private AccountScreen accountScreen;
@@ -30,11 +34,17 @@ public class PresenceController {
 		this.contacts = contacts;
 	}
 
+	/**
+	 * This is called when a new presence is recieved.
+	 * Updates the presence for the given contact.
+	 * @param from the contact that the presence is from
+	 * @param type the type of presence
+	 */
 	public void status(AppJid from, AppPresence.Type type) {
 		AppUser contact = contacts.getContactWithUsername(from.getLocal());
 		if(contact != null){
 			contact.setPresence(type);
 		}
-		
+
 	}
 }

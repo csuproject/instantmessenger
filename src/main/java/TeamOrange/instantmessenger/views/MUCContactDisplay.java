@@ -19,6 +19,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+/**
+ * Displays a muc contact
+ *
+ */
 public class MUCContactDisplay extends FlowPane {
 
 	private String username;

@@ -25,7 +25,10 @@ import exceptions.ConfideFailedToEnterChatRoomException;
 import javafx.application.Platform;
 import javafx.scene.control.Alert.AlertType;
 
-
+/**
+ * Controlls the flow for muc events.
+ * Such as: creating a muc, deleting a muc, inviting contacts to a muc, sending messages to a muc, accepting muc requests, declining muc requests, notifications.
+ */
 public class MUCController {
 
 	private BabblerBase babblerBase;
@@ -70,6 +73,11 @@ public class MUCController {
 		chatScreen.setOnSendMucMessageEvent((muc, message)->sendMUCMessage(muc, message));
 	}
 
+	/**
+	 * Changes to the MUC_INVITE screen.
+	 * Sets the muc that is currently being invited for.
+	 * @param muc the muc that is being invited for
+	 */
 	public void openInviteMucScreen(AppMuc muc){
 		mucs.setMucInvitingTo(muc);
 		System.out.println("MUCController muc inviting to: " + mucs.getMucInvitingTo());
@@ -77,6 +85,11 @@ public class MUCController {
 //		mucInviteScreen.loadLater(new MucInviteScreenInput(mucs, contacts));
 	}
 
+	/**
+	 * This is called when a muc is to be deleted.
+	 * Deletes the muc locally and removes the bookmark from the server.
+	 * @param muc the muc that is to be deleted
+	 */
 	public void mucDeleteButtonPress(AppMuc muc){
 		String roomName = muc.getRoomID();
 		String nick = muc.getNick();
@@ -85,12 +98,21 @@ public class MUCController {
 		mucScreen.loadLater( new MUCScreenInput(this.mucs) );
 	}
 
+	/**
+	 * Invites the given list of users to the muc that is set as the current muc to invite to.
+	 * @param users the list of users to invite to the muc
+	 */
 	public void inviteUsersToMuc(List<AppUser> users){
 		for(AppUser user : users){
 			babblerBase.requestJoinMuc(user.getJid(), mucs.getMucInvitingTo().getRoomID());
 		}
 	}
 
+	/**
+	 * Creates a muc.
+	 * This is used by connectionController.
+	 * @param roomID the id of the room to create
+	 */
 	public void actuallyCreateMUC(String roomID) {
 
 		// Create MUC
@@ -109,6 +131,11 @@ public class MUCController {
 		}
 	}
 
+	/**
+	 * This is called when it is requested for a room to be created.
+	 * Differs the creation of the room to connectionController, so that it can be ensured that the app has a connection first.
+	 * @param roomID the id of the room to create.
+	 */
 	public void createMUC(String roomID){
 		if( mucs.getMucIfExists(roomID) != null ){
 			mucScreen.alertLater("Group Chat \""+roomID+"\" already exists", "Group Already Exists", AlertType.INFORMATION);
@@ -119,13 +146,22 @@ public class MUCController {
 	}
 
 	/**
-	 * Send message to focused MUC
-	 * @param message
+	 * Send message to the given muc.
+	 * This is used by connectionController.
+	 * @param muc the muc to send the message to
+	 * @param message the message to send
 	 */
 	public void actuallySendMUCMessage(AppMuc muc, String message) {
 		muc.sendMessage(message);
 	}
 
+	/**
+	 * This is called when it is requested for a message to be sent to a muc.
+	 * An unsent message is added to the muc.
+	 * The sending is differed to conntectionController to ensure that the app has a connection first.
+	 * @param muc the muc to send the message to
+	 * @param message the message to send
+	 */
 	public void sendMUCMessage(AppMuc muc, String message){
 		muc.addUnsentMessage(message, contacts.getSelf().getJid().getLocal());
 		ChatScreenInput input = new ChatScreenInput(muc);
@@ -135,6 +171,10 @@ public class MUCController {
 		connectionController.completeTasks();
 	}
 
+	/**
+	 * Changes to screen to the MUCCHAT screen, displaying the given muc
+	 * @param roomID the id of the muc to display
+	 */
 	private void openChatScreen(String roomID) {
 		AppMuc muc = mucs.getMucIfExists(roomID);
 		mucs.setMucInFocus(muc);
@@ -145,12 +185,22 @@ public class MUCController {
 		this.notifyMUCEvent = notifyMUCEvent;
 	}
 
+	/**
+	 * Accepts a muc request, creating that muc, and removing the request.
+	 * @param roomID the id of the muc to create
+	 * @param from the contact that the request is from
+	 */
 	public void acceptMucRequest(String roomID, String from){
 		mucs.removeMucRequestsWithRoomID(roomID);
 		createMUC(roomID);
 		mucScreen.loadLater( new MUCScreenInput(mucs) );
 	}
 
+	/**
+	 * Declines a muc request, removing the request.
+	 * @param roomID the id of the muc to decline
+	 * @param from the contact that the request is from
+	 */
 	public void declineMucRequest(String roomID, String from){
 		mucs.removeMucRequestsWithRoomID(roomID);
 		mucScreen.loadLater( new MUCScreenInput(mucs) );

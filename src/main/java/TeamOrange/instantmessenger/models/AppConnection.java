@@ -1,5 +1,10 @@
 package TeamOrange.instantmessenger.models;
 
+/**
+ * Represents the connection status of the application.
+ * Either CONNECTED or NOT_CONNECTED
+ *
+ */
 public class AppConnection {
 	public static final int CONNECTED = 0;
 	public static final int NOT_CONNECTED = 1;
