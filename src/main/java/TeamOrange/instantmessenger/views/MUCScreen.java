@@ -119,6 +119,14 @@ public class MUCScreen extends Screen {
 		mucScrollPane.setFitToWidth(true);
 		mucScrollPane.setFitToHeight(true);
 		mucScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		
+		//////////////////////////////////////////////////////////////////////////////
+		//----------------------------------Resources-------------------------------//
+		//////////////////////////////////////////////////////////////////////////////
+		imageMessage = new Image(getClass().getResource(
+				"/resources/message.png").toURI().toString(),50,50,false,false);
+		imageNewMessage = new Image(getClass().getResource(
+				"/resources/message-new.png").toURI().toString(),50,50,false,false);
 
 		//////////////////////////////////////////////////////////////////////////////
 		//----------------------------------Screen----------------------------------//

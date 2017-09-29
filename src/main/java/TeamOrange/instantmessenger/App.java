@@ -1,7 +1,6 @@
 package TeamOrange.instantmessenger;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayList;import java.util.List;
 import TeamOrange.instantmessenger.controllers.AcceptOrDeclineContactRequestController;
 import TeamOrange.instantmessenger.controllers.AddContactController;
 import TeamOrange.instantmessenger.controllers.ChatController;
@@ -43,6 +42,11 @@ import exceptions.ConfideXmppException;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import java.io.File;
+import java.net.URISyntaxException;
+
 
 /**
  * Top level of the application, creates and connects objects, determines architecture.
@@ -82,14 +86,19 @@ public class App {
 	private NavigationController naviationController;
 	private ConnectionController connectionController;
 	private MUCController mucController;
-	private ContactManagementController contactManagementController;
-
+	private ContactManagementController contactManagementController;    
 
 	// models
 	AppContacts contacts;
 	AppChats chats;
 	AppConnection connection;
 	private AppMucList mucs;
+	
+	// resources
+	private Media soundA;
+	private Media soundB;
+	private MediaPlayer audibleAlertChat;
+	private MediaPlayer audibleAlertMUC;
 
 	public App(GuiBase guiBase){
 		this.guiBase = guiBase;
@@ -160,6 +169,17 @@ public class App {
 
 		contactManagementController = new ContactManagementController(babblerBase, homeScreen, chats, contacts, connectionController);
 		contactManagementController.setOnChangeScreen( screen->setScreen(screen) );
+
+		// Notification Alert
+		try {
+			soundA = new Media(getClass().getResource("/resources/misc_menu.wav").toURI().toString());
+			soundB = new Media(getClass().getResource("/resources/misc_menu.wav").toURI().toString());
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		audibleAlertChat = new MediaPlayer(soundA);
+		audibleAlertMUC = new MediaPlayer(soundB);
 	}
 
 	public void reset(){
@@ -283,6 +303,7 @@ public class App {
 				HomeScreenInput input = new HomeScreenInput(contacts);
 				homeScreen.loadLater(input);
 				guiBase.setScreenLater(statusDisplay,homeScreen,navigationScreen);
+				audibleAlertMUC.stop();
 			} break;
 			case MUC:
 			{
@@ -291,6 +312,7 @@ public class App {
 				navigationScreen.setSelectedToGroups();
 				mucScreen.loadLater(new MUCScreenInput(mucs));
 				guiBase.setScreen(statusDisplay,mucScreen,navigationScreen);
+				audibleAlertChat.stop();
 			} break;
 			case MUC_INVITE:
 			{
@@ -359,9 +381,6 @@ public class App {
 			if (currentScreen == ScreenEnum.MUCCHAT &&
 					this.mucs.mucInFocusIs(muc) ) {
     		}
-			else {
-				navigationScreen.setImageNewGroupMessage();
-			}
 		}
 		// Reload open screen
     	if (currentScreen == ScreenEnum.MUCCHAT && this.mucs.mucInFocusIs(muc) )
@@ -385,6 +404,7 @@ public class App {
     		}
 			else {
 				navigationScreen.setImageNewContactMessage();
+				audibleAlertChat.play();
 			}
 		}
 		// Set new message on contact displays
@@ -406,17 +426,20 @@ public class App {
     	// Notify on MUCCHAT
 		if (currentScreen == ScreenEnum.MUCCHAT && !mucs.getMucInFocus().equals(muc)) {
 			navigationScreen.setImageNewGroupMessage(); // Notify NavigationScreen
+			audibleAlertMUC.play();
 			mucs.setNotification(muc, true); // Notify MUCChatDisplays
 			mucScreen.loadLater(new MUCScreenInput(mucs));
 		}
 		// Notify on MUC
 		if(currentScreen == ScreenEnum.MUC) {
 			mucs.setNotification(muc, true); // Notify MUCChatDisplays
+			audibleAlertMUC.play();
 			mucScreen.loadLater(new MUCScreenInput(mucs));
 		}
 		// Notify on HOME
 		if(currentScreen == ScreenEnum.HOME) {
 			navigationScreen.setImageNewGroupMessage(); // Notify NavigationScreen
+			audibleAlertMUC.play();
 			mucs.setNotification(muc, true); // Notify MUCChatDisplays
 			mucScreen.loadLater(new MUCScreenInput(mucs));
 		}
@@ -430,6 +453,8 @@ public class App {
      * It shuts down the thread within connectionController, which may be trying to connect.
      */
     public void onClose(){
+    	audibleAlertMUC.stop();
+    	audibleAlertChat.stop();
 //    	connectionController.addEndTaskThreadTask();
 //    	connectionController.completeTasks();
     	connectionController.endTaskThread();
