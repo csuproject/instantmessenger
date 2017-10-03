@@ -1,6 +1,7 @@
 package TeamOrange.instantmessenger.views;
 
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -84,6 +85,33 @@ public abstract class Screen extends StackPane {
 		alert.setX( guiBase.getCenterX() - 211 );
 		alert.setY( guiBase.getCenterY() - 70 );
 		alert.showAndWait();
+	}
+
+	/**
+	 * Creates an alert that returns a boolean depending on how the user answers.
+	 * Should not be used from outside of javafx code.
+	 * @param message the message of the alert
+	 * @param title the title of the alert
+	 * @return true if user selects yes, false if user accepts no.
+	 */
+	public boolean alertBoolean(String message, String title){
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.getButtonTypes().clear();
+		alert.getButtonTypes().add(ButtonType.YES);
+		alert.getButtonTypes().add(ButtonType.NO);
+		alert.setTitle(title);
+		alert.setHeaderText(null);
+		alert.setContentText(message);
+		alert.setX( guiBase.getCenterX() - 211 );
+		alert.setY( guiBase.getCenterY() - 70 );
+//		alert.getResult();
+//		alert.showAndWait();
+		Optional<ButtonType> result = alert.showAndWait();
+		 if (result.isPresent() && result.get() == ButtonType.YES) {
+		     return true;
+		 } else {
+			 return false;
+		 }
 	}
 
 	public void loginUserNameTextFieldFormatValidation(KeyEvent keyEvent){

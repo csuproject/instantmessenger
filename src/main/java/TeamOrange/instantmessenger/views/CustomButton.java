@@ -133,4 +133,8 @@ public class CustomButton extends Button {
 		}
 	}
 
+	public boolean isSelected(){
+		return selected;
+	}
+
 }

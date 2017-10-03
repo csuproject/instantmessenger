@@ -69,13 +69,10 @@ public class NavigationScreen extends Screen {
 		logoutButton = new CustomButton("Logout");
 		logoutButton.setGraphic(new ImageView(imageLogout));
 		logoutButton.setMinSize(135, 60);
-		logoutButton.setOnAction(e->{
-			logoutButton.select();
-			setImageContactMessage();
-			setImageGroupMessage();
-			logoutEvent.logout();
-		});
 		logoutButton.setFocusTraversable(false);
+		logoutButton.setOnAction(e->{
+			logoutButtonPress();
+		});
 
 		contactButton.setPrefWidth(141.0);
 		contactButton.setPrefHeight(66.0);
@@ -122,6 +119,36 @@ public class NavigationScreen extends Screen {
 		Platform.runLater(new Runnable(){
 			@Override public void run(){
 				chatButton.setGraphic(new ImageView(imageMessage));}});
+	}
+
+	/**
+	 * This is called when the logout button is pressed.
+	 * Displays an alert asking the user if they are sure,
+	 * if they are then it logs them out by sending the logout event.
+	 */
+	public void logoutButtonPress(){
+		boolean contactsButtonSelected;
+		if(contactButton.isSelected()){
+			contactsButtonSelected = true;
+			contactButton.unSelect();
+		} else {
+			contactsButtonSelected = false;
+			chatButton.unSelect();
+		}
+		logoutButton.select();
+		setImageContactMessage();
+		setImageGroupMessage();
+		boolean answer = alertBoolean("Are you sure you would like to log out?", "Are You Sure?");
+		if(answer){
+			logoutEvent.logout();
+		} else {
+			logoutButton.unSelect();
+			if(contactsButtonSelected){
+				contactButton.select();
+			} else {
+				chatButton.select();
+			}
+		}
 	}
 
 	/**
