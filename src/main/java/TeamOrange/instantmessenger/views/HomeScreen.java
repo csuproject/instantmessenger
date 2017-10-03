@@ -11,6 +11,7 @@ import TeamOrange.instantmessenger.models.AppJid;
 import TeamOrange.instantmessenger.models.AppPresence;
 import TeamOrange.instantmessenger.models.AppUser;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -81,7 +82,7 @@ public class HomeScreen extends Screen {
 		contacts.setStyle("-fx-focus-color: transparent;");
 		contactsContent = new VBox();
 		contactsContent.setMaxHeight(500);
-		contactsContent.setPrefWidth(500);
+		contactsContent.setPrefWidth(680);
 		contacts.setContent(contactsContent);
 		contacts.setMaxHeight(500);
 		contacts.setMinHeight(500);
@@ -94,11 +95,13 @@ public class HomeScreen extends Screen {
 		//////////////////////////////////////////////////////////////////////////////
 		Label addContactWithUsername = new Label("Add Contact: ");
 		addContactWithUsername.setFont(new Font(20));
+		addContactWithUsername.setPadding(new Insets(0, 0, 0, 20));
 		addContactWithUsernameInputTextField = new TextField();
 		addContactWithUsernameInputTextField.setOnKeyPressed(
 				keyEvent->addContactInputKeyPressed(keyEvent));
 		// Restrict input to lower case
 		addContactWithUsernameInputTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
+		addContactWithUsernameInputTextField.setPrefWidth(450);
 		addContactButton = new Button("Add");
 		addContactButton.setOnAction( e->addContactBtnPress() );
 		addContactButton.setFocusTraversable(false);

@@ -138,10 +138,12 @@ public class ChatScreen extends Screen {
 		sendNewMessageButton.setOnAction( e->sendNewMessageBtnPress() );
 		sendNewMessageButton.setFocusTraversable(false);
 		scrollPane.setContent(scrollPaneContent);
-		sendNewMessageButton.setPrefWidth(50);
-		newMessageTextField.setPrefWidth(350-sendNewMessageButton.getWidth());
+//		sendNewMessageButton.setPrefWidth(50);
+		newMessageTextField.setPrefWidth(620);
+//		newMessageTextField.setPrefWidth(350-sendNewMessageButton.getWidth());
 		newMessage = new HBox();
 		newMessage.getChildren().addAll(newMessageTextField, sendNewMessageButton);
+		newMessage.setPrefWidth(680);
 
 		//////////////////////////////////////////////////////////////////////////////
 		//--------------------------Partner Detail Display--------------------------//

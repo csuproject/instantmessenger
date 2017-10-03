@@ -56,7 +56,8 @@ public class MUCContactDisplay extends FlowPane {
                 "-fx-border-insets: 3;" +
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: black;");
-		this.setMaxWidth(380);
+		this.setMaxWidth(680);
+		this.setPrefWidth(680);
 		this.setOnMouseClicked(e->select());
 		this.getChildren().addAll(usernameLabel);
 	}
@@ -104,7 +105,7 @@ public class MUCContactDisplay extends FlowPane {
                 "-fx-border-insets: 3;" +
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: black;");
-		this.setMaxWidth(380);
+		this.setMaxWidth(680);
 		this.setOnMouseClicked(e-> {
 			openAppUser.getAppUser(appUser);
 			usernameLabel.setGraphic(new ImageView(imageMessage));
@@ -117,7 +118,7 @@ public class MUCContactDisplay extends FlowPane {
 
 		FlowPane mainBox = new FlowPane();
 		mainBox.getChildren().addAll(onlineHBox, usernameHBox, buttonHBox);
-		mainBox.setMaxWidth(380);
+		mainBox.setMaxWidth(680);
 		mainBox.setHgap(10);
 
 		this.setHgap(10);
@@ -186,7 +187,7 @@ public class MUCContactDisplay extends FlowPane {
                 "-fx-border-insets: 3;" +
                 "-fx-border-radius: 5;" +
                 "-fx-border-color: black;");
-		this.setMaxWidth(380);
+		this.setMaxWidth(680);
 		this.setOnMouseClicked(e-> {
 			usernameLabel.setGraphic(new ImageView(this.imageMessage));
 			openMUCEvent.getMUC(this.appMUC);});
