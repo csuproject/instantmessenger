@@ -82,6 +82,7 @@ public class NavigationScreen extends Screen {
 		logoutButton.setPrefHeight(66.0);
 
 		navigationBox.getChildren().addAll(contactButton, chatButton, logoutButton);
+		navigationBox.setSpacing(40);
 		this.getChildren().addAll(navigationBox);
 	}
 

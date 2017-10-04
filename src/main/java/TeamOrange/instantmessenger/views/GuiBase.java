@@ -47,14 +47,14 @@ public class GuiBase extends Application {
 		borderpane = new BorderPane();
 		this.stage = primaryStage;
 		stage.setTitle("Confide");
-		stage.setWidth(416);
+		stage.setWidth(680);
 		stage.setHeight(680);
 		stage.setResizable(false);
 		stage.setOnCloseRequest(we->{
 			this.app.onClose();
 		});
 
-		scene = new Scene( new StackPane(), 416, 680);
+		scene = new Scene( new StackPane(), 680, 680);
 		button = new Button();
 		app = new App(this);
 
