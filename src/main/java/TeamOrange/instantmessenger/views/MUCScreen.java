@@ -21,6 +21,7 @@ import TeamOrange.instantmessenger.lambda.GetMUCEvent;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -28,6 +29,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import resources.GroupList;
 
 /**
@@ -85,7 +87,7 @@ public class MUCScreen extends Screen {
 		addGroupTextField = new TextField();
 		addGroupTextField.setPromptText("Add Group Chat");
 		addGroupTextField.setMinHeight(35);
-		addGroupTextField.setMinWidth(320);
+		addGroupTextField.setPrefWidth(220);
 		// restrict input to lower case
 		addGroupTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
 		addGroupTextField.setOnKeyPressed(ke->{
@@ -101,8 +103,10 @@ public class MUCScreen extends Screen {
 		declineAddGroupButton.setGraphic( GuiBase.IMAGE_DECLINE );
 		declineAddGroupButton.setOnAction(e->closeAddGroupBox());
 		declineAddGroupButton.setFocusTraversable(false);
+		Label addGroupLabel = new Label("Group Name: ");
+		addGroupLabel.setFont(new Font(15));
 		addGroupHBox = new HBox(
-				addGroupTextField,acceptAddGroupButton,declineAddGroupButton);
+				addGroupLabel, addGroupTextField,acceptAddGroupButton,declineAddGroupButton);
 		addGroupHBox.setAlignment(Pos.CENTER);
 
 		//////////////////////////////////////////////////////////////////////////////
@@ -119,7 +123,7 @@ public class MUCScreen extends Screen {
 		mucScrollPane.setFitToWidth(true);
 		mucScrollPane.setFitToHeight(true);
 		mucScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-		
+
 		//////////////////////////////////////////////////////////////////////////////
 		//----------------------------------Resources-------------------------------//
 		//////////////////////////////////////////////////////////////////////////////
