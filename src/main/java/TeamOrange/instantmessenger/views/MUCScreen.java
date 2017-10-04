@@ -87,7 +87,7 @@ public class MUCScreen extends Screen {
 		addGroupTextField = new TextField();
 		addGroupTextField.setPromptText("Add Group Chat");
 		addGroupTextField.setMinHeight(35);
-		addGroupTextField.setPrefWidth(220);
+		addGroupTextField.setPrefWidth(400);
 		// restrict input to lower case
 		addGroupTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
 		addGroupTextField.setOnKeyPressed(ke->{

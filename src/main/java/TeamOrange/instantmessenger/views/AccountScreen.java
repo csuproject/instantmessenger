@@ -62,6 +62,7 @@ public class AccountScreen extends Screen {
 		loginUserNameTextField.setOnKeyPressed(keyEvent->loginKeyPressed(keyEvent));
 		// restrict input to lower case
 		loginUserNameTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
+		loginUserNameTextField.setPrefWidth(200);
 		//loginUserNameTextField.addEventHandler(KeyEvent.KEY_TYPED , loginUserNameTextFieldFormatValidation());
 		Label loginUserNameLabel = new Label("Username: " );
 		loginUserNameLabel.setFont(new Font(18));
@@ -71,6 +72,7 @@ public class AccountScreen extends Screen {
 		//
 		loginPasswordTextField = new PasswordField();
 		loginPasswordTextField.setOnKeyPressed(keyEvent->loginKeyPressed(keyEvent));
+		loginPasswordTextField.setPrefWidth(200);
 		Label loginPasswordLabel = new Label("Password: " );
 		loginPasswordLabel.setFont(new Font(18));
 		HBox loginPasswordInput = new HBox();
@@ -102,6 +104,7 @@ public class AccountScreen extends Screen {
 		createAccountUserNameTextField.setOnKeyPressed(keyEvent->createAccountKeyPressed(keyEvent));
 		// restrict input to lower case
 		createAccountUserNameTextField.setOnKeyTyped(keyEvent->loginUserNameTextFieldFormatValidation(keyEvent));
+		createAccountUserNameTextField.setPrefWidth(200);
 		Label createAccountserNameLabel = new Label("Username: " );
 		createAccountserNameLabel.setFont(new Font(18));
 		HBox createAccountUserNameInput = new HBox();
@@ -110,6 +113,7 @@ public class AccountScreen extends Screen {
 		//
 		createAccountPasswordTextField = new PasswordField();
 		createAccountPasswordTextField.setOnKeyPressed(keyEvent->createAccountKeyPressed(keyEvent));
+		createAccountPasswordTextField.setPrefWidth(200);
 		Label createAccountPasswordLabel = new Label("Password: " );
 		createAccountPasswordLabel.setFont(new Font(18));
 		HBox createAccountPasswordInput = new HBox();
@@ -205,7 +209,7 @@ public class AccountScreen extends Screen {
 	 * @return true if the format is valid, false if it is invalid
 	 */
 	private boolean isValidCreateAccountFormat(String userName, String password){
-		if(userName.isEmpty() || password.isEmpty()){
+		if(userName.isEmpty() || password.isEmpty() || userName.contains(" ") || password.contains(" ")){
 			return false;
 		}
 		return true;

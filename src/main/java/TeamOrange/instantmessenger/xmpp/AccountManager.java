@@ -86,8 +86,7 @@ public class AccountManager {
 	 * @param password the password
 	 * @throws XmppException
 	 */
-	public void createUser(XmppClient client, String userName, String password) throws XmppException {
-		// TODO: how to tell if this failed?
+	public void createUser(XmppClient client, String userName, String password) throws XmppException  {
 		Registration registration = Registration.builder()
     			.username(userName)
     			.password(password)
