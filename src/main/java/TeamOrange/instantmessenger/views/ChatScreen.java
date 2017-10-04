@@ -188,7 +188,7 @@ public class ChatScreen extends Screen {
 			for(AppMucMessage m : messages){
 				String username = m.getFromNick();
 				MessageDisplay md = new MessageDisplay(
-						username, m.getBody(), m.getSent(), m.getSentFromSelf());
+						username, m.getBody(), m.getSent(), m.getSentFromSelf(), m.getColor());
 				scrollPaneContent.getChildren().add(md);
 			}
 			scrollChat();

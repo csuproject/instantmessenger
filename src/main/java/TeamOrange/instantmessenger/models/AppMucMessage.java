@@ -1,5 +1,7 @@
 package TeamOrange.instantmessenger.models;
 
+import javafx.scene.paint.Color;
+
 /**
  * Represents a muc message
  *
@@ -9,12 +11,18 @@ public class AppMucMessage {
 	private String fromNick;
 	private boolean sent;
 	private boolean sentFromSelf;
+	private Color color;
 
-	private AppMucMessage(String body, String fromNick, boolean sent, boolean sentFromSelf){
+	private AppMucMessage(String body, String fromNick, boolean sent, boolean sentFromSelf, Color color){
 		this.body = body;
 		this.fromNick = fromNick;
 		this.sent = sent;
 		this.sentFromSelf = sentFromSelf;
+		this.color = color;
+	}
+
+	public Color getColor(){
+		return color;
 	}
 
 	/**
@@ -24,7 +32,7 @@ public class AppMucMessage {
 	 * @return the created outbound muc message
 	 */
 	public static AppMucMessage createOutbound(String body, String fromNick){
-		return new AppMucMessage(body, fromNick, false, true);
+		return new AppMucMessage(body, fromNick, false, true, Color.GREEN);
 	}
 
 	/**
@@ -34,7 +42,11 @@ public class AppMucMessage {
 	 * @return the created inbound muc message
 	 */
 	public static AppMucMessage createInbound(String body, String fromNick){
-		return new AppMucMessage(body, fromNick, true, false);
+		return new AppMucMessage(body, fromNick, true, false, Color.BLUE);
+	}
+
+	public void setColor(Color color){
+		this.color = color;
 	}
 
 	public boolean getSentFromSelf(){

@@ -1,5 +1,7 @@
 package TeamOrange.instantmessenger.models;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import TeamOrange.instantmessenger.lambda.GetMUCEvent;
@@ -11,6 +13,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
@@ -27,6 +30,8 @@ public class AppMuc {
 	AppMuc muc;
 	boolean messageInit;
 	private boolean notify;
+	private int colorsIndex;
+	private ArrayList<Color> colors = new ArrayList();
 
 	public AppMuc(String roomID, String nickname, BabblerBase babblerBase, GetMUCEvent messageEvent){
 		this.roomID = roomID;
@@ -35,6 +40,18 @@ public class AppMuc {
 		messages = new LinkedList<AppMucMessage>();
 		occupants = new LinkedList<AppOccupant>();
 		this.messageEvent = messageEvent;
+
+		colors.add( Color.rgb(244, 92, 66) );
+		colors.add( Color.rgb(65, 244, 241) );
+		colors.add( Color.rgb(244, 160, 65) );
+		colors.add( Color.rgb(244, 92, 66) );
+		colors.add( Color.rgb(208, 65, 244) );
+		colors.add( Color.rgb(65, 244, 178) );
+		colors.add( Color.rgb(65, 74, 244) );
+		colors.add( Color.rgb(65, 166, 244) );
+		colors.add( Color.rgb(244, 65, 131) );
+		colors.add( Color.rgb(244, 241, 65) );
+		colorsIndex = 0;
 	}
 
 	/**
@@ -104,10 +121,33 @@ public class AppMuc {
 				messages.add(message);
 			}
 		} else{
+			int index = addOccupantOrGetIndexIfExists(message.getFromNick());
+			if(index < 0){
+				System.out.println("occupant not found");
+				index = 0;
+			}
+			Color color = colors.get(index % colors.size());
+			message.setColor(color);
 			messages.add(message);
 		}
 
 		messageEvent.getMUC(this);
+	}
+
+	/**
+	 * Returns the index of the occupant with the given nick, or adds an occupant if it doesnt already exist
+	 * @param nick the nickname to look for
+	 * @return the index of that occupant.
+	 */
+	public int addOccupantOrGetIndexIfExists(String nick){
+		for(int i = 0; i < occupants.size(); ++i){
+			if(occupants.get(i).getNickname().equals(nick)){
+				return i;
+			}
+		}
+		int index = occupants.size();
+		occupants.addLast(new AppOccupant(nick));
+		return index;
 	}
 
 	/**
