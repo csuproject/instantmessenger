@@ -44,6 +44,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+
 import java.io.File;
 import java.net.URISyntaxException;
 
@@ -86,14 +88,14 @@ public class App {
 	private NavigationController naviationController;
 	private ConnectionController connectionController;
 	private MUCController mucController;
-	private ContactManagementController contactManagementController;    
+	private ContactManagementController contactManagementController;
 
 	// models
 	AppContacts contacts;
 	AppChats chats;
 	AppConnection connection;
 	private AppMucList mucs;
-	
+
 	// resources
 	private Media soundA;
 	private Media soundB;
@@ -232,7 +234,12 @@ public class App {
     			contactManagementController.onRequestDeleteFromContacts(from.getLocal());
     		}
     	} else if(message.getType() == AppMessageType.CHAT){
-
+    		if(currentScreen == ScreenEnum.CHAT && chats.getActiveChat().getThread().equals(message.getThread())){
+    			// dont play sound
+    		} else {
+    			audibleAlertChat.seek(new Duration(0.0));
+    			audibleAlertChat.play();
+    		}
     		// Update chats
     		chatController.incomingChatMessage(message, currentScreen==ScreenEnum.CHAT);
     		notifyContact(message);
@@ -404,7 +411,6 @@ public class App {
     		}
 			else {
 				navigationScreen.setImageNewContactMessage();
-				audibleAlertChat.play();
 			}
 		}
 		// Set new message on contact displays
@@ -422,24 +428,27 @@ public class App {
      * @param muc
      */
     private void notifyAndLoadMUCOnEvent(AppMuc muc) {
+    	if(currentScreen == ScreenEnum.MUCCHAT && mucs.getMucInFocus().getRoomID().equals(muc.getRoomID())){
+			// dont play sound
+		} else {
+			audibleAlertMUC.seek(new Duration(0.0));
+			audibleAlertMUC.play();
+		}
 
     	// Notify on MUCCHAT
 		if (currentScreen == ScreenEnum.MUCCHAT && !mucs.getMucInFocus().equals(muc)) {
 			navigationScreen.setImageNewGroupMessage(); // Notify NavigationScreen
-			audibleAlertMUC.play();
 			mucs.setNotification(muc, true); // Notify MUCChatDisplays
 			mucScreen.loadLater(new MUCScreenInput(mucs));
 		}
 		// Notify on MUC
 		if(currentScreen == ScreenEnum.MUC) {
 			mucs.setNotification(muc, true); // Notify MUCChatDisplays
-			audibleAlertMUC.play();
 			mucScreen.loadLater(new MUCScreenInput(mucs));
 		}
 		// Notify on HOME
 		if(currentScreen == ScreenEnum.HOME) {
 			navigationScreen.setImageNewGroupMessage(); // Notify NavigationScreen
-			audibleAlertMUC.play();
 			mucs.setNotification(muc, true); // Notify MUCChatDisplays
 			mucScreen.loadLater(new MUCScreenInput(mucs));
 		}
